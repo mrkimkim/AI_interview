@@ -2,8 +2,13 @@ package portfolio.projects.mrkimkim.ai_interview;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.media.MediaRecorder;
+import android.net.Uri;
+import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,10 +18,17 @@ import android.view.SurfaceView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import ng.max.slideview.SlideView;
 
 public class Interview extends AppCompatActivity {
+    private boolean isrecording;
+    private MediaRecorder mediaRecorder;
     private CameraPreview mPreview;
     private Camera mCamera;
+
+
 
     public static void setCameraDisplayOrientation(Activity activity, int cameraId, android.hardware.Camera camera) {
         android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
@@ -73,7 +85,9 @@ public class Interview extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interview);
 
+        // set layout preview
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+
         // Create an instance of Camera
         mCamera = openFrontCamera();
         setCameraDisplayOrientation(this, Camera.CameraInfo.CAMERA_FACING_BACK, mCamera);
@@ -81,6 +95,49 @@ public class Interview extends AppCompatActivity {
         // Create our Preview view and set it as the content of our activity.
         mPreview = new CameraPreview(this, mCamera);
         preview.addView(mPreview);
+
+        SlideView slideView = (SlideView)findViewById(R.id.slideView);
+        slideView.setOnSlideCompleteListener(new SlideView.OnSlideCompleteListener() {
+            @Override
+            public void onSlideComplete(SlideView slideView) {
+                // vibrate the device
+                if (isrecording) {
+                    Log.d("Recording : " , "End");
+                    mediaRecorder.stop();
+                    mediaRecorder.release();
+                    mCamera.lock();
+                    isrecording = false;
+                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                            Uri.parse("/sdcard/interview.mp4")));
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(Interview.this, "Start", Toast.LENGTH_LONG).show();
+                            try {
+                                mediaRecorder = new MediaRecorder();
+                                mCamera.unlock();
+                                mediaRecorder.setCamera(mCamera);
+                                mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+                                mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+                                mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+                                mediaRecorder.setAudioEncoder(3);
+                                mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
+                                mediaRecorder.setOutputFile("/sdcard/interview.mp4");
+                                mediaRecorder.prepare();
+                                mediaRecorder.start();
+                                isrecording = true;
+                                Log.d("Recording : " , "Start");
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                                mediaRecorder.release();
+                                return;
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
     /** Check if this device has a camera */
