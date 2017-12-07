@@ -7,9 +7,12 @@ import android.hardware.Camera;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Surface;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 public class Interview extends AppCompatActivity {
     private CameraPreview mPreview;
@@ -70,13 +73,13 @@ public class Interview extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interview);
 
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         // Create an instance of Camera
         mCamera = openFrontCamera();
         setCameraDisplayOrientation(this, Camera.CameraInfo.CAMERA_FACING_BACK, mCamera);
 
         // Create our Preview view and set it as the content of our activity.
         mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
     }
 

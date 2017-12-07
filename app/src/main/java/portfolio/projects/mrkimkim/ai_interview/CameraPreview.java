@@ -93,8 +93,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, width, height);
         }
 
-        FrameLayout mPreview = (FrameLayout)findViewById(R.id.camera_preview);
-        int new_height = mPreview.getHeight();
         if (mPreviewSize!=null) {
             float ratio;
             if(mPreviewSize.height > mPreviewSize.width)
@@ -102,9 +100,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             else
                 ratio = (float) mPreviewSize.width / (float) mPreviewSize.height;
             // One of these methods should be used, second method squishes preview slightly
-            setMeasuredDimension((int)(new_height * ratio), new_height);
-            //        setMeasuredDimension((int) (width * ratio), height);
-        }
+            Log.d("Screen Size : ", Integer.toString(width) + ":" + Integer.toString((int)(ratio * height)));        }
+            setMeasuredDimension(width, height);
+
     }
 
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
