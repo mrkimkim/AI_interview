@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="portfolio.projects.mrkimkim.ai_interview">
 
+    <uses-feature android:name="android.hardware.camera" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,11 +22,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChooseQuestion" />
-        <activity android:name=".Interview" android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".Interview"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SendToServer"
+            android:label="@string/title_activity_send_to_server"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 </manifest>

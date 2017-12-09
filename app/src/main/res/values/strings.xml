@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AI_Interview</string>
+    <string name="title_activity_send_to_server">SendToServer</string>
 </resources>
