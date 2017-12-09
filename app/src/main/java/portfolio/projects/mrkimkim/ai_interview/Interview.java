@@ -3,10 +3,13 @@ package portfolio.projects.mrkimkim.ai_interview;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -20,15 +23,18 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import ng.max.slideview.SlideView;
 
 public class Interview extends AppCompatActivity {
+    private String FileName;
     private boolean isrecording;
     private MediaRecorder mediaRecorder;
     private CameraPreview mPreview;
     private Camera mCamera;
-
-
 
     public static void setCameraDisplayOrientation(Activity activity, int cameraId, android.hardware.Camera camera) {
         android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
@@ -76,7 +82,6 @@ public class Interview extends AppCompatActivity {
                 }
             }
         }
-
         return cam;
     }
 
@@ -90,7 +95,7 @@ public class Interview extends AppCompatActivity {
 
         // Create an instance of Camera
         mCamera = openFrontCamera();
-        setCameraDisplayOrientation(this, Camera.CameraInfo.CAMERA_FACING_BACK, mCamera);
+        setCameraDisplayOrientation(this, Camera.CameraInfo.CAMERA_FACING_FRONT, mCamera);
 
         // Create our Preview view and set it as the content of our activity.
         mPreview = new CameraPreview(this, mCamera);
@@ -102,34 +107,55 @@ public class Interview extends AppCompatActivity {
             public void onSlideComplete(SlideView slideView) {
                 // vibrate the device
                 if (isrecording) {
-                    Log.d("Recording : " , "End");
                     mediaRecorder.stop();
                     mediaRecorder.release();
                     mCamera.lock();
                     isrecording = false;
+
+                    // update device gallary
                     sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                            Uri.parse("/sdcard/interview.mp4")));
+                            Uri.parse("file://" + Environment.getExternalStorageDirectory() + "/interview/" + FileName)));
+
+                    // give uri information to SendToServer
+                    Intent intent = new Intent(Interview.this, SendToServer.class);
+                    intent.putExtra("uri","file://" + Environment.getExternalStorageDirectory() + "/interview/" + FileName);
+                    startActivity(intent);
+                    finish();
+
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(Interview.this, "Start", Toast.LENGTH_LONG).show();
                             try {
-                                mediaRecorder = new MediaRecorder();
+                                // Set File Path
+                                String timeStamp = new SimpleDateFormat("yyyy-MM-dd-mm-ss").format(new Date());
+                                FileName = timeStamp + ".mp4";
+
+                                // Folder Check
+                                File f = new File("/sdcard/interview");
+                                if(!f.isDirectory()) f.mkdir();
+
+                                // unlock camera
                                 mCamera.unlock();
+
+                                // mediaResorder configuration
+                                mediaRecorder = new MediaRecorder();
+
                                 mediaRecorder.setCamera(mCamera);
-                                mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+                                mediaRecorder.setOrientationHint(270);
+
+                                mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                                 mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-                                mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                                mediaRecorder.setAudioEncoder(3);
-                                mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
-                                mediaRecorder.setOutputFile("/sdcard/interview.mp4");
+
+                                mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
+                                mediaRecorder.setOutputFile("/sdcard/interview/" + FileName);
+
                                 mediaRecorder.prepare();
                                 mediaRecorder.start();
                                 isrecording = true;
-                                Log.d("Recording : " , "Start");
                             } catch (final Exception e) {
                                 e.printStackTrace();
+                                mCamera.lock();
                                 mediaRecorder.release();
                                 return;
                             }
@@ -138,29 +164,6 @@ public class Interview extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    /** Check if this device has a camera */
-    private boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
-            // this device has a camera
-            return true;
-        } else {
-            // no camera on this device
-            return false;
-        }
-    }
-
-    /** A safe way to get an instance of the Camera object. */
-    public static Camera getCameraInstance(){
-        Camera c = null;
-        try {
-            c = Camera.open(); // attempt to get a Camera instance
-        }
-        catch (Exception e){
-            // Camera is not available (in use or does not exist)
-        }
-        return c; // returns null if camera is unavailable
     }
 }
 
