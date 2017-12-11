@@ -14,19 +14,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         int permissionStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permissionRead = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
         int permissionCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         int permissionRecord = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+        int permissionInternet = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
 
         if (permissionCamera == PackageManager.PERMISSION_DENIED ||
                 permissionRecord == PackageManager.PERMISSION_DENIED ||
-                permissionStorage == PackageManager.PERMISSION_DENIED) {
+                permissionStorage == PackageManager.PERMISSION_DENIED ||
+                permissionInternet == PackageManager.PERMISSION_DENIED ||
+                permissionRead == PackageManager.PERMISSION_DENIED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ||
                         ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) ||
-                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
+                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
                 }
                 else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                    ActivityCompat.requestPermissions(this, new String[]{
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.RECORD_AUDIO,
+                            Manifest.permission.INTERNET,
+                            Manifest.permission.READ_EXTERNAL_STORAGE},
+                            MY_PERMISSIONS_REQUEST_READ_CONTACTS);
                 }
         }
 

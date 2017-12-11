@@ -1,27 +1,17 @@
 package portfolio.projects.mrkimkim.ai_interview;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.Vibrator;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Surface;
-import android.view.SurfaceView;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -86,6 +76,13 @@ public class Interview extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mCamera.lock();
+        mediaRecorder.release();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interview);
@@ -116,8 +113,8 @@ public class Interview extends AppCompatActivity {
                     sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                             Uri.parse("file://" + Environment.getExternalStorageDirectory() + "/interview/" + FileName)));
 
-                    // give uri information to SendToServer
-                    Intent intent = new Intent(Interview.this, SendToServer.class);
+                    // give uri information to UploadVideo
+                    Intent intent = new Intent(Interview.this, UploadVideo.class);
                     intent.putExtra("uri","file://" + Environment.getExternalStorageDirectory() + "/interview/" + FileName);
                     startActivity(intent);
                     finish();
