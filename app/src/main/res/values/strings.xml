@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AI_Interview</string>
     <string name="title_activity_send_to_server">SendToServer</string>
-    <string name="ServerIP">192.168.43.9</string>
+    <string name="ServerIP">192.168.0.4</string>
     <string name="ServerPort">8426</string>
 
     <string name="connecting">서버와 연결 중입니다.</string>
