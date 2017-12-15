@@ -34,3 +34,16 @@
 - position
 
 - voice_file_path
+
+INSERT INTO UserInfo (idx, user_id, id_hash, pwd_hash, credits, icon_file_path) VALUES (1, "ÀåÇö±Ô", "12345678123456781234567812345678", "1234567812345678123456781234567812345678123456781234567812345678", 1, "c:/login/");
+
+ALTER TABLE `UserInfo` CHANGE COLUMN `user_id` `user_id` VARCHAR(256) CHARACTER SET 'utf8' NULL DEFAULT NULL;
+
+"CREATE TABLE VideoInfo(
+idx INT(32) unsigned NOT NULL,
+owner_idx INT(32) unsigned NOT NULL,
+file_name VARCHAR(128) NOT NULL,
+file_path VARCHAR(256) NOT NULL,
+is_processed BOOL DEFAULT 0,
+file_size INT(32) DEFAULT 0,
+question_idx INT(32) NOT NULL);"
