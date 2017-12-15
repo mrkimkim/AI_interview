@@ -1,7 +1,6 @@
 class mVideoReceiver(object):
     def __init__(self, conn, sql):
         self.conn = conn
-
         self.sql = sql
 
         self.idx = 0
@@ -102,6 +101,8 @@ class mVideoReceiver(object):
             self.SaveDB()
             print "Saving Video"
             self.SaveVideo()
+            print "Successfully Receive Video"
+            return self.file_path
             
         except Exception as e:
             print e

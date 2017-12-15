@@ -2,6 +2,7 @@ import socket
 import sys
 import threading
 import VideoReceiver
+import VideoProcessor
 import pymysql
 
 class Session(threading.Thread):
@@ -33,8 +34,9 @@ class Session(threading.Thread):
                     elif "sendVideo" in cmd:
                         print "Start Receving Video"
                         mVideoReceiver = VideoReceiver.mVideoReceiver(self.conn, self.sql)
-                        mVideoReceiver.Receive()
+                        file_path = mVideoReceiver.Receive()
                         print "Successfuly register Video Data"
+                        mVideoProcessor = VideoProcessor.mVideoProcessor(self.sql, file_path)
                 else: raise KeyboardInterrupt
             except KeyboardInterrupt:
                 print "Force Down Server"
