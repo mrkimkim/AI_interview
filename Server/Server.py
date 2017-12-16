@@ -2,7 +2,6 @@ import socket
 import sys
 import threading
 import VideoReceiver
-import VideoProcessor
 import pymysql
 
 class Session(threading.Thread):
@@ -17,29 +16,29 @@ class Session(threading.Thread):
 
     def run(self):
         # Login to Server
-        print "Login to Server"
+        print ("Login to Server")
 
         # waiting message
         while True:
             try:
-                print "Waiting Command..."
+                print ("Waiting Command...")
                 cmd = self.conn.recv(10)
                 if cmd:
                     cmd = cmd.strip()
                     if "quit" in cmd:
-                        print "Close Program"
+                        print ("Close Program")
                         self.conn.close()
                         self.stop()
                         break
                     elif "sendVideo" in cmd:
-                        print "Start Receving Video"
+                        print ("Start Receving Video")
                         mVideoReceiver = VideoReceiver.mVideoReceiver(self.conn, self.sql)
                         file_path = mVideoReceiver.Receive()
-                        print "Successfuly register Video Data"
-                        mVideoProcessor = VideoProcessor.mVideoProcessor(self.sql, file_path)
+                        print ("Successfuly register Video Data")
+                        raise KeyboardInterrupt
                 else: raise KeyboardInterrupt
             except KeyboardInterrupt:
-                print "Force Down Server"
+                print ("Force Down Server")
                 self.conn.close()
                 self.stop()
                 break

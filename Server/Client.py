@@ -1,33 +1,47 @@
 import socket
-import sys
+import os
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_addr = ('localhost', 8426)
-sock.connect(server_addr)
+server_address = ('35.200.16.120', 8426)
+sock.connect(server_address)
 
-try:
-    sock.sendall("userinfois" * 10)
-    amount_received = 0
-    amount_expected = len("I am ready to receive msg")
+print "Connection"
+file_name = 'sample.mp4'
 
-    while amount_received < amount_expected:
-        data = sock.recv(amount_expected)
-        if data:
-            amount_received += len(data)
-            print data
-            
-    sock.sendall("metainfois" * 10)
+# Start Video Transformation
+sock.sendall('sendVideo ')
 
-    amount_received = 0
-    amount_expected = len("I am ready to receive msg")
+# send file_name length
+data = sock.recv(5)
+if data == 'ready':
+    sock.sendall('0' * (16 - len(str(len(file_name)))) + str(len(file_name)))
 
-    while amount_received < amount_expected:
-        data = sock.recv(amount_expected)
-        if data:
-            amount_received += len(data)
-            print data
+# send file_name
+data = sock.recv(5)
+if data == 'ready':
+    sock.sendall(file_name)
 
-    sock.sendall("video" * 40)
-    
-finally:
-    sock.close()
+# send file_size
+f = open(file_name, 'rb')
+f.seek(0, os.SEEK_END)
+size = f.tell()
+f.seek(0, 0)
+
+data = sock.recv(5)
+if data == 'ready':
+    sock.sendall('0' * (16 - len(str(size))) + str(size))
+
+# send file
+data = sock.recv(5)
+if data == 'ready':
+    data = f.read()
+    sock.sendall(data)
+
+
+# close connection
+data = sock.recv(5)
+if data == 'ready':
+    sock.sendall('quit      ')
+
+sock.close()
+
