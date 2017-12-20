@@ -7,7 +7,7 @@ class mVideoReceiver(object):
         self.conn = conn
         self.sql = sql
         
-        self.owner_idx = 0
+        self.user_idx = 0
         self.user_id = hashlib.sha256("Guest").hexdigest()
         
         self.folder_path = "./Data/" + self.user_id + "/"
@@ -47,10 +47,10 @@ class mVideoReceiver(object):
     
     def SaveDB(self):
         # Save to UserData DB
-        query = """insert into UserData(owner_idx, folder_path, file_name, video_hash, video_size, video_format)
+        query = """insert into UserData(user_idx, folder_path, file_name, video_hash, video_size, video_format)
                 values (%s, %s, %s, %s, %s, %s)"""
-        print (self.owner_idx, self.folder_path, self.file_name, self.video_hash, self.video_size, self.video_format)
-        data = (self.owner_idx, self.folder_path, self.file_name, self.video_hash, self.video_size, self.video_format)
+        print (self.user_idx, self.folder_path, self.file_name, self.video_hash, self.video_size, self.video_format)
+        data = (self.user_idx, self.folder_path, self.file_name, self.video_hash, self.video_size, self.video_format)
         curs = self.sql.cursor()
         curs.execute(query, data)
         print (1)
@@ -60,8 +60,8 @@ class mVideoReceiver(object):
         rows = curs.fetchall()
         userdata_idx = rows[0][0]
         print (2)
-        query = """insert into TaskQueue(owner_idx, userdata_idx) values (%s, %s)"""
-        curs.execute(query, (self.owner_idx, userdata_idx))
+        query = """insert into TaskQueue(user_idx, userdata_idx) values (%s, %s)"""
+        curs.execute(query, (self.user_idx, userdata_idx))
         print (3)
 
     def SaveVideo(self):
