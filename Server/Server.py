@@ -2,7 +2,9 @@ import socket
 import sys
 import threading
 import VideoReceiver
+import ResultSender
 import pymysql
+from Background.Scheme import UserInfo
 
 class Session(threading.Thread):
     def __init__(self, conn, sql):
@@ -17,7 +19,8 @@ class Session(threading.Thread):
     def run(self):
         # Login to Server
         print ("Login to Server")
-
+        mUserInfo = UserInfo()
+        
         # waiting message
         while True:
             try:
@@ -35,7 +38,11 @@ class Session(threading.Thread):
                         mVideoReceiver = VideoReceiver.mVideoReceiver(self.conn, self.sql)
                         file_path = mVideoReceiver.Receive()
                         print ("Successfuly register Video Data")
-                        raise KeyboardInterrupt
+                    elif "resultList" in cmd:
+                        print ("Result List")
+                        mResultSender = ResultSender.mResultSender(self.conn, self.sql, mUserInfo)
+                        mResultSender.run()
+                    raise KeyboardInterrupt
                 else: raise KeyboardInterrupt
             except KeyboardInterrupt:
                 print ("Force Down Server")
