@@ -1,25 +1,20 @@
 package portfolio.projects.mrkimkim.ai_interview;
 
 import android.content.Intent;
-import android.icu.util.Output;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.VideoView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -48,7 +43,7 @@ public class UploadVideo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_to_server);
+        setContentView(R.layout.activity_upload_video);
 
         // 이전 액티비티의 영상 인텐트 전달
         Intent intent = getIntent();

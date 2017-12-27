@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
                         ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO) ||
                         ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET) ||
                         ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
                 }
                 else {
                     ActivityCompat.requestPermissions(this, new String[]{
