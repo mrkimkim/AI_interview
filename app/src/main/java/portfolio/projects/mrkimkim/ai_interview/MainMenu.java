@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+public class MainMenu extends AppCompatActivity {
     static int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 112;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void load_question_activity(View v) {
-        Intent intent = new Intent(MainActivity.this, ChooseQuestion.class);
+        Intent intent = new Intent(MainMenu.this, ChooseQuestion.class);
         startActivity(intent);
     }
 }
