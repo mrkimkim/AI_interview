@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".GlobalApplication"
@@ -19,19 +19,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".LoginActivity">
+        <activity android:name=".NetworkModule.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainMenu"></activity>
+        <activity android:name=".MainMenu" />
 
         <activity
             android:name=".Interview"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
 
         <activity android:name=".ChooseQuestion" />
 
@@ -40,8 +39,7 @@
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="5207d8f5691153fb22fb9e7950e4e9c1" />
-
-
+        
     </application>
 
 </manifest>

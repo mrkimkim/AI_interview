@@ -15,7 +15,7 @@
         android:layout_marginTop="0dp"
         android:background="@null"
         android:scaleType="fitXY"
-        android:onClick="load_question_activity"
+        android:onClick="onClickUnlink"
         app:layout_constraintDimensionRatio="h,8.65:3.5"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"

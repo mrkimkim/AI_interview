@@ -1,4 +1,4 @@
-package portfolio.projects.mrkimkim.ai_interview;
+package portfolio.projects.mrkimkim.ai_interview.NetworkModule;
 
 import android.Manifest;
 import android.content.Context;
@@ -16,11 +16,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
+import com.kakao.auth.ApiResponseCallback;
+import com.kakao.auth.AuthService;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
+import com.kakao.auth.network.response.AccessTokenInfoResponse;
 import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.LoginButton;
 import com.kakao.usermgmt.UserManagement;
@@ -30,8 +32,20 @@ import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
+import portfolio.projects.mrkimkim.ai_interview.MainMenu;
+import portfolio.projects.mrkimkim.ai_interview.R;
+
 public class LoginActivity extends AppCompatActivity {
     private SessionCallback callback;
+    private long user_id;
+    private long user_expiresInMilis;
+    private String user_token;
 
     String[] permissions = new String[] {
             Manifest.permission.CAMERA,
@@ -57,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
+        // 세션 콜백 등록
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
 
@@ -75,7 +90,13 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        if (Session.getCurrentSession().isOpened()) requestMe();
+        // 세션 연결 시 즉시 사용자 정보를 받아옴
+        if (Session.getCurrentSession().isOpened()) {
+            loginButton.setVisibility(View.INVISIBLE);
+            requestMe();
+        } else {
+            loginButton.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -84,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    // 로그인 수행 결과를 받음.
     private class SessionCallback implements ISessionCallback {
         @Override
         public void onSessionOpened() {
@@ -95,6 +117,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // 로그인 성공 시 사용자 정보를 받음.
     private void requestMe() {
         UserManagement.requestMe(new MeResponseCallback() {
             @Override
@@ -106,35 +129,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(UserProfile userProfile) {
                 Log.d("onSuccess", userProfile.toString());
-                Toast.makeText(LoginActivity.this, "Success", Toast.LENGTH_LONG).show();
+                requestAccessTokenInfo();
+                redirectMainMenu(userProfile);
             }
 
             @Override
-            public void onNotSignedUp() { Log.e("onNotSignedUp", "onNotSignedUp");};
+            public void onNotSignedUp() { Toast.makeText(LoginActivity.this, "Not Signed Up", Toast.LENGTH_LONG).show();};
         });
-    }
-
-    public boolean isConnected() {
-        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo ni = cm.getActiveNetworkInfo();
-        if (ni != null && ni.isConnectedOrConnecting()) return true;
-        return false;
-    }
-
-    // 퍼미션 체크
-    public boolean checkPermissions() {
-        for (int i = 0; i < permissions.length; ++i) {
-            if (ContextCompat.checkSelfPermission(this, permissions[i]) == PackageManager.PERMISSION_DENIED) return true;
-        }
-        return false;
-    }
-
-    // 퍼미션 요구 이유 체크
-    public boolean showRequestPermission() {
-        for (int i = 0; i < permissions.length; ++i) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) return true;
-        }
-        return false;
     }
 
     @Override
@@ -143,48 +144,93 @@ public class LoginActivity extends AppCompatActivity {
         Session.getCurrentSession().removeCallback(callback);
     }
 
-    public void onClickUnlink(View v) {
-        final String appendMessage = getString(R.string.com_kakao_confirm_unlink);
-        try {
-            new AlertDialog.Builder(this)
-                    .setMessage(appendMessage)
-                    .setPositiveButton(getString(R.string.com_kakao_ok_button),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    UserManagement.requestUnlink(new UnLinkResponseCallback() {
-                                        @Override
-                                        public void onFailure(ErrorResult errorResult) {
-                                            Logger.e(errorResult.toString());
-                                        }
+    public void requestAccessTokenInfo() {
+        AuthService.requestAccessTokenInfo(new ApiResponseCallback<AccessTokenInfoResponse>() {
+            @Override
+            public void onFailure(ErrorResult errorResult) {
+                Log.d("requestAccessTokenInfo", "Fail to AccessTokenInfo");
+            }
 
-                                        @Override
-                                        public void onSessionClosed(ErrorResult errorResult) {
-                                            Toast.makeText(LoginActivity.this, "Sessons is Closed", Toast.LENGTH_LONG);
-                                        }
+            @Override
+            public void onSessionClosed(ErrorResult errorResult) {
 
-                                        @Override
-                                        public void onNotSignedUp() {
+            }
 
-                                        }
+            @Override
+            public void onNotSignedUp() {
+            }
 
-                                        @Override
-                                        public void onSuccess(Long result) {
-                                            Toast.makeText(LoginActivity.this, "회원 탈퇴 완료", Toast.LENGTH_LONG);
-                                        }
-                                    });
-                                    dialogInterface.dismiss();
-                                }
-                            })
-                    .setNegativeButton(getString(R.string.com_kakao_cancel_button),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.dismiss();
-                                }
-                            }).show();
-        } catch (KakaoException e) {
-            e.printStackTrace();
+            @Override
+            public void onSuccess(AccessTokenInfoResponse accessTokenInfoResponse) {
+                user_id = accessTokenInfoResponse.getUserId();
+                user_token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+                user_expiresInMilis = accessTokenInfoResponse.getExpiresInMillis();
+            }
+        });
+    }
+
+    private void LoginToServer() {
+        class t_loginToServer implements Runnable {
+            UserProfile userProfile;
+
+            t_loginToServer(UserProfile uP) {userProfile = uP;}
+
+            @Override
+            public void run() {
+                try {
+                    Socket t_socket = new Socket();
+                    t_socket.connect(new InetSocketAddress(getString(R.string.server_ip), Integer.parseInt(getString(R.string.login_server_port))), 1000);
+                    InputStream networkDataReader = t_socket.getInputStream();
+                    OutputStream networkDataWriter = t_socket.getOutputStream();
+
+                    // Make UserID => 8byte
+                    // UserToken =>
+
+                } catch (IOException e) {
+                    Toast.makeText(LoginActivity.this, "앱 서버와 연결에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
         }
+    }
+
+    // 메인 메뉴로의 이동
+    private void redirectMainMenu(UserProfile userProfile) {
+        Intent intent = new Intent(this, MainMenu.class);
+        intent.putExtra("user_id", user_id);
+        intent.putExtra("user_token", user_token);
+        intent.putExtra("user_expiresInMilis", user_expiresInMilis);
+        intent.putExtra("user_email", userProfile.getEmail());
+        intent.putExtra("user_uuid", userProfile.getUUID());
+        intent.putExtra("user_serviceUserId", userProfile.getServiceUserId());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Toast.makeText(LoginActivity.this, user_token, Toast.LENGTH_SHORT).show();
+        startActivity(intent);
+    }
+
+    // 퍼미션 체크
+    private boolean checkPermissions() {
+        for (int i = 0; i < permissions.length; ++i) {
+            if (ContextCompat.checkSelfPermission(this, permissions[i]) == PackageManager.PERMISSION_DENIED) return true;
+        }
+        return false;
+    }
+
+    // 퍼미션 요구 이유 체크
+    private boolean showRequestPermission() {
+        for (int i = 0; i < permissions.length; ++i) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) return true;
+        }
+        return false;
+    }
+
+    //인터넷 연결상태 확인
+    public boolean isConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+            return true;
+        }
+        return false;
     }
 }

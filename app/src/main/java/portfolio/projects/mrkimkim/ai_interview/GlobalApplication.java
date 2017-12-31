@@ -14,7 +14,6 @@ import com.kakao.auth.KakaoAdapter;
 import com.kakao.auth.KakaoSDK;
 
 public class GlobalApplication extends Application {
-
     private class KakaoSDKAdapter extends KakaoAdapter {
 
         @Override
