@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -40,12 +41,16 @@ import java.net.Socket;
 
 import portfolio.projects.mrkimkim.ai_interview.MainMenu;
 import portfolio.projects.mrkimkim.ai_interview.R;
+import portfolio.projects.mrkimkim.ai_interview.UtilFunctions.UtilFunctions;
 
 public class LoginActivity extends AppCompatActivity {
+    private String nullToken = "                                                                ";
     private SessionCallback callback;
     private long user_id;
     private long user_expiresInMilis;
     private String user_token;
+    private byte[] app_token;
+    UserProfile mUserProfile;
 
     String[] permissions = new String[] {
             Manifest.permission.CAMERA,
@@ -59,6 +64,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Thread Policy를 지정
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         // 기기 버전 체크 후 퍼미션 요청
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -129,8 +138,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(UserProfile userProfile) {
                 Log.d("onSuccess", userProfile.toString());
+                mUserProfile = userProfile;
                 requestAccessTokenInfo();
-                redirectMainMenu(userProfile);
             }
 
             @Override
@@ -144,6 +153,7 @@ public class LoginActivity extends AppCompatActivity {
         Session.getCurrentSession().removeCallback(callback);
     }
 
+    // 카카오로부터 로그인 토큰을 받아온다.
     public void requestAccessTokenInfo() {
         AuthService.requestAccessTokenInfo(new ApiResponseCallback<AccessTokenInfoResponse>() {
             @Override
@@ -165,10 +175,12 @@ public class LoginActivity extends AppCompatActivity {
                 user_id = accessTokenInfoResponse.getUserId();
                 user_token = Session.getCurrentSession().getTokenInfo().getAccessToken();
                 user_expiresInMilis = accessTokenInfoResponse.getExpiresInMillis();
+                LoginToServer();
             }
         });
     }
 
+    // 앱 서버에 로그인 한다.
     private void LoginToServer() {
         class t_loginToServer implements Runnable {
             UserProfile userProfile;
@@ -178,20 +190,33 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    // 로그인 서버와 연결
                     Socket t_socket = new Socket();
                     t_socket.connect(new InetSocketAddress(getString(R.string.server_ip), Integer.parseInt(getString(R.string.login_server_port))), 1000);
                     InputStream networkDataReader = t_socket.getInputStream();
                     OutputStream networkDataWriter = t_socket.getOutputStream();
 
-                    // Make UserID => 8byte
-                    // UserToken =>
+                    // 로그인 인증 패킷 전송
+                    byte[] packet = UtilFunctions.concatBytes(UtilFunctions.longToBytes(user_id), user_token.getBytes());
+                    networkDataWriter.write(packet);
+                    networkDataWriter.flush();
 
+                    // 로그인 결과로 앱 서버의 AccessToken을 얻음
+                    app_token = new byte[64];
+                    networkDataReader.read(app_token, 0, 64);
+                    Log.d("app_token", new String(app_token, 0, app_token.length));
+
+                    t_socket.close();
+                    networkDataReader.close();
+                    networkDataWriter.close();
                 } catch (IOException e) {
                     Toast.makeText(LoginActivity.this, "앱 서버와 연결에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 }
             }
-
         }
+        Runnable t = new t_loginToServer(mUserProfile);
+        t.run();
     }
 
     // 메인 메뉴로의 이동
@@ -204,7 +229,6 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtra("user_uuid", userProfile.getUUID());
         intent.putExtra("user_serviceUserId", userProfile.getServiceUserId());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Toast.makeText(LoginActivity.this, user_token, Toast.LENGTH_SHORT).show();
         startActivity(intent);
     }
 

@@ -59,7 +59,7 @@ public class UploadVideo extends AppCompatActivity {
         // Connect to Server
         mHandler = new Handler();
         try {
-            setSocket(getString(R.string.ServerIP), Integer.parseInt(getString(R.string.ServerPort)));
+            setSocket(getString(R.string.server_ip), Integer.parseInt(getString(R.string.cmd_server_port)));
             Upload.start();
         } catch(Exception e) {
             e.printStackTrace();
