@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import portfolio.projects.mrkimkim.ai_interview.InterviewModule.Interview;
+
 /**
  * Created by mrkimkim on 2017-12-06.
  */

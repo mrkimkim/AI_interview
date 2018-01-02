@@ -4,6 +4,7 @@ import threading
 import ast
 import hashlib
 import pymysql
+import time
 
 def hexToLong(str_hex):
     ret = 0
@@ -54,7 +55,7 @@ class LoginSession(threading.Thread):
 
 
         """
-        Verify User Token by Kakao REST API
+        Verify Kakao_Token by Kakao REST API
         """
         try:
             resp = req('/v1/user/me', '', 'GET', self.user_token)
@@ -69,7 +70,7 @@ class LoginSession(threading.Thread):
 
 
         """
-        Check if user info is in DB
+        Check if user info is in DB and generate hash
         """
         try:
             login_query = """select idx from UserInfo where `idx` = %s"""
@@ -86,10 +87,11 @@ class LoginSession(threading.Thread):
             self.curs.execute(insert_query, data)
             
         """
-        Generate token between App and Client
+        Generate app_token
         """
         try:
-            app_token = str(hashlib.sha256(self.user_id.encode('utf-8')).hexdigest())
+            token_hash = self.user_id.encode('utf-8') + self.user_token + str(time.time())
+            app_token = str(hashlib.sha256(token_hash).hexdigest())
             update_query = """Update UserInfo SET `token` = %s where `idx` = %s"""
             self.curs.execute(update_query, (app_token, self.user_id))
 

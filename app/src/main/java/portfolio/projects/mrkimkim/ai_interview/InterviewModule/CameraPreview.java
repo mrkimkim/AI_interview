@@ -1,4 +1,4 @@
-package portfolio.projects.mrkimkim.ai_interview;
+package portfolio.projects.mrkimkim.ai_interview.InterviewModule;
 
 import android.content.Context;
 import android.hardware.Camera;

@@ -1,4 +1,4 @@
-package portfolio.projects.mrkimkim.ai_interview.UtilFunctions;
+package portfolio.projects.mrkimkim.ai_interview.Utils;
 
 import java.nio.ByteBuffer;
 
@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
  * Created by JHG on 2017-12-31.
  */
 
-public class UtilFunctions {
+public class Functions {
     public static byte[] longToBytes(long x) {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         buffer.putLong(x);

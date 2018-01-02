@@ -28,7 +28,6 @@ import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.LoginButton;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.MeResponseCallback;
-import com.kakao.usermgmt.callback.UnLinkResponseCallback;
 import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
@@ -39,17 +38,18 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
 import portfolio.projects.mrkimkim.ai_interview.MainMenu;
 import portfolio.projects.mrkimkim.ai_interview.R;
-import portfolio.projects.mrkimkim.ai_interview.UtilFunctions.UtilFunctions;
+import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
 
 public class LoginActivity extends AppCompatActivity {
-    private String nullToken = "                                                                ";
+
     private SessionCallback callback;
     private long user_id;
     private long user_expiresInMilis;
     private String user_token;
-    private byte[] app_token;
+    private byte[] kakao_token;
     UserProfile mUserProfile;
 
     String[] permissions = new String[] {
@@ -137,8 +137,8 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(UserProfile userProfile) {
-                Log.d("onSuccess", userProfile.toString());
-                mUserProfile = userProfile;
+                GlobalApplication.mUserInfoManager.setUserId(userProfile.getId());
+                GlobalApplication.mUserInfoManager.setUserEmail(userProfile.getEmail());
                 requestAccessTokenInfo();
             }
 
@@ -174,7 +174,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(AccessTokenInfoResponse accessTokenInfoResponse) {
                 user_id = accessTokenInfoResponse.getUserId();
                 user_token = Session.getCurrentSession().getTokenInfo().getAccessToken();
-                user_expiresInMilis = accessTokenInfoResponse.getExpiresInMillis();
+                GlobalApplication.mUserInfoManager.setAppToken(user_token.getBytes());
+                GlobalApplication.mUserInfoManager.setUserExpiresInMilis(accessTokenInfoResponse.getExpiresInMillis());
                 LoginToServer();
             }
         });
@@ -183,10 +184,6 @@ public class LoginActivity extends AppCompatActivity {
     // 앱 서버에 로그인 한다.
     private void LoginToServer() {
         class t_loginToServer implements Runnable {
-            UserProfile userProfile;
-
-            t_loginToServer(UserProfile uP) {userProfile = uP;}
-
             @Override
             public void run() {
                 try {
@@ -197,37 +194,49 @@ public class LoginActivity extends AppCompatActivity {
                     OutputStream networkDataWriter = t_socket.getOutputStream();
 
                     // 로그인 인증 패킷 전송
-                    byte[] packet = UtilFunctions.concatBytes(UtilFunctions.longToBytes(user_id), user_token.getBytes());
+                    byte[] packet = Functions.concatBytes(Functions.longToBytes(user_id), user_token.getBytes());
                     networkDataWriter.write(packet);
                     networkDataWriter.flush();
 
                     // 로그인 결과로 앱 서버의 AccessToken을 얻음
-                    app_token = new byte[64];
-                    networkDataReader.read(app_token, 0, 64);
-                    Log.d("app_token", new String(app_token, 0, app_token.length));
+                    kakao_token = new byte[64];
+                    networkDataReader.read(kakao_token, 0, 64);
+                    GlobalApplication.mUserInfoManager.setKakaoToken(kakao_token);
 
+                    // 소켓 연결 종료
                     t_socket.close();
                     networkDataReader.close();
                     networkDataWriter.close();
+
+                    // 토큰이 유효하면 메인 메뉴로 이동
+                    if(GlobalApplication.mUserInfoManager.getTokenValidation()) redirectMainMenu();
+                    else showFailDialog();
+
                 } catch (IOException e) {
-                    Toast.makeText(LoginActivity.this, "앱 서버와 연결에 실패했습니다.", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
+                    showFailDialog();
                 }
             }
         }
-        Runnable t = new t_loginToServer(mUserProfile);
+        Runnable t = new t_loginToServer();
         t.run();
     }
 
-    // 메인 메뉴로의 이동
-    private void redirectMainMenu(UserProfile userProfile) {
+    void showFailDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("앱 서버 로그인 실패");
+        builder.setMessage("서버 점검 중이에요!\n잠시 후에 다시 시도해주세요");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int i) {
+                LoginActivity.this.finish();
+            }
+        });
+        builder.show();
+    }
+
+    // MainMenu Activity로 전환
+    private void redirectMainMenu() {
         Intent intent = new Intent(this, MainMenu.class);
-        intent.putExtra("user_id", user_id);
-        intent.putExtra("user_token", user_token);
-        intent.putExtra("user_expiresInMilis", user_expiresInMilis);
-        intent.putExtra("user_email", userProfile.getEmail());
-        intent.putExtra("user_uuid", userProfile.getUUID());
-        intent.putExtra("user_serviceUserId", userProfile.getServiceUserId());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

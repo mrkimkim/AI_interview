@@ -1,4 +1,4 @@
-package portfolio.projects.mrkimkim.ai_interview;
+package portfolio.projects.mrkimkim.ai_interview.InterviewModule;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ng.max.slideview.SlideView;
+import portfolio.projects.mrkimkim.ai_interview.R;
 
 public class Interview extends AppCompatActivity {
     private String FileName;

@@ -24,8 +24,7 @@
             android:layout_height="0dp"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
-            android:background="#ee21b0e2"
-            android:onClick="onClickUserInfo">
+            android:background="#ee21b0e2">
 
             <ImageView
                 android:id="@+id/img_menu1"

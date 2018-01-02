@@ -1,4 +1,4 @@
-package portfolio.projects.mrkimkim.ai_interview;
+package portfolio.projects.mrkimkim.ai_interview.InterviewModule;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+
+import portfolio.projects.mrkimkim.ai_interview.R;
 
 public class UploadVideo extends AppCompatActivity {
     private Socket socket;

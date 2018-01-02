@@ -4,11 +4,13 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,11 +27,34 @@ public class MainMenu extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.d("UserEmail", GlobalApplication.mUserInfoManager.getUserEmail());
+        Log.d("UserID", Long.toString(GlobalApplication.mUserInfoManager.getUserId()));
     }
 
-    public void load_question_activity(View v) {
-        Intent intent = new Intent(MainMenu.this, ChooseQuestion.class);
+    public void onClickUserInfo(View v) {
+        Intent intent = new Intent(MainMenu.this, UserinfoActivity.class);
         startActivity(intent);
+    }
+
+    public void onClickStartInterview(View v) {
+
+    }
+
+    public void onClickSearchQuestion(View v) {
+
+    }
+
+    public void onClickInterviewResult(View v) {
+
+    }
+
+    public void onClickGroupStudy(View v) {
+
+    }
+
+    public void onClickSetting(View v) {
+
     }
 
 
