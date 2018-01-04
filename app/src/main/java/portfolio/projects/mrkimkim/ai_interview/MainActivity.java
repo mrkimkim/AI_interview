@@ -1,15 +1,22 @@
 package portfolio.projects.mrkimkim.ai_interview;
 
+import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
+
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d("App_Token : ", new String(GlobalApplication.mUserInfoManager.getAppToken()));
+        Log.d("App_Token_Length : ", String.valueOf(GlobalApplication.mUserInfoManager.getAppToken().length));
     }
 
     public void onClickUserInfo(View v) {
@@ -22,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickSearchQuestion(View v) {
-
+        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+        startActivity(intent);
     }
 
     public void onClickInterviewResult(View v) {

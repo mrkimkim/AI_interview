@@ -90,20 +90,18 @@ class LoginSession(threading.Thread):
         Generate app_token
         """
         try:
-            token_hash = self.user_id.encode('utf-8') + self.user_token + str(time.time())
-            app_token = str(hashlib.sha256(token_hash).hexdigest())
+            app_token_seed = str(self.user_id) + str(self.user_token) + str(time.time())
+            app_token = str(hashlib.sha256(app_token_seed.encode('utf-8')).hexdigest())
             update_query = """Update UserInfo SET `token` = %s where `idx` = %s"""
             self.curs.execute(update_query, (app_token, self.user_id))
-
-            app_token = app_token.encode('utf-8')
-            self.conn.send(app_token)
-            print (app_token)
+            self.conn.send(app_token.encode('ascii'))
+            print (app_token.encode('ascii'))
+            print (len(app_token))
         except Exception as e:
             print ("Token Update Failed.")
             print (e)
-
-        
         self.conn.close()
+        print ("Connection Closed")
     
 
 class LoginServer(object):
@@ -126,7 +124,11 @@ class LoginServer(object):
             t.start()
             t.join()
             break
+
+    def __del__(self):
+        print ("Program finished")
         self.socket.close()
+        self.socket = ""
 
 if __name__ == "__main__":
     login_server = LoginServer('', 8426)

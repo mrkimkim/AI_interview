@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="portfolio.projects.mrkimkim.ai_interview.SearchActivity">
+
+    <LinearLayout
+        android:id="@+id/search_leftmenu"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/search_guide1"
+        app:layout_constraintStart_toStartOf="@+id/search_guide0"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/search_menu1"
+            android:background="#fff68355"
+            style="@style/search_menu_layout">
+
+            <ImageView
+                android:src="@drawable/icon_government"
+                style="@style/search_menu_icon"/>
+            <TextView
+                style="@style/search_menu_text"
+                android:text="공무원"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_menu2"
+            style="@style/search_menu_layout"
+            android:background="#ff7bdef0">
+
+            <ImageView
+                android:src="@drawable/icon_enterprise"
+                style="@style/search_menu_icon"/>
+            <TextView
+                style="@style/search_menu_text"
+                android:text="기업"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/search_menu3"
+            style="@style/search_menu_layout"
+            android:background="#ff6dcfdb">
+
+            <ImageView
+                android:src="@drawable/icon_school"
+                style="@style/search_menu_icon"/>
+            <TextView
+                style="@style/search_menu_text"
+                android:text="입시"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/search_menu4"
+            style="@style/search_menu_layout"
+            android:background="#ff73b4c6">
+
+            <ImageView
+                android:src="@drawable/icon_basic"
+                style="@style/search_menu_icon"/>
+            <TextView
+                style="@style/search_menu_text"
+                android:text="면접 기초"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/search_guide2"
+        app:layout_constraintStart_toStartOf="@+id/search_guide1"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/search_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="@id/search_guide2"
+            app:layout_constraintHeight_default="wrap"
+            app:layout_constraintStart_toStartOf="@id/search_guide1"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/search_guide0"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/search_guide1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/search_guide2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="1.0"/>
+
+</android.support.constraint.ConstraintLayout>

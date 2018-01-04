@@ -19,6 +19,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.kakao.auth.ApiResponseCallback;
 import com.kakao.auth.AuthService;
 import com.kakao.auth.ISessionCallback;
@@ -48,8 +50,8 @@ public class LoginActivity extends AppCompatActivity {
     private SessionCallback callback;
     private long user_id;
     private long user_expiresInMilis;
-    private String user_token;
-    private byte[] kakao_token;
+    private String kakao_token;
+    private byte[] app_token;
     UserProfile mUserProfile;
 
     String[] permissions = new String[] {
@@ -106,6 +108,11 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             loginButton.setVisibility(View.VISIBLE);
         }
+
+        // Firebase 푸시 기기 등록
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
+        FirebaseInstanceId.getInstance().getToken();
+
     }
 
     @Override
@@ -172,8 +179,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(AccessTokenInfoResponse accessTokenInfoResponse) {
                 user_id = accessTokenInfoResponse.getUserId();
-                user_token = Session.getCurrentSession().getTokenInfo().getAccessToken();
-                GlobalApplication.mUserInfoManager.setAppToken(user_token.getBytes());
+                kakao_token = Session.getCurrentSession().getTokenInfo().getAccessToken();
+                GlobalApplication.mUserInfoManager.setKakaoToken(kakao_token.getBytes());
                 GlobalApplication.mUserInfoManager.setUserExpiresInMilis(accessTokenInfoResponse.getExpiresInMillis());
                 LoginToServer();
             }
@@ -193,14 +200,14 @@ public class LoginActivity extends AppCompatActivity {
                     OutputStream networkDataWriter = t_socket.getOutputStream();
 
                     // 로그인 인증 패킷 전송
-                    byte[] packet = Functions.concatBytes(Functions.longToBytes(user_id), user_token.getBytes());
+                    byte[] packet = Functions.concatBytes(Functions.longToBytes(user_id), kakao_token.getBytes());
                     networkDataWriter.write(packet);
                     networkDataWriter.flush();
 
                     // 로그인 결과로 앱 서버의 AccessToken을 얻음
-                    kakao_token = new byte[64];
-                    networkDataReader.read(kakao_token, 0, 64);
-                    GlobalApplication.mUserInfoManager.setKakaoToken(kakao_token);
+                    app_token = new byte[64];
+                    networkDataReader.read(app_token, 0, 64);
+                    GlobalApplication.mUserInfoManager.setAppToken(app_token);
 
                     // 소켓 연결 종료
                     t_socket.close();

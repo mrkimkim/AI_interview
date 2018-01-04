@@ -26,208 +26,116 @@
             android:layout_rowWeight="1"
             android:background="#ee21b0e2"
             android:onClick="onClickUserInfo">
-
             <ImageView
                 android:id="@+id/img_menu1"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
+                style="@style/main_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/icon_user" />
-
             <TextView
                 android:id="@+id/tv_title1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="2dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="16dp"
+                style="@style/main_title"
                 android:text="내 정보"
-                android:textAlignment="center"
-                android:textColor="#ffffffff"
-                android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/img_menu1" />
-
             <TextView
                 android:id="@+id/tv_describe1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                style="@style/main_describe"
                 android:text="사용자 정보를 확인하고 편집할 수 있습니다"
-                android:textAlignment="center"
-                android:textColor="#ff444444"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title1" />
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
+            style="@style/main_layout"
             android:background="#ee5557aa">
-
             <ImageView
                 android:id="@+id/img_menu2"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
+                style="@style/main_image"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/icon_microphone" />
-
             <TextView
                 android:id="@+id/tv_title2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="2dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="16dp"
+                style="@style/main_title"
                 android:text="AI 면접"
-                android:textAlignment="center"
-                android:textColor="#ffffffff"
-                android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/img_menu2" />
-
             <TextView
                 android:id="@+id/tv_describe2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="AI 감독관이 당신의 면접을 평가합니다"
-                android:textAlignment="center"
+                style="@style/main_describe"
+                android:text="AI 감독관에게 면접 피드백을 받아보세요"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title2" />
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:background="#eedf79bf">
-
+            style="@style/main_layout"
+            android:background="#eedf79bf"
+            android:onClick="onClickSearchQuestion">
             <ImageView
                 android:id="@+id/img_menu3"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
+                style="@style/main_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/icon_search" />
-
+                app:srcCompat="@drawable/icon_lecture" />
             <TextView
                 android:id="@+id/tv_title3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="2dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="16dp"
-                android:text="문제 검색"
-                android:textAlignment="center"
-                android:textColor="#ffffffff"
-                android:textSize="24sp"
+                style="@style/main_title"
+                android:text="면접 강의"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/img_menu3" />
-
             <TextView
                 android:id="@+id/tv_describe3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="면접 문제를 검색하고 미리 연습해 볼 수 있습니다"
-                android:textAlignment="center"
+                style="@style/main_describe"
+                android:text="면접 첫걸음부터 심층면접까지 차근차근 배워봅시다"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title3" />
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
+            style="@style/main_layout"
             android:background="#eef2684c"
             android:onClick="onClickInterviewResult">
-
             <ImageView
                 android:id="@+id/img_menu4"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
+                style="@style/main_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/icon_result" />
-
             <TextView
                 android:id="@+id/tv_title4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                style="@style/main_title"
                 android:text="면접 결과"
-                android:textAlignment="center"
-                android:textColor="#ffffffff"
-                android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/img_menu4" />
-
             <TextView
                 android:id="@+id/tv_describe4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                style="@style/main_describe"
                 android:text="분석이 끝난 AI 면접 결과를 확인할 수 있습니다"
-                android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title4" />
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
+            style="@style/main_layout"
             android:background="#ee3c8c47">
 
             <ImageView
                 android:id="@+id/img_menu5"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
+                style="@style/main_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -235,47 +143,28 @@
 
             <TextView
                 android:id="@+id/tv_title5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                style="@style/main_title"
                 android:text="면접 스터디"
-                android:textAlignment="center"
-                android:textColor="#ffffffff"
-                android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/img_menu5" />
 
             <TextView
                 android:id="@+id/tv_describe5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="온라인으로 면접 스터디를 진행해보세요"
-                android:textAlignment="center"
+                style="@style/main_describe"
+                android:text="팀원을 모아 함께 면접 스터디를 진행해보세요"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title5" />
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
+            style="@style/main_layout"
             android:background="#eec54538">
 
             <ImageView
                 android:id="@+id/img_menu6"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
+                style="@style/main_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -283,28 +172,16 @@
 
             <TextView
                 android:id="@+id/tv_title6"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                style="@style/main_title"
                 android:text="환경설정"
-                android:textAlignment="center"
-                android:textColor="#ffffffff"
-                android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/img_menu6" />
 
             <TextView
                 android:id="@+id/tv_describe6"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                style="@style/main_describe"
                 android:text="지금은 딱히 환경설정을 할게 없을 것 같아요"
-                android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title6" />

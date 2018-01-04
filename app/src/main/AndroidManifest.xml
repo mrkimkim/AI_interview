@@ -37,7 +37,7 @@
             android:value="5207d8f5691153fb22fb9e7950e4e9c1" />
 
         <activity android:name=".UserinfoActivity" />
-        <activity android:name=".ResultActivity"></activity>
+        <activity android:name=".ResultActivity" />
 
         <service
             android:name=".NetworkModule.MyFireBaseMessagingService"
@@ -56,6 +56,7 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".SearchActivity"></activity>
     </application>
 
 </manifest>

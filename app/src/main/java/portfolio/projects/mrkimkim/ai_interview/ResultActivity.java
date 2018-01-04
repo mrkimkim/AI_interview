@@ -17,15 +17,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import java.util.ArrayList;
 
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
-
 import portfolio.projects.mrkimkim.ai_interview.Utils.LoadingDialog;
-import portfolio.projects.mrkimkim.ai_interview.Utils.Item;
+import portfolio.projects.mrkimkim.ai_interview.Utils.item_result;
 
 public class ResultActivity extends AppCompatActivity {
     Context mContext;
-
     RecyclerView recyclerView;
     RecyclerView.Adapter Adapter;
     RecyclerView.LayoutManager layoutManager;
@@ -35,12 +31,7 @@ public class ResultActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
-        FirebaseInstanceId.getInstance().getToken();
-
-        Log.d("MainActivity", "Token : " + FirebaseInstanceId.getInstance().getToken());
+        setContentView(R.layout.activity_result);
 
         // RecyclerView
         mContext = getApplicationContext();
@@ -49,12 +40,12 @@ public class ResultActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
 
         ArrayList items = new ArrayList<>();
-        items.add(new Item("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
-        items.add(new Item("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
-        items.add(new Item("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
-        items.add(new Item("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
-        items.add(new Item("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
-        items.add(new Item("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
+        items.add(new item_result("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
+        items.add(new item_result("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
+        items.add(new item_result("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
+        items.add(new item_result("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
+        items.add(new item_result("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
+        items.add(new item_result("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
 
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -72,7 +63,7 @@ public class ResultActivity extends AppCompatActivity {
 
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         private Context context;
-        private ArrayList<Item> mItems;
+        private ArrayList<item_result> mItems;
 
         private int lastPosition = -1;
 
@@ -83,7 +74,7 @@ public class ResultActivity extends AppCompatActivity {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cardview, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_result, parent, false);
             recyclerView.setMinimumWidth(parent.getMeasuredWidth());
             ViewHolder holder = new ViewHolder(v);
             return holder;

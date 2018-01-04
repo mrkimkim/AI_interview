@@ -7,6 +7,8 @@ import java.nio.ByteBuffer;
  */
 
 public class Functions {
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
     public static byte[] longToBytes(long x) {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         buffer.putLong(x);
@@ -18,5 +20,15 @@ public class Functions {
         buffer.put(a);
         buffer.put(b);
         return buffer.array();
+    }
+
+    public static String byteHexToString(byte[] a) {
+        char[] hexChars = new char[a.length * 2];
+        for (int i = 0; i < a.length; ++i) {
+            int v = a[i] & 0xFF;
+            hexChars[i * 2] = hexArray[v >>> 4];
+            hexChars[i * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }
