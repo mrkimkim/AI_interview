@@ -25,7 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainMenu" />
+        <activity android:name=".MainActivity" />
         <activity
             android:name=".InterviewModule.Interview"
             android:screenOrientation="portrait" />
@@ -36,7 +36,26 @@
             android:name="com.kakao.sdk.AppKey"
             android:value="5207d8f5691153fb22fb9e7950e4e9c1" />
 
-        <activity android:name=".UserinfoActivity"></activity>
+        <activity android:name=".UserinfoActivity" />
+        <activity android:name=".ResultActivity"></activity>
+
+        <service
+            android:name=".NetworkModule.MyFireBaseMessagingService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".NetworkModule.MyFireBaseInstanceIDService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="portfolio.projects.mrkimkim.ai_interview.Main2Activity">
+    tools:context="portfolio.projects.mrkimkim.ai_interview.MainActivity">
 
     <GridLayout
         android:layout_width="match_parent"
@@ -170,7 +170,8 @@
             android:layout_height="0dp"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
-            android:background="#eef2684c">
+            android:background="#eef2684c"
+            android:onClick="onClickInterviewResult">
 
             <ImageView
                 android:id="@+id/img_menu4"
@@ -308,6 +309,5 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title6" />
         </android.support.constraint.ConstraintLayout>
-
     </GridLayout>
 </android.support.constraint.ConstraintLayout>

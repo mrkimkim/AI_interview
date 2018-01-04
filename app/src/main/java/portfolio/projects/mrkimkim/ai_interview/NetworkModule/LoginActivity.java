@@ -39,7 +39,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
-import portfolio.projects.mrkimkim.ai_interview.MainMenu;
+import portfolio.projects.mrkimkim.ai_interview.MainActivity;
 import portfolio.projects.mrkimkim.ai_interview.R;
 import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
 
@@ -137,8 +137,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(UserProfile userProfile) {
-                GlobalApplication.mUserInfoManager.setUserId(userProfile.getId());
-                GlobalApplication.mUserInfoManager.setUserEmail(userProfile.getEmail());
+                GlobalApplication.mUserInfoManager.setUserProfile(userProfile);
                 requestAccessTokenInfo();
             }
 
@@ -234,9 +233,9 @@ public class LoginActivity extends AppCompatActivity {
         builder.show();
     }
 
-    // MainMenu Activity로 전환
+    // MainActivity Activity로 전환
     private void redirectMainMenu() {
-        Intent intent = new Intent(this, MainMenu.class);
+        Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

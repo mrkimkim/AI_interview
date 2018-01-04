@@ -6,4 +6,285 @@
     android:layout_height="match_parent"
     tools:context="portfolio.projects.mrkimkim.ai_interview.UserinfoActivity">
 
+    <RelativeLayout
+        android:id="@+id/userinfo_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ee21b0e2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:padding="8dp"
+            android:layout_alignParentLeft="true">
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#00000000"
+                android:scaleType="fitXY"
+                android:src="@drawable/leftarrow" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/nanumgothic"
+            android:text="내 정보"
+            android:textColor="#ffffffff"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:padding="8dp"
+            android:layout_alignParentRight="true">
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#00000000"
+                android:scaleType="fitXY"
+                android:src="@drawable/notification2" />
+        </LinearLayout>
+    </RelativeLayout>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/userinfo_userinfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/userinfo_title">
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/userinfo_userimg"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/sample_userimage"
+            app:civ_border_color="#ee21b0e2"
+            app:civ_border_width="3dp"
+            app:civ_shadow="true"
+            app:civ_shadow_color="#21b0e2"
+            app:civ_shadow_radius="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/userinfo_nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Guest"
+            android:textColor="#ff444444"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            app:layout_constraintTop_toBottomOf="@+id/userinfo_userimg"
+            />
+
+        <TextView
+                android:id="@+id/userinfo_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:text="guest@kakao.com"
+                android:textColor="#ff888888"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userinfo_nickname" />
+
+        <LinearLayout
+            android:id="@+id/userinfo_usermsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="64dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userinfo_email">
+
+            <ImageButton
+                android:id="@+id/modify_usermsg"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_alignParentTop="true"
+                android:layout_margin="0dp"
+                android:background="#00ffffff"
+                android:padding="0dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/checkpen" />
+
+            <TextView
+                android:id="@+id/userinfo_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_toRightOf="@id/modify_usermsg"
+                android:text="올해는 반드시 성공하자 화이팅!"
+                android:textColor="#ff000000"
+                android:textSize="10sp"
+                android:textAlignment="center"
+                android:gravity="bottom"/>
+        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/userinfo_userinfo">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/userinfo_try"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/userinfo_border">
+
+            <TextView
+                android:id="@+id/userinfo_tv_numtry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="13"
+                android:textAlignment="center"
+                android:textColor="#ffffffff"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="parent" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="19dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:text="총 연습 횟수"
+                android:textAlignment="center"
+                android:textColor="#ffffffff"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/userinfo_tv_numtry" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/userinfo_upvote"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/userinfo_border">
+
+            <TextView
+                android:id="@+id/userinfo_tv_upvote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="77"
+                android:textAlignment="center"
+                android:textColor="#ffffffff"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="parent" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="19dp"
+                android:layout_marginTop="8dp"
+                android:text="받은 좋아요"
+                android:textAlignment="center"
+                android:textColor="#ffffffff"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@id/userinfo_tv_upvote" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/userinfo_credit"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_weight="1"
+            android:background="@drawable/userinfo_border">
+
+            <TextView
+                android:id="@+id/userinfo_tv_numcredit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="42"
+                android:textAlignment="center"
+                android:textColor="#ffffffff"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="parent" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="19dp"
+                android:layout_marginTop="8dp"
+                android:text="남은 크레딧"
+                android:textAlignment="center"
+                android:textColor="#ffffffff"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@id/userinfo_tv_numcredit" />
+        </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/userinfo_tv_buycredit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/userinfo_border2"
+        android:padding="20dp"
+        android:text="크레딧 구매"
+        android:textSize="16sp"
+        android:textColor="#ff000000"
+        android:fontFamily="@font/nanumgothic"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <TextView
+        android:id="@+id/userinfo_withdraw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/userinfo_border2"
+        android:padding="20dp"
+        android:text="회원 탈퇴"
+        android:textSize="16sp"
+        android:textColor="#ff000000"
+        android:fontFamily="@font/nanumgothic"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userinfo_tv_buycredit" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/userinfo_guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="1.0" />
 </android.support.constraint.ConstraintLayout>

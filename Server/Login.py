@@ -126,6 +126,7 @@ class LoginServer(object):
             t.start()
             t.join()
             break
+        self.socket.close()
 
 if __name__ == "__main__":
     login_server = LoginServer('', 8426)
