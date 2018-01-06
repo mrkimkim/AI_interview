@@ -51,7 +51,8 @@
 
         <android.support.constraint.ConstraintLayout
             style="@style/main_layout"
-            android:background="#ee5557aa">
+            android:background="#ee5557aa"
+            android:onClick="onClickStartInterview">
             <ImageView
                 android:id="@+id/img_menu2"
                 style="@style/main_image"

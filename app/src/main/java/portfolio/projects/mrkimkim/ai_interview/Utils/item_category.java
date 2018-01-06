@@ -11,8 +11,6 @@ public class item_category {
     public int getImage() { return this.image; }
     public String getCategory_name() { return this.category_name; }
 
-    public item_category(int image, String category_name) {
-        this.image = image;
-        this.category_name = category_name;
+    public item_category() {
     }
 }

@@ -25,12 +25,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickStartInterview(View v) {
-
+        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+        startActivity(intent);
     }
 
     public void onClickSearchQuestion(View v) {
-        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-        startActivity(intent);
+
     }
 
     public void onClickInterviewResult(View v) {

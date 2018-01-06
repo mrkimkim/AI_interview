@@ -35,13 +35,13 @@ public class SearchActivity extends AppCompatActivity {
 
         ArrayList items = new ArrayList<>();
 
-        items.add(new item_category(R.drawable.sample, "9급 공무원"));
-        items.add(new item_category(R.drawable.sample, "9급 공무원"));
-        items.add(new item_category(R.drawable.sample, "9급 공무원"));
-        items.add(new item_category(R.drawable.sample, "9급 공무원"));
-        items.add(new item_category(R.drawable.sample, "9급 공무원"));
+        items.add(new item_category());
+        items.add(new item_category());
+        items.add(new item_category());
+        items.add(new item_category());
+        items.add(new item_category());
 
-        layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         Adapter = new Adapter_search(items, mContext);
         recyclerView.setAdapter(Adapter);
@@ -67,8 +67,7 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder_search holder, int position) {
-            holder.imageView.setImageResource(mItems.get(position).getImage());
-            holder.textView.setText(mItems.get(position).getCategory_name());
+
         }
 
         @Override
@@ -77,12 +76,8 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         public class ViewHolder_search extends RecyclerView.ViewHolder {
-            public ImageView imageView;
-            public TextView textView;
             public ViewHolder_search(View v) {
                 super(v);
-                imageView = (ImageView)v.findViewById(R.id.item_category_iv);
-                textView = (TextView)v.findViewById(R.id.item_category_tv);
             }
         }
 
