@@ -10,51 +10,27 @@
 
     <RelativeLayout
         android:id="@+id/result_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#ee21b0e2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        style="@style/common_titlebar">
 
         <LinearLayout
             android:id="@+id/result_btn_back"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="8dp"
-            android:padding="8dp"
-            android:layout_alignParentLeft="true">
+            style="@style/common_titlebar_leftlayout">
 
             <ImageButton
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#00000000"
-                android:scaleType="fitXY"
+                style="@style/common_titlebar_imagebtn"
                 android:src="@drawable/leftarrow" />
         </LinearLayout>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:fontFamily="@font/nanumgothic"
+            style="@style/common_titlebar_title"
             android:text="면접 결과"
-            android:textColor="#ffffffff"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            />
 
         <LinearLayout
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="8dp"
-            android:padding="8dp"
-            android:layout_alignParentRight="true">
+            style="@style/common_titlebar_rightlayout">
 
             <ImageButton
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#00000000"
-                android:scaleType="fitXY"
+                style="@style/common_titlebar_imagebtn"
                 android:src="@drawable/reload" />
         </LinearLayout>
     </RelativeLayout>

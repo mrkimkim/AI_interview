@@ -14,6 +14,49 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="common_titlebar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">#ee21b0e2</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+    </style>
+
+    <style name="common_titlebar_leftlayout">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_alignParentLeft">true</item>
+    </style>
+
+    <style name="common_titlebar_rightlayout">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_alignParentRight">true</item>
+    </style>
+
+    <style name="common_titlebar_imagebtn">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">#00000000</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="common_titlebar_title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:fontFamily">@font/nanumgothic</item>
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
     <style name="main_layout">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>
@@ -21,18 +64,18 @@
         <item name="android:layout_rowWeight">1</item>
     </style>
 
+
+
     <style name="main_image">
         <item name="android:layout_width">64dp</item>
         <item name="android:layout_height">64dp</item>
         <item name="android:layout_marginTop">32dp</item>
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginEnd">8dp</item>
-        <item name="app:layout_constraintEnd_toEndOf">parent</item>
-        <item name="app:layout_constraintStart_toStartOf">parent</item>
     </style>
 
     <style name="main_title">
-        <item name="android:layout_weight">0dp</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginEnd">2dp</item>
         <item name="android:layout_marginStart">2dp</item>

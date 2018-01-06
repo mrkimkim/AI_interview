@@ -16,24 +16,38 @@ import com.kakao.usermgmt.response.model.UserProfile;
 
 import java.util.Arrays;
 
+import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
+
 public class GlobalApplication extends Application {
     public static GlobalApplication singleton;
     public static GlobalApplication getInstance() { return singleton; }
 
+    public static DBHelper mDBHelper;
     public static UserInfoManager mUserInfoManager;
 
     public class UserInfoManager {
         final byte[] invalid_token = "                                                                ".getBytes();
 
         private UserProfile userProfile;
-
+        private String userMsg;
+        private int userNumtry;
+        private int userUpvote;
+        private int userCredit;
         private byte[] app_token = null;
         private byte[] kakao_token = null;
         private long kakao_tokenExpiresInMilis = -1;
 
-        // 사용자 정보 관련 함수
+        // 사용자 프로필 관련 함수
         public void setUserProfile(UserProfile up) {userProfile = up;}
         public UserProfile getUserProfile() { return userProfile; }
+
+        // 사용자 수치 정보
+        public void setUserNumtry(int value) {this.userNumtry = value;}
+        public void setUserUpvote(int value) {this.userUpvote = value;}
+        public void setUserCredit(int value) {this.userCredit = value;}
+        public int getUserNumtry() { return this.userNumtry;}
+        public int getUserUpvote() { return this.userUpvote;}
+        public int getUserCredit() { return this.userCredit;}
 
         // 토큰 정보 관련 함수
         public void setAppToken(byte[] token) {
@@ -103,5 +117,6 @@ public class GlobalApplication extends Application {
         singleton = this;
         KakaoSDK.init(new KakaoSDKAdapter());
         mUserInfoManager = new UserInfoManager();
+        mDBHelper = new DBHelper(getApplicationContext(), "AI.db", null, 1);
     }
 }

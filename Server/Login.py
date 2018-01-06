@@ -43,7 +43,7 @@ class LoginSession(threading.Thread):
     def run(self):
         """
         Receive Packet from Client
-        Structure : User_ID(8byte), User_Token (54byte)
+        Structure : user_id(8byte), kakao_token (54byte)
         """
         cmd = self.conn.recv(64)
         try:
@@ -61,7 +61,8 @@ class LoginSession(threading.Thread):
             resp = req('/v1/user/me', '', 'GET', self.user_token)
             resp = ast.literal_eval(resp.text.replace(':true',':True'))
             if str(resp['id']) != self.user_id:
-                raise Exception("not a valid user_token!!!")
+                self.conn.send(" " * 64)
+                raise Exception("not a valid kakao_token!!!")
                 
         except Exception as e:
             print (e)

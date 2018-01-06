@@ -49,11 +49,11 @@
             android:background="#ff6dcfdb">
 
             <ImageView
-                android:src="@drawable/icon_school"
+                android:src="@drawable/icon_basic"
                 style="@style/search_menu_icon"/>
             <TextView
                 style="@style/search_menu_text"
-                android:text="입시"/>
+                android:text="특수/전문"/>
 
         </LinearLayout>
         <LinearLayout
@@ -62,11 +62,11 @@
             android:background="#ff73b4c6">
 
             <ImageView
-                android:src="@drawable/icon_basic"
+                android:src="@drawable/icon_school"
                 style="@style/search_menu_icon"/>
             <TextView
                 style="@style/search_menu_text"
-                android:text="면접 기초"/>
+                android:text="입시"/>
 
         </LinearLayout>
     </LinearLayout>
