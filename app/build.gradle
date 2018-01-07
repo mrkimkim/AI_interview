@@ -46,6 +46,12 @@ dependencies {
 
     // AutoFit TextSize
     compile 'me.grantland:autofittextview:0.2.+'
+
+    // Dialog UI
+    compile 'com.yarolegovich:lovely-dialog:1.0.7'
+
+    // Jsoup
+    compile 'org.jsoup:jsoup:1.11.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

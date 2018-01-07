@@ -45,7 +45,7 @@
 
 
                     <ImageView
-                        android:id="@+id/category_card_icon"
+                        android:id="@+id/category_card_left_icon"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:src="@drawable/icon_category_card_1"
@@ -56,35 +56,31 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         />
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:background="#ffffffff"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="면접 시간"
+                        android:textAlignment="center"
+                        android:textColor="#ffffffff"
+                        android:textSize="10sp"
+                        android:fontFamily="@font/nanumgothic"
+                        android:textStyle="bold"
                         app:layout_constraintTop_toTopOf="@id/category_card_left_horizontal_guide3"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_left_horizontal_guide4"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="@id/category_card_left_vertical_guide0"
-                        ></LinearLayout>
+                        app:layout_constraintStart_toStartOf="@id/category_card_left_vertical_guide0"
+                        app:layout_constraintEnd_toEndOf="@id/category_card_left_vertical_guide1"/>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:background="#ffffffff"
-                        app:layout_constraintTop_toTopOf="@id/category_card_left_horizontal_guide5"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_left_horizontal_guide6"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="@id/category_card_left_vertical_guide0"
-                        ></LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:background="#ffffffff"
-                        app:layout_constraintTop_toTopOf="@id/category_card_left_horizontal_guide7"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_left_horizontal_guide8"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="@id/category_card_left_vertical_guide0"
-                        ></LinearLayout>
+                    <TextView
+                        android:id="@+id/category_card_left_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="00:30 ~ 05:00"
+                        android:textAlignment="center"
+                        android:textColor="#ffeeeeee"
+                        android:textSize="9sp"
+                        android:fontFamily="@font/nanumgothic"
+                        app:layout_constraintTop_toTopOf="@id/category_card_left_horizontal_guide4"
+                        app:layout_constraintStart_toStartOf="@id/category_card_left_vertical_guide0"
+                        app:layout_constraintEnd_toEndOf="@id/category_card_left_vertical_guide1"/>
 
                     <android.support.constraint.Guideline
                         android:id="@+id/category_card_left_horizontal_guide1"
@@ -103,13 +99,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        app:layout_constraintGuide_percent = "0.72"/>
+                        app:layout_constraintGuide_percent = "0.7"/>
                     <android.support.constraint.Guideline
                         android:id="@+id/category_card_left_horizontal_guide4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        app:layout_constraintGuide_percent = "0.73"/>
+                        app:layout_constraintGuide_percent = "0.8"/>
                     <android.support.constraint.Guideline
                         android:id="@+id/category_card_left_horizontal_guide5"
                         android:layout_width="wrap_content"
@@ -137,6 +133,13 @@
 
                     <android.support.constraint.Guideline
                         android:id="@+id/category_card_left_vertical_guide0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent = "0.1"/>
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/category_card_left_vertical_guide1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -184,7 +187,7 @@
 
                     <me.grantland.widget.AutofitTextView
                         style="@style/category_card_right_tv"
-                        android:text="문제 세트"
+                        android:text="지원 직렬"
                         autofit:minTextSize="10sp"
                         app:layout_constraintTop_toTopOf="@id/category_card_right_horizontal_guide1"
                         app:layout_constraintBottom_toBottomOf="@id/category_card_right_horizontal_guide2"
@@ -192,14 +195,14 @@
                         app:layout_constraintEnd_toEndOf="@id/category_card_right_vertical_guide2"/>
                     <me.grantland.widget.AutofitTextView
                         style="@style/category_card_right_tv"
-                        android:text="총 문항"
+                        android:text="문제 세트"
                         app:layout_constraintTop_toTopOf="@id/category_card_right_horizontal_guide1"
                         app:layout_constraintBottom_toBottomOf="@id/category_card_right_horizontal_guide2"
                         app:layout_constraintStart_toStartOf="@id/category_card_right_vertical_guide2"
                         app:layout_constraintEnd_toEndOf="@id/category_card_right_vertical_guide3"/>
                     <me.grantland.widget.AutofitTextView
                         style="@style/category_card_right_tv"
-                        android:text="면접 시간"
+                        android:text="총 문제 수"
                         app:layout_constraintTop_toTopOf="@id/category_card_right_horizontal_guide1"
                         app:layout_constraintBottom_toBottomOf="@id/category_card_right_horizontal_guide2"
                         app:layout_constraintStart_toStartOf="@id/category_card_right_vertical_guide3"

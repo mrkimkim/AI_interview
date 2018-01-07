@@ -6,6 +6,9 @@ import hashlib
 import pymysql
 import time
 
+def intToHex(num):
+    return ''.join([chr(num >> i & 0xff) for i in (24,16,8,0)])
+
 def hexToLong(str_hex):
     ret = 0
     for i in range(len(str_hex)):
@@ -100,6 +103,18 @@ class LoginSession(threading.Thread):
             print (len(app_token))
         except Exception as e:
             print ("Token Update Failed.")
+            print (e)
+
+
+        """ Send DB File """
+        try:
+            data = open("DB.csv","r").read()
+            data_size = len(data.encode('utf-8'))
+            print ("Total Byte is " + str(data_size))
+            self.conn.send(bytes.fromhex("{:08x}".format(data_size)))
+            self.conn.send(data.encode('utf-8'))
+        except Exception as e:
+            print ("Send DB Failed")
             print (e)
         self.conn.close()
         print ("Connection Closed")

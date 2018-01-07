@@ -69,7 +69,6 @@ public class GlobalApplication extends Application {
     }
 
     private class KakaoSDKAdapter extends KakaoAdapter {
-
         @Override
         public ISessionConfig getSessionConfig() {
             return new ISessionConfig() {
@@ -117,6 +116,5 @@ public class GlobalApplication extends Application {
         singleton = this;
         KakaoSDK.init(new KakaoSDKAdapter());
         mUserInfoManager = new UserInfoManager();
-        mDBHelper = new DBHelper(getApplicationContext(), "AI.db", null, 1);
     }
 }

@@ -5,4 +5,10 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="onBtnPressed">#FFf0f0f0</color>
+
+    <color name="category_card_background_0">#ffefa008</color>
+    <color name="category_card_background_1">#ff72b060</color>
+    <color name="category_card_background_2">#ff574897</color>
+    <color name="category_card_background_3">#FFFF4081</color>
+    <color name="category_card_background_4">#ee21b0e2</color>
 </resources>

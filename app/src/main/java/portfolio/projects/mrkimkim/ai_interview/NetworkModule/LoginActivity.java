@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
@@ -34,12 +35,15 @@ import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
 
+import org.jsoup.Jsoup;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
 import portfolio.projects.mrkimkim.ai_interview.MainActivity;
 import portfolio.projects.mrkimkim.ai_interview.R;
@@ -209,15 +213,32 @@ public class LoginActivity extends AppCompatActivity {
                     networkDataReader.read(app_token, 0, 64);
                     GlobalApplication.mUserInfoManager.setAppToken(app_token);
 
+                    // 로컬 DB 버전와 서버 DB를 동기화
+                    DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
+                    int dbVersion = mDBHelper.getDBVersion();
+                    Log.d("DB VERSION : ", String.valueOf(dbVersion));
+                    packet = Functions.intToBytes(dbVersion);
+                    networkDataWriter.write(packet);
+                    networkDataWriter.flush();
+
+                    packet = new byte[4];
+                    networkDataReader.read(packet, 0, 4);
+                    int db_size = Functions.bytesToInt(packet);
+                    if (db_size != 0) {
+                        // csv 형태의 데이터를 받음
+                        packet = new byte[db_size];
+                        networkDataReader.read(packet, 0, db_size);
+                        String[] csv = new String(packet, "UTF-8").split("\\r?\\n");
+                        mDBHelper.updateCategory(csv);
+                    }
+
                     // 소켓 연결 종료
-                    t_socket.close();
                     networkDataReader.close();
                     networkDataWriter.close();
+                    t_socket.close();
 
-                    // 토큰이 유효하면 메인 메뉴로 이동
                     if(GlobalApplication.mUserInfoManager.getTokenValidation()) redirectMainMenu();
                     else showFailDialog();
-
                 } catch (IOException e) {
                     e.printStackTrace();
                     showFailDialog();
@@ -238,6 +259,28 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         builder.show();
+    }
+
+    // 스토어 버전 체크
+    public class VersionChecker extends AsyncTask<String, String, String> {
+        String newVersion;
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                newVersion = Jsoup.connect("https://play.google.com/store/apps/details?id=" + "package name" + "&hl=en")
+                        .timeout(30000)
+                        .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
+                        .referrer("http://www.google.com")
+                        .get()
+                        .select("div[itemprop=softwareVersion]")
+                        .first()
+                        .ownText();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return newVersion;
+        }
     }
 
     // MainActivity Activity로 전환

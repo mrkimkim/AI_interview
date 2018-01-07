@@ -23,7 +23,7 @@ import portfolio.projects.mrkimkim.ai_interview.Utils.item_result;
 public class ResultActivity extends AppCompatActivity {
     Context mContext;
     RecyclerView recyclerView;
-    RecyclerView.Adapter Adapter;
+    ResultAdapter Adapter;
     RecyclerView.LayoutManager layoutManager;
 
     LoadingDialog loadingDialog;
@@ -49,7 +49,7 @@ public class ResultActivity extends AppCompatActivity {
 
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-        Adapter = new MyAdapter(items, mContext);
+        Adapter = new ResultAdapter(items, mContext);
         recyclerView.setAdapter(Adapter);
 
         // Dialog setting
@@ -61,13 +61,13 @@ public class ResultActivity extends AppCompatActivity {
         loadingDialog.show();
     }
 
-    class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+    class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder> {
         private Context context;
         private ArrayList<item_result> mItems;
 
         private int lastPosition = -1;
 
-        public MyAdapter(ArrayList items, Context mContext) {
+        public ResultAdapter(ArrayList items, Context mContext) {
             mItems = items;
             context = mContext;
         }
@@ -106,9 +106,9 @@ public class ResultActivity extends AppCompatActivity {
                 ib_share = (ImageButton) view.findViewById(R.id.ib_share);
                 ib_delete = (ImageButton) view.findViewById(R.id.ib_delete);
 
-                ib_download.setTag(R.integer.ib_download, view);
-                ib_share.setTag(R.integer.ib_share, view);
-                ib_delete.setTag(R.integer.ib_delete, view);
+                ib_download.setTag(R.integer.result_ib_download, view);
+                ib_share.setTag(R.integer.result_ib_share, view);
+                ib_delete.setTag(R.integer.result_ib_delete, view);
 
                 ib_download.setOnClickListener(this);
                 ib_share.setOnClickListener(this);

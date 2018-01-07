@@ -19,7 +19,8 @@
         <LinearLayout
             android:id="@+id/search_menu1"
             android:background="#fff68355"
-            style="@style/search_menu_layout">
+            style="@style/search_menu_layout"
+            android:onClick="changeCategory">
 
             <ImageView
                 android:src="@drawable/icon_government"
@@ -32,8 +33,10 @@
 
         <LinearLayout
             android:id="@+id/search_menu2"
+            android:background="#ff7bdef0"
             style="@style/search_menu_layout"
-            android:background="#ff7bdef0">
+            android:onClick="changeCategory"
+            >
 
             <ImageView
                 android:src="@drawable/icon_enterprise"
@@ -45,8 +48,10 @@
         </LinearLayout>
         <LinearLayout
             android:id="@+id/search_menu3"
+            android:background="#ff6dcfdb"
             style="@style/search_menu_layout"
-            android:background="#ff6dcfdb">
+            android:onClick="changeCategory"
+            >
 
             <ImageView
                 android:src="@drawable/icon_basic"
@@ -58,8 +63,9 @@
         </LinearLayout>
         <LinearLayout
             android:id="@+id/search_menu4"
+            android:background="#ff73b4c6"
             style="@style/search_menu_layout"
-            android:background="#ff73b4c6">
+            android:onClick="changeCategory">
 
             <ImageView
                 android:src="@drawable/icon_school"

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="frame_duration">40</integer>
-    <integer name="ib_download">201</integer>
-    <integer name="ib_share">202</integer>
-    <integer name="ib_delete">203</integer>
+    <integer name="result_ib_download">201</integer>
+    <integer name="result_ib_share">202</integer>
+    <integer name="result_ib_delete">203</integer>
+
+    <integer name="category_card">301</integer>
 </resources>
