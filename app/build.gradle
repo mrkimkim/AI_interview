@@ -48,7 +48,7 @@ dependencies {
     compile 'me.grantland:autofittextview:0.2.+'
 
     // Dialog UI
-    compile 'com.yarolegovich:lovely-dialog:1.0.7'
+    compile 'com.roger.catloadinglibrary:catloadinglibrary:1.0.1'
 
     // Jsoup
     compile 'org.jsoup:jsoup:1.11.2'

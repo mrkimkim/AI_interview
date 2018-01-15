@@ -11,10 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.roger.catloadinglibrary.CatLoadingView;
 
 import java.util.ArrayList;
 
@@ -22,14 +22,18 @@ import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_category;
 
 public class SearchActivity extends AppCompatActivity {
-    static final int category_num = 4;
+    static final int n_category_parent = 4;
+    int n_subcategory_parent = 0;
 
+    CatLoadingView mView;
     Context mContext;
     DBHelper mDBHelper;
+
     RecyclerView recyclerView;
-    Adapter_search mAdapter;
     RecyclerView.LayoutManager layoutManager;
-    ArrayList[] items = new ArrayList[4];;
+    Adapter_Category mAdapter_Category, mAdapter_SubCategory;;
+    ArrayList[] items_category = new ArrayList[4];
+    ArrayList[] items_subcategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,18 +56,41 @@ public class SearchActivity extends AppCompatActivity {
         class t_LoadCategory implements Runnable {
             @Override
             public void run() {
-                // ArrayList를 초기화한다.
-                for(int i = 0; i < category_num; ++i) items[i] = new ArrayList<>();
+                // Category의 ArrayList를 초기화한다.
+                for(int i = 0; i < n_category_parent; ++i) items_category[i] = new ArrayList<>();
 
                 // DB의 모든 카테고리를 불러온다.
                 ContentValues[] values = mDBHelper.select("Category", DBHelper.column_category, null, null, null, null, null);
+
+                // 메인 카테고리를 찾는다
                 for (int i = 0; i < values.length; ++i) {
                     int idx = values[i].getAsInteger("parent_idx");
-                    if (idx != -1) {
+                    if (1 <= idx && idx <= n_category_parent) {
                         --idx;
                         Log.d("IDX :", String.valueOf(idx));
-                        items[idx].add(new item_category(R.drawable.icon_category_card_1,
+                        items_category[idx].add(new item_category(R.drawable.icon_category_card_1,
                                 values[i].getAsInteger("idx"),
+                                values[i].getAsInteger("parent_idx"),
+                                values[i].getAsString("title"),
+                                values[i].getAsString("description"),
+                                values[i].getAsInteger("n_subcategory"),
+                                values[i].getAsInteger("n_probset"),
+                                values[i].getAsInteger("n_problem")));
+                        n_subcategory_parent += 1;
+                    }
+                }
+
+                // SubCategory의 ArrayList를 초기화한다.
+                items_subcategory = new ArrayList[n_subcategory_parent];
+                for(int i = 0; i < n_subcategory_parent; ++i) items_subcategory[i] = new ArrayList<>();
+
+                // 서브 카테고리를 찾는다
+                for (int i = 0; i < values.length; ++i) {
+                    int idx = values[i].getAsInteger("parent_idx");
+                    if (n_category_parent < idx && idx <= n_category_parent + n_subcategory_parent) {
+                        items_subcategory[idx - n_category_parent - 1].add(new item_category(R.drawable.icon_category_card_1,
+                                values[i].getAsInteger("idx"),
+                                values[i].getAsInteger("parent_idx"),
                                 values[i].getAsString("title"),
                                 values[i].getAsString("description"),
                                 values[i].getAsInteger("n_subcategory"),
@@ -71,12 +98,14 @@ public class SearchActivity extends AppCompatActivity {
                                 values[i].getAsInteger("n_problem")));
                     }
                 }
+
                 // DEFAULT로 보여줄 카테고리 설정
-                mAdapter = new Adapter_search(items[0], mContext);
+                mAdapter_Category = new Adapter_Category(items_category[0], mContext);
+                mAdapter_SubCategory = new Adapter_Category(items_subcategory[0], mContext);
 
                 // RecyclerView와 Adapter를 연결
                 recyclerView.setLayoutManager(layoutManager);
-                recyclerView.setAdapter(mAdapter);
+                recyclerView.setAdapter(mAdapter_Category);
             }
         }
         Runnable t = new t_LoadCategory();
@@ -86,31 +115,35 @@ public class SearchActivity extends AppCompatActivity {
     // 화면에서 좌측 대분류 버튼을 클릭 시 RecyclerView의 데이터를 갱신한다.
     public void changeCategory(View v) {
         int id = v.getId();
-        if (R.id.search_menu1 == id) mAdapter.refreshItems(items[0]);
-        else if (R.id.search_menu2 == id) mAdapter.refreshItems(items[1]);
-        else if (R.id.search_menu3 == id) mAdapter.refreshItems(items[2]);
-        else if (R.id.search_menu4 == id) mAdapter.refreshItems(items[3]);
+        if (!recyclerView.getAdapter().equals(mAdapter_Category)) {
+            recyclerView.swapAdapter(mAdapter_Category, false);
+            Log.d("Category Changed : ", "Changed!");
+        }
+        if (R.id.search_menu1 == id) mAdapter_Category.refreshItems(items_category[0]);
+        else if (R.id.search_menu2 == id) mAdapter_Category.refreshItems(items_category[1]);
+        else if (R.id.search_menu3 == id) mAdapter_Category.refreshItems(items_category[2]);
+        else if (R.id.search_menu4 == id) mAdapter_Category.refreshItems(items_category[3]);
     }
 
-    public class Adapter_search extends RecyclerView.Adapter<Adapter_search.ViewHolder_search> {
+    public class Adapter_Category extends RecyclerView.Adapter<Adapter_Category.ViewHolder> {
         private Context context;
         private ArrayList<item_category> mItems;
         private int lastPosition = -1;
 
-        public Adapter_search(ArrayList items, Context mContext) {
+        public Adapter_Category(ArrayList items, Context mContext) {
             mItems = items;
             context = mContext;
         }
 
         @Override
-        public ViewHolder_search onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_category, parent, false);
-            ViewHolder_search holder = new ViewHolder_search(v);
+            ViewHolder holder = new ViewHolder(v);
             return holder;
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder_search holder, int position) {
+        public void onBindViewHolder(ViewHolder holder, int position) {
             int idx = position % 5;
             // 카드 배경 색상 지정
             if (idx == 0) holder.card.setCardBackgroundColor(getResources().getColor(R.color.category_card_background_0));
@@ -142,12 +175,12 @@ public class SearchActivity extends AppCompatActivity {
             notifyDataSetChanged();
         }
 
-        public class ViewHolder_search extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             public CardView card;
             public ImageView icon;
             public TextView title, title_describe, n_subcategory, n_probset, n_problem;
 
-            public ViewHolder_search(View view) {
+            public ViewHolder(View view) {
                 super(view);
                 card = (CardView) view.findViewById(R.id.category_card);
                 icon = (ImageView)view.findViewById(R.id.category_card_left_icon);
@@ -163,12 +196,33 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                // 클릭된 카드의 idx를 찾아온다.
+                Log.d("OnClick", "OnClicked");
 
-                // Dialog를 띄워서 상세 직렬을 넣는다.
+                // 클릭된 카드의 인스턴스를 가져온다.
+                int idx = getAdapterPosition();
+                item_category instance = mItems.get(idx);
 
-                // DB에서 검색해서 문제 리스트를 받아온다.
-                // 이것은 Loading Dialog를 띄워서 구현한다.
+                // 부모의 idx를 찾아온다
+                int parent_idx = instance.getParent_idx();
+
+                // 메인 카테고리인 경우 어댑터를 교체한다.
+                if (1 <= parent_idx && parent_idx <= n_category_parent) {
+                    idx = instance.getidx() - n_category_parent - 1;
+                    recyclerView.swapAdapter(mAdapter_SubCategory, false);
+                    mAdapter_SubCategory.refreshItems(items_subcategory[idx]);
+                }
+
+                // 서브 카테고리인 경우 문제를 로드한다.
+                else if (n_category_parent < parent_idx && parent_idx <= n_category_parent + n_subcategory_parent) {
+                    // 로딩 다이얼로그 생성
+                    mView = new CatLoadingView();
+                    mView.setCancelable(false);
+                    mView.show(getSupportFragmentManager(), "");
+
+                    // 문제 로딩
+                    idx = instance.getidx() - n_category_parent - n_subcategory_parent - 1;
+
+                }
             }
         }
     }
