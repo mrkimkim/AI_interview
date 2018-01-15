@@ -182,10 +182,10 @@ public class SearchActivity extends AppCompatActivity {
 
             public ViewHolder(View view) {
                 super(view);
-                card = (CardView) view.findViewById(R.id.category_card);
-                icon = (ImageView)view.findViewById(R.id.category_card_left_icon);
-                title = (TextView) view.findViewById(R.id.category_card_right_title);
-                title_describe = (TextView) view.findViewById(R.id.category_card_right_describe);
+                card = (CardView) view.findViewById(R.id.question_card);
+                icon = (ImageView)view.findViewById(R.id.question_card_left_icon);
+                title = (TextView) view.findViewById(R.id.question_card_right_title);
+                title_describe = (TextView) view.findViewById(R.id.question_card_right_describe);
                 n_subcategory = (TextView) view.findViewById(R.id.category_card_right_tv1);
                 n_probset = (TextView) view.findViewById(R.id.category_card_right_tv2);
                 n_problem = (TextView) view.findViewById(R.id.category_card_right_tv3);

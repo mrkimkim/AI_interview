@@ -2,7 +2,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:autofit="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/category_card"
+        android:id="@+id/question_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardBackgroundColor="#ffefa008"
@@ -24,20 +24,20 @@
                 app:layout_constraintDimensionRatio="H,16:7">
 
                 <android.support.constraint.ConstraintLayout
-                    android:id="@+id/category_card_left"
+                    android:id="@+id/question_card_left"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/category_vertical_guide6">
+                    app:layout_constraintEnd_toEndOf="@id/question_vertical_guide6">
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:orientation="vertical"
-                        app:layout_constraintTop_toTopOf="@id/category_card_left_horizontal_guide1"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_left_horizontal_guide2"
+                        app:layout_constraintTop_toTopOf="@id/question_card_left_horizontal_guide1"
+                        app:layout_constraintBottom_toBottomOf="@id/question_card_left_horizontal_guide2"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         >
@@ -45,13 +45,13 @@
 
 
                     <ImageView
-                        android:id="@+id/category_card_left_icon"
+                        android:id="@+id/question_card_left_icon"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:src="@drawable/icon_category_card_1"
                         android:scaleType="fitCenter"
-                        app:layout_constraintTop_toTopOf="@id/category_card_left_horizontal_guide1"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_left_horizontal_guide2"
+                        app:layout_constraintTop_toTopOf="@id/question_card_left_horizontal_guide1"
+                        app:layout_constraintBottom_toBottomOf="@id/question_card_left_horizontal_guide2"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         />
@@ -65,9 +65,9 @@
                         android:textSize="10sp"
                         android:fontFamily="@font/nanumgothic"
                         android:textStyle="bold"
-                        app:layout_constraintTop_toTopOf="@id/category_card_left_horizontal_guide3"
-                        app:layout_constraintStart_toStartOf="@id/category_card_left_vertical_guide0"
-                        app:layout_constraintEnd_toEndOf="@id/category_card_left_vertical_guide1"/>
+                        app:layout_constraintTop_toTopOf="@id/question_left_horizontal_guide3"
+                        app:layout_constraintStart_toStartOf="@id/question_card_left_vertical_guide0"
+                        app:layout_constraintEnd_toEndOf="@id/question_card_left_vertical_guide2"/>
 
                     <TextView
                         android:id="@+id/category_card_left_tv"
@@ -78,68 +78,68 @@
                         android:textColor="#ffeeeeee"
                         android:textSize="9sp"
                         android:fontFamily="@font/nanumgothic"
-                        app:layout_constraintTop_toTopOf="@id/category_card_left_horizontal_guide4"
-                        app:layout_constraintStart_toStartOf="@id/category_card_left_vertical_guide0"
-                        app:layout_constraintEnd_toEndOf="@id/category_card_left_vertical_guide1"/>
+                        app:layout_constraintTop_toTopOf="@id/question_card_left_horizontal_guide4"
+                        app:layout_constraintStart_toStartOf="@id/question_card_left_vertical_guide0"
+                        app:layout_constraintEnd_toEndOf="@id/question_card_left_vertical_guide2"/>
 
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_left_horizontal_guide1"
+                        android:id="@+id/question_card_left_horizontal_guide1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         app:layout_constraintGuide_percent = "0.1"/>
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_left_horizontal_guide2"
+                        android:id="@+id/question_card_left_horizontal_guide2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         app:layout_constraintGuide_percent = "0.4"/>
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_left_horizontal_guide3"
+                        android:id="@+id/question_left_horizontal_guide3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         app:layout_constraintGuide_percent = "0.7"/>
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_left_horizontal_guide4"
+                        android:id="@+id/question_card_left_horizontal_guide4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         app:layout_constraintGuide_percent = "0.8"/>
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_left_horizontal_guide5"
+                        android:id="@+id/question_card_left_horizontal_guide5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         app:layout_constraintGuide_percent = "0.74"/>
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_left_horizontal_guide6"
+                        android:id="@+id/question_card_left_horizontal_guide6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         app:layout_constraintGuide_percent = "0.75"/>
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_left_horizontal_guide7"
+                        android:id="@+id/question_card_left_horizontal_guide7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         app:layout_constraintGuide_percent = "0.76"/>
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_left_horizontal_guide8"
+                        android:id="@+id/question_card_left_horizontal_guide8"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         app:layout_constraintGuide_percent = "0.77"/>
 
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_left_vertical_guide0"
+                        android:id="@+id/question_card_left_vertical_guide0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         app:layout_constraintGuide_percent = "0.1"/>
 
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_left_vertical_guide1"
+                        android:id="@+id/question_card_left_vertical_guide2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -147,17 +147,17 @@
                 </android.support.constraint.ConstraintLayout>
 
                 <android.support.constraint.ConstraintLayout
-                    android:id="@+id/category_card_right"
+                    android:id="@+id/question_card_right"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:background="#ffffffff"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@id/category_vertical_guide6"
-                    app:layout_constraintEnd_toEndOf="@id/category_vertical_guide7">
+                    app:layout_constraintStart_toStartOf="@id/question_vertical_guide6"
+                    app:layout_constraintEnd_toEndOf="@id/question_vertical_guide7">
 
                     <me.grantland.widget.AutofitTextView
-                        android:id="@+id/category_card_right_title"
+                        android:id="@+id/question_card_right_title"
                         android:text=": 9급 공무원"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -166,12 +166,12 @@
                         android:textStyle="bold"
                         android:textColor="#ff444444"
                         android:layout_marginBottom="5dp"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_right_horizontal_guide0"
-                        app:layout_constraintStart_toStartOf="@id/category_card_right_vertical_guide1"
-                        app:layout_constraintEnd_toEndOf="@id/category_card_right_vertical_guide4"/>
+                        app:layout_constraintBottom_toBottomOf="@id/question_card_right_horizontal_guide0"
+                        app:layout_constraintStart_toStartOf="@id/question_card_right_vertical_guide1"
+                        app:layout_constraintEnd_toEndOf="@id/question_card_right_vertical_guide4"/>
 
                     <me.grantland.widget.AutofitTextView
-                        android:id="@+id/category_card_right_describe"
+                        android:id="@+id/question_card_right_describe"
                         android:text="공무원 합격을 향한 마지막 관문"
                         android:textSize="10sp"
                         android:textColor="#ff444444"
@@ -180,73 +180,73 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        app:layout_constraintTop_toBottomOf="@id/category_card_right_horizontal_guide0"
-                        app:layout_constraintStart_toStartOf="@id/category_card_right_vertical_guide1"
-                        app:layout_constraintEnd_toEndOf="@id/category_card_right_vertical_guide4"
+                        app:layout_constraintTop_toBottomOf="@id/question_card_right_horizontal_guide0"
+                        app:layout_constraintStart_toStartOf="@id/question_card_right_vertical_guide1"
+                        app:layout_constraintEnd_toEndOf="@id/question_card_right_vertical_guide4"
                         />
 
                     <me.grantland.widget.AutofitTextView
                         style="@style/category_card_right_tv"
                         android:text="지원 직렬"
                         autofit:minTextSize="10sp"
-                        app:layout_constraintTop_toTopOf="@id/category_card_right_horizontal_guide1"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_right_horizontal_guide2"
-                        app:layout_constraintStart_toStartOf="@id/category_card_right_vertical_guide0"
-                        app:layout_constraintEnd_toEndOf="@id/category_card_right_vertical_guide2"/>
+                        app:layout_constraintTop_toTopOf="@id/question_card_right_horizontal_guide1"
+                        app:layout_constraintBottom_toBottomOf="@id/question_card_right_horizontal_guide2"
+                        app:layout_constraintStart_toStartOf="@id/question_card_right_vertical_guide0"
+                        app:layout_constraintEnd_toEndOf="@id/question_card_right_vertical_guide2"/>
                     <me.grantland.widget.AutofitTextView
                         style="@style/category_card_right_tv"
                         android:text="문제 세트"
-                        app:layout_constraintTop_toTopOf="@id/category_card_right_horizontal_guide1"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_right_horizontal_guide2"
-                        app:layout_constraintStart_toStartOf="@id/category_card_right_vertical_guide2"
-                        app:layout_constraintEnd_toEndOf="@id/category_card_right_vertical_guide3"/>
+                        app:layout_constraintTop_toTopOf="@id/question_card_right_horizontal_guide1"
+                        app:layout_constraintBottom_toBottomOf="@id/question_card_right_horizontal_guide2"
+                        app:layout_constraintStart_toStartOf="@id/question_card_right_vertical_guide2"
+                        app:layout_constraintEnd_toEndOf="@id/question_card_right_vertical_guide3"/>
                     <me.grantland.widget.AutofitTextView
                         style="@style/category_card_right_tv"
                         android:text="총 문제 수"
-                        app:layout_constraintTop_toTopOf="@id/category_card_right_horizontal_guide1"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_right_horizontal_guide2"
-                        app:layout_constraintStart_toStartOf="@id/category_card_right_vertical_guide3"
+                        app:layout_constraintTop_toTopOf="@id/question_card_right_horizontal_guide1"
+                        app:layout_constraintBottom_toBottomOf="@id/question_card_right_horizontal_guide2"
+                        app:layout_constraintStart_toStartOf="@id/question_card_right_vertical_guide3"
                         app:layout_constraintEnd_toEndOf="parent"/>
 
                     <me.grantland.widget.AutofitTextView
                         android:id="@+id/category_card_right_tv1"
                         style="@style/category_card_right_tv2"
                         android:text="10"
-                        app:layout_constraintTop_toTopOf="@id/category_card_right_horizontal_guide2"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_right_horizontal_guide3"
-                        app:layout_constraintStart_toStartOf="@id/category_card_right_vertical_guide0"
-                        app:layout_constraintEnd_toEndOf="@id/category_card_right_vertical_guide2"/>
+                        app:layout_constraintTop_toTopOf="@id/question_card_right_horizontal_guide2"
+                        app:layout_constraintBottom_toBottomOf="@id/question_card_right_horizontal_guide3"
+                        app:layout_constraintStart_toStartOf="@id/question_card_right_vertical_guide0"
+                        app:layout_constraintEnd_toEndOf="@id/question_card_right_vertical_guide2"/>
                     <me.grantland.widget.AutofitTextView
                         android:id="@+id/category_card_right_tv2"
                         style="@style/category_card_right_tv2"
                         android:text="120"
-                        app:layout_constraintTop_toTopOf="@id/category_card_right_horizontal_guide2"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_right_horizontal_guide3"
-                        app:layout_constraintStart_toStartOf="@id/category_card_right_vertical_guide2"
-                        app:layout_constraintEnd_toEndOf="@id/category_card_right_vertical_guide3"/>
+                        app:layout_constraintTop_toTopOf="@id/question_card_right_horizontal_guide2"
+                        app:layout_constraintBottom_toBottomOf="@id/question_card_right_horizontal_guide3"
+                        app:layout_constraintStart_toStartOf="@id/question_card_right_vertical_guide2"
+                        app:layout_constraintEnd_toEndOf="@id/question_card_right_vertical_guide3"/>
 
                     <me.grantland.widget.AutofitTextView
                         android:id="@+id/category_card_right_tv3"
                         style="@style/category_card_right_tv2"
                         android:text="1 ~ 5분"
-                        app:layout_constraintTop_toTopOf="@id/category_card_right_horizontal_guide2"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_right_horizontal_guide3"
-                        app:layout_constraintStart_toStartOf="@id/category_card_right_vertical_guide3"
+                        app:layout_constraintTop_toTopOf="@id/question_card_right_horizontal_guide2"
+                        app:layout_constraintBottom_toBottomOf="@id/question_card_right_horizontal_guide3"
+                        app:layout_constraintStart_toStartOf="@id/question_card_right_vertical_guide3"
                         app:layout_constraintEnd_toEndOf="parent"/>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="1dp"
                         android:background="#ffcccccc"
-                        app:layout_constraintTop_toTopOf="@id/category_card_right_horizontal_guide0"
-                        app:layout_constraintBottom_toBottomOf="@id/category_card_right_horizontal_guide0"
-                        app:layout_constraintStart_toStartOf="@id/category_card_right_vertical_guide1"
-                        app:layout_constraintEnd_toEndOf="@id/category_card_right_vertical_guide4"
+                        app:layout_constraintTop_toTopOf="@id/question_card_right_horizontal_guide0"
+                        app:layout_constraintBottom_toBottomOf="@id/question_card_right_horizontal_guide0"
+                        app:layout_constraintStart_toStartOf="@id/question_card_right_vertical_guide1"
+                        app:layout_constraintEnd_toEndOf="@id/question_card_right_vertical_guide4"
                         >
                     </LinearLayout>
 
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_right_horizontal_guide0"
+                        android:id="@+id/question_card_right_horizontal_guide0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -254,7 +254,7 @@
                     </android.support.constraint.Guideline>
 
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_right_horizontal_guide1"
+                        android:id="@+id/question_card_right_horizontal_guide1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -262,7 +262,7 @@
                     </android.support.constraint.Guideline>
 
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_right_horizontal_guide2"
+                        android:id="@+id/question_card_right_horizontal_guide2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -270,7 +270,7 @@
                     </android.support.constraint.Guideline>
 
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_right_horizontal_guide3"
+                        android:id="@+id/question_card_right_horizontal_guide3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -278,7 +278,7 @@
                     </android.support.constraint.Guideline>
 
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_right_vertical_guide0"
+                        android:id="@+id/question_card_right_vertical_guide0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -286,7 +286,7 @@
                     </android.support.constraint.Guideline>
 
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_right_vertical_guide1"
+                        android:id="@+id/question_card_right_vertical_guide1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -294,7 +294,7 @@
                     </android.support.constraint.Guideline>
 
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_right_vertical_guide2"
+                        android:id="@+id/question_card_right_vertical_guide2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -302,7 +302,7 @@
                     </android.support.constraint.Guideline>
 
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_right_vertical_guide3"
+                        android:id="@+id/question_card_right_vertical_guide3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -310,7 +310,7 @@
                     </android.support.constraint.Guideline>
 
                     <android.support.constraint.Guideline
-                        android:id="@+id/category_card_right_vertical_guide4"
+                        android:id="@+id/question_card_right_vertical_guide4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -322,21 +322,21 @@
                 </android.support.constraint.ConstraintLayout>
 
                 <android.support.constraint.Guideline
-                    android:id="@+id/category_vertical_guide5"
+                    android:id="@+id/question_vertical_guide5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintGuide_percent = "0.02"/>
 
                 <android.support.constraint.Guideline
-                    android:id="@+id/category_vertical_guide6"
+                    android:id="@+id/question_vertical_guide6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintGuide_percent = "0.2"/>
 
                 <android.support.constraint.Guideline
-                    android:id="@+id/category_vertical_guide7"
+                    android:id="@+id/question_vertical_guide7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
