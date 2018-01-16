@@ -5,7 +5,7 @@
     android:id="@+id/question_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="#088fef"
+    app:cardBackgroundColor="#289df0"
     app:cardCornerRadius="5dp"
     app:cardElevation="10dp"
     app:cardUseCompatPadding="true">
@@ -45,9 +45,9 @@
                     android:layout_height="0dp"
                     android:background="@drawable/white_btn_border"
                     android:text="가이드 영상"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:textColor="#ffffffff"
-                    android:style="?android:attr/borderlessButtonStyle"
+                    style="?android:attr/borderlessButtonStyle"
                     app:layout_constraintStart_toStartOf="@id/question_card_left_vertical_guide0"
                     app:layout_constraintEnd_toEndOf="@id/question_card_left_vertical_guide2"
                     app:layout_constraintTop_toTopOf="@id/question_card_left_horizontal_guide1"
@@ -60,8 +60,9 @@
                     android:layout_height="0dp"
                     android:background="@drawable/white_btn_border"
                     android:text="문제 보기"
+                    android:textSize="12sp"
                     android:textColor="#ffffffff"
-                    android:style="?android:attr/borderlessButtonStyle"
+                    style="?android:attr/borderlessButtonStyle"
                     app:layout_constraintStart_toStartOf="@id/question_card_left_vertical_guide0"
                     app:layout_constraintEnd_toEndOf="@id/question_card_left_vertical_guide2"
                     app:layout_constraintTop_toTopOf="@id/question_left_horizontal_guide3"
@@ -80,10 +81,11 @@
                     />
 
                 <TextView
-                    android:id="@+id/question_card_left_viewCnt"
+                    android:id="@+id/question_totalView"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:text="100"
+                    android:textSize="12sp"
                     android:textColor="#ffffffff"
                     app:layout_constraintStart_toStartOf="@id/question_card_left_vertical_guide1"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -94,7 +96,7 @@
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:src="@drawable/icon_eye"
+                    android:src="@drawable/icon_like"
                     android:scaleType="fitCenter"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/question_card_left_vertical_guide1"
@@ -103,10 +105,11 @@
                     />
 
                 <TextView
-                    android:id="@+id/question_card_left_likeCnt"
+                    android:id="@+id/question_totalLike"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:text="100"
+                    android:textSize="12sp"
                     android:textColor="#ffffffff"
                     app:layout_constraintStart_toStartOf="@id/question_card_left_vertical_guide1"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -119,49 +122,49 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent = "0.15"/>
+                    app:layout_constraintGuide_percent = "0.1"/>
                 <android.support.constraint.Guideline
                     android:id="@+id/question_card_left_horizontal_guide2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent = "0.35"/>
+                    app:layout_constraintGuide_percent = "0.3"/>
                 <android.support.constraint.Guideline
                     android:id="@+id/question_left_horizontal_guide3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent = "0.4"/>
+                    app:layout_constraintGuide_percent = "0.35"/>
                 <android.support.constraint.Guideline
                     android:id="@+id/question_card_left_horizontal_guide4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent = "0.6"/>
+                    app:layout_constraintGuide_percent = "0.55"/>
                 <android.support.constraint.Guideline
                     android:id="@+id/question_card_left_horizontal_guide5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent = "0.65"/>
+                    app:layout_constraintGuide_percent = "0.6"/>
                 <android.support.constraint.Guideline
                     android:id="@+id/question_card_left_horizontal_guide6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent = "0.80"/>
+                    app:layout_constraintGuide_percent = "0.75"/>
                 <android.support.constraint.Guideline
                     android:id="@+id/question_card_left_horizontal_guide7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent = "0.80"/>
+                    app:layout_constraintGuide_percent = "0.75"/>
                 <android.support.constraint.Guideline
                     android:id="@+id/question_card_left_horizontal_guide8"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent = "0.95"/>
+                    app:layout_constraintGuide_percent = "0.9"/>
 
                 <android.support.constraint.Guideline
                     android:id="@+id/question_card_left_vertical_guide0"
@@ -196,36 +199,39 @@
                 app:layout_constraintEnd_toEndOf="@id/question_vertical_guide7">
 
                 <TextView
+                    android:id="@+id/question_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="10dp"
                     android:text="공직자로서의 마음가짐에 대하여 기술하시오 으헤헤헤헤헤 으허허허허"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:fontFamily="@font/nanumgothic"
                     android:textColor="#ff000000"
                     android:textStyle="bold"
-                    android:maxLines="2"
-                    android:ellipsize="end"
                     app:layout_constraintTop_toTopOf="@id/question_card_right_horizontal_guide0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
                 <TextView
+                    android:id="@+id/question_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="10dp"
+                    android:textSize="12sp"
                     android:text="30초  |  한국어  |  1Credit"
                     app:layout_constraintTop_toTopOf="@id/question_card_right_horizontal_guide1"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
                 <TextView
+                    android:id="@+id/question_history"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="10dp"
+                    android:textSize="12sp"
                     android:text="2017년 국가직 행정"
                     android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="@id/question_card_right_horizontal_guide2"
@@ -237,7 +243,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.13">
+                    app:layout_constraintGuide_percent="0.1">
                 </android.support.constraint.Guideline>
 
                 <android.support.constraint.Guideline
@@ -245,7 +251,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.6">
+                    app:layout_constraintGuide_percent="0.60">
                 </android.support.constraint.Guideline>
 
                 <android.support.constraint.Guideline
@@ -253,7 +259,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.8">
+                    app:layout_constraintGuide_percent="0.75">
                 </android.support.constraint.Guideline>
 
                 <android.support.constraint.Guideline
@@ -261,7 +267,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.95">
+                    app:layout_constraintGuide_percent="0.93">
                 </android.support.constraint.Guideline>
 
                 <android.support.constraint.Guideline

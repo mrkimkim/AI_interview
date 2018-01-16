@@ -58,7 +58,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".SearchActivity" />
+        <activity android:name=".ChooseCategory" />
         <activity android:name=".TestActivity"></activity>
     </application>
 

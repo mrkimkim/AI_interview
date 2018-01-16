@@ -7,7 +7,7 @@
     tools:context="portfolio.projects.mrkimkim.ai_interview.UserinfoActivity">
 
     <RelativeLayout
-        android:id="@+id/userinfo_title"
+        android:id="@+id/cq_title"
         style="@style/common_titlebar">
         <LinearLayout style="@style/common_titlebar_leftlayout">
             <ImageButton
@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/userinfo_title">
+        app:layout_constraintTop_toBottomOf="@+id/cq_title">
 
         <com.mikhaellopez.circularimageview.CircularImageView
             android:id="@+id/userinfo_userimg"

@@ -21,7 +21,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:appcompat-v7:26.1.+'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     implementation 'com.android.support:cardview-v7:26.1.0'
@@ -52,6 +52,9 @@ dependencies {
 
     // Jsoup
     compile 'org.jsoup:jsoup:1.11.2'
+
+    // Markdown
+    compile 'us.feras.mdv:markdownview:1.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

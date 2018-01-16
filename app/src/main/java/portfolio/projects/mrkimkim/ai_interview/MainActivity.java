@@ -1,14 +1,10 @@
 package portfolio.projects.mrkimkim.ai_interview;
 
-import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
-
 import android.content.Intent;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -25,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickStartInterview(View v) {
-        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+        Intent intent = new Intent(MainActivity.this, ChooseCategory.class);
         startActivity(intent);
     }
 
