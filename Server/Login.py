@@ -52,6 +52,7 @@ class LoginSession(threading.Thread):
         try:
             self.user_id = hexToLong(cmd[:8])
             self.user_token = hexToString(cmd[8:])
+            print (self.user_id, self.user_token)
         except Exception as e:
             print ("Error : Invalid packet format")
             return -1, "Error : Invalid packet format"
@@ -96,7 +97,7 @@ class LoginSession(threading.Thread):
         try:
             app_token_seed = str(self.user_id) + str(self.user_token) + str(time.time())
             app_token = str(hashlib.sha256(app_token_seed.encode('utf-8')).hexdigest())
-            update_query = """Update UserInfo SET `token` = %s where `idx` = %s"""
+            update_query = """Update UserInfo SET `app_token` = %s where `idx` = %s"""
             self.curs.execute(update_query, (app_token, self.user_id))
             self.conn.send(app_token.encode('ascii'))
             print (app_token.encode('ascii'))

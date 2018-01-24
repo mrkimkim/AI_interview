@@ -28,9 +28,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity
-            android:name=".InterviewModule.Interview"
-            android:screenOrientation="portrait" />
         <activity android:name=".ChooseQuestion" />
         <activity android:name=".InterviewModule.UploadVideo" />
 
@@ -59,7 +56,8 @@
         </service>
 
         <activity android:name=".ChooseCategory" />
-        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".TestActivity" />
+        <activity android:name=".InterviewModule.ActivityInterview"></activity>
     </application>
 
 </manifest>

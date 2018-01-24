@@ -1,10 +1,11 @@
 package portfolio.projects.mrkimkim.ai_interview;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -14,16 +15,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.roger.catloadinglibrary.CatLoadingView;
+import com.google.android.youtube.player.YouTubeBaseActivity;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
 
 import java.util.ArrayList;
 
-import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
-import portfolio.projects.mrkimkim.ai_interview.InterviewModule.Interview;
-import portfolio.projects.mrkimkim.ai_interview.Utils.item_category;
+import portfolio.projects.mrkimkim.ai_interview.InterviewModule.ActivityInterview;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_question;
 import us.feras.mdv.MarkdownView;
 
@@ -31,38 +33,49 @@ import us.feras.mdv.MarkdownView;
  * Created by mrkimkim on 2017-12-06.
  */
 
-public class ChooseQuestion extends AppCompatActivity{
+public class ChooseQuestion extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
+    private static final int RECOVERY_REQUEST = 1;
+    private static final String YOUTUBE_API_KEY = "AIzaSyCsBC6KFCzSWwA9qy7byEZ7tElx0EEjHos";
+    private static final String VIDEO_ID = "hOLVzFm-nPk";
     Context mContext;
-    DBHelper mDBHelper;
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     Adapter_Question mAdapter_Question;
     ArrayList items_question;
 
+    @Override
+    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
+    }
+
+    @Override
+    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult errorReason) {
+        if (errorReason.isUserRecoverableError()) {
+            errorReason.getErrorDialog(this, RECOVERY_REQUEST).show();
+        } else {
+            String error = String.format(getString(R.string.player_error), errorReason.toString());
+            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choosequestion);
-        Intent intent = new Intent(this.getIntent());
-
 
         items_question = new ArrayList<item_question>();
-        recyclerView = (RecyclerView)findViewById(R.id.cq_recycler_view);
-        recyclerView.setHasFixedSize(true);
-        layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-
-
-
         items_question.add(new item_question(0, 0, "배우가 된 이유에 대해서 뮤지컬 형식을 사용해서 설명해주세요", "2014년 한예종 연극영화과", "30초", "한국어", "1 크레딧", "300만", "21만", "www.naver.com"));
-        items_question.add(new item_question(0, 0, "배우가 된 이유에 대해서 설명해주세요", "2014년 한예종 연극영화과", "30초", "한국어", "1 크레딧", "300만", "21만", "www.naver.com"));
-        items_question.add(new item_question(0, 0, "배우가 된 이유에 대해서 설명해주세요", "2014년 한예종 연극영화과", "30초", "한국어", "1 크레딧", "300만", "21만", "www.naver.com"));
-        items_question.add(new item_question(0, 0, "배우가 된 이유에 대해서 설명해주세요", "2014년 한예종 연극영화과", "30초", "한국어", "1 크레딧", "300만", "21만", "www.naver.com"));
-        items_question.add(new item_question(0, 0, "배우가 된 이유에 대해서 설명해주세요", "2014년 한예종 연극영화과", "30초", "한국어", "1 크레딧", "300만", "21만", "www.naver.com"));
-        items_question.add(new item_question(0, 0, "배우가 된 이유에 대해서 설명해주세요", "2014년 한예종 연극영화과", "30초", "한국어", "1 크레딧", "300만", "21만", "www.naver.com"));
-        items_question.add(new item_question(0, 0, "배우가 된 이유에 대해서 설명해주세요", "2014년 한예종 연극영화과", "30초", "한국어", "1 크레딧", "300만", "21만", "www.naver.com"));
         items_question.add(new item_question(0, 0, "배우가 된 이유에 대해서 설명해주세요", "2014년 한예종 연극영화과", "30초", "한국어", "1 크레딧", "300만", "21만", "www.naver.com"));
 
         mAdapter_Question = new Adapter_Question(items_question, mContext);
+
+        recyclerView = (RecyclerView)findViewById(R.id.cq_recycler_view);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter_Question);
     }
@@ -70,7 +83,6 @@ public class ChooseQuestion extends AppCompatActivity{
     public class Adapter_Question extends RecyclerView.Adapter<Adapter_Question.ViewHolder> {
         private Context context;
         private ArrayList<item_question> mItems;
-        private int lastPosition = -1;
 
         public Adapter_Question(ArrayList items, Context mContext) {
             mItems = items;
@@ -140,6 +152,7 @@ public class ChooseQuestion extends AppCompatActivity{
                 btn_guide = (Button)view.findViewById(R.id.question_card_left_btn_guide);
                 btn_viewQuestion = (Button)view.findViewById(R.id.question_card_left_btn_viewQuestion);
 
+                card.setOnClickListener(this);
                 btn_guide.setOnClickListener(this);
                 btn_viewQuestion.setOnClickListener(this);
             }
@@ -168,6 +181,32 @@ public class ChooseQuestion extends AppCompatActivity{
                             "***");
 
                     dialog.show();
+                }
+
+                // 샘플 가이드 영상을 클릭한 경우
+                else if (v.getId() == R.id.question_card_left_btn_guide) {
+                    Intent intent = YouTubeStandalonePlayer.createVideoIntent(ChooseQuestion.this, YOUTUBE_API_KEY, VIDEO_ID);
+                    startActivity(intent);
+                }
+
+                else if (v.getId() == R.id.question_card) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ChooseQuestion.this);
+                    builder.setTitle("면접 시작");
+                    builder.setMessage("1 크레딧을 차감하여 면접을 시작하시겠습니까?");
+                    builder.setPositiveButton("예",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(getApplicationContext(),"면접장으로 이동합니다.",Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(ChooseQuestion.this, ActivityInterview.class);
+                                    startActivity(intent);
+                                }
+                            });
+                    builder.setNegativeButton("아니오",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            });
+                    builder.show();
                 }
             }
         }

@@ -1,0 +1,25 @@
+영상 메타 정보
+
+idx
+user_idx
+video_hash
+video_size
+video_format
+video_duration
+video_frame_count
+audio_hash
+audio_size
+audio_format
+audio_duration
+audio_sample_rate
+question_idx
+is_processed
+result_idx
+
+[video_uri_path] = user_idx + "_" + video_hash.format
+[audio_uri_path] = user_idx + "_" + audio_hash.format
+
+
+<Client -> Server>
+1차 : userIdx + AppToken
+2차 : opcode + question_idx + packet(size) video_size(4byte) + data

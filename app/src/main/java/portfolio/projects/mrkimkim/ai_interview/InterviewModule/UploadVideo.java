@@ -7,6 +7,7 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -18,18 +19,16 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
+import portfolio.projects.mrkimkim.ai_interview.NetworkModule.NetworkService;
 import portfolio.projects.mrkimkim.ai_interview.R;
+import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
 
 public class UploadVideo extends AppCompatActivity {
     private Socket socket;
     private BufferedReader networkReader;
     private OutputStream networkWriter;
-
     private Handler mHandler;
-
-    private Info mUserInfo = new Info();
-    private Info mMetaInfo = new Info();
-    private String ServerState;
 
     private Uri uri;
     @Override
@@ -57,7 +56,7 @@ public class UploadVideo extends AppCompatActivity {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-        Log.d("State : ", "I am trying");
+
         // Connect to Server
         mHandler = new Handler();
         try {
@@ -73,53 +72,35 @@ public class UploadVideo extends AppCompatActivity {
             try {
                 int maxBufferSize = 2048;
                 final byte[] buffers = new byte[maxBufferSize];
-                String sData;
 
-                // Upload UserInfo
-                mUserInfo.setDataString(new String[]{"Name","Gender","Age"}, new String[]{"HyeonGyuJang", "Man", "28"});
-                sData = mUserInfo.getDataString();
-                networkWriter.write(sData.getBytes(), 0, sData.length());
+                // 유저 인증 토큰을 전송함.
+                byte[] userId = Functions.longToBytes(GlobalApplication.mUserInfoManager.getUserProfile().getId());
+                byte[] userToken = GlobalApplication.mUserInfoManager.getAppToken();
+                byte[] packet = new byte[userId.length + userToken.length];
+                networkWriter.write(packet);
                 networkWriter.flush();
 
-                while (true) {
-                    ServerState = networkReader.readLine();
-                    if (ServerState.length() > 10) break;
-                }
-
-                // Load Video
+                // 비디오를 로드함
                 String[] FileName = uri.getPath().split("/");
                 File file = new File(uri.getPath());
                 FileInputStream fis = new FileInputStream(file);
+                long video_size = file.length();
                 int read = 0;
 
-
-                // Upload MetaInfo
-                mMetaInfo.setDataString(new String[]{"fileName","size"}, new String[]{FileName[FileName.length - 1],Long.toString(file.length())});
-                sData = mMetaInfo.getDataString();
-                networkWriter.write(sData.getBytes(), 0, sData.length());
+                // 헤더 전송 (20byte)
+                byte[] Opcode = NetworkService.getHeader(getResources().getInteger(R.integer.op_upload), 0, video_size);
+                networkWriter.write(Opcode);
                 networkWriter.flush();
 
-                while (true) {
-                    ServerState = networkReader.readLine();
-                    if (ServerState.length() > 10) break;
-                }
-
-
-                // Upload Video
+                // 비디오 데이터 전송
                 BufferedInputStream bis = new BufferedInputStream(fis);
                 while((read = bis.read(buffers, 0, maxBufferSize)) != -1) {
                     networkWriter.write(buffers, 0, buffers.length);
                 }
                 networkWriter.flush();
-
-                while (true) {
-                    ServerState = networkReader.readLine();
-                    if (ServerState.length() > 10) break;
-                }
-
-                // Success to Upload Video
             } catch (Exception e) {
                 e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "영상 전송에 실패했습니다.", Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -134,36 +115,6 @@ public class UploadVideo extends AppCompatActivity {
             Log.d("Error : ", "failed to connect server");
             System.out.println(e);
             e.printStackTrace();
-        }
-    }
-
-    class Info {
-        String[] Field;
-        String[] Data;
-        int Len = 100;
-
-        public Info() {};
-
-        public String getDataString() {
-            String ret = "";
-            for (int i = 0; i < Field.length; ++i) {
-                ret += Field[i] + ":" + Data[i];
-                if (i != Field.length - 1) ret += ":";
-            }
-            ret += new String(new char[Len - ret.length()]).replace("\0", " ");
-            return ret;
-        }
-
-        public void setDataString(String[] Field, String[] Data) {
-            this.Field = new String[Field.length];
-            this.Data = new String[Data.length];
-
-            for(int i = 0; i < Field.length; ++i) this.Field[i] = Field[i];
-            for(int i = 0; i < Data.length; ++i) this.Data[i] = Data[i];
-        }
-
-        public void setDataLen(int len) {
-            this.Len = len;
         }
     }
 }

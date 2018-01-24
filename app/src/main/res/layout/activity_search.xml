@@ -117,6 +117,6 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="1.0"/>
+        app:layout_constraintGuide_percent="1.0" />
 
 </android.support.constraint.ConstraintLayout>

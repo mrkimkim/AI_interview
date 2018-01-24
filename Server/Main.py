@@ -18,7 +18,7 @@ class Server(object):
         while True:
             print ("Server Start") 
             conn, address = self.socket.accept()
-            print ("Client is Login")
+            print ("Client is Connected")
             t = Session(conn, self.sql)
             t.daemon = True
             t.start()

@@ -13,6 +13,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import portfolio.projects.mrkimkim.ai_interview.R;
+import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
 
 public class NetworkService extends Service {
     int max_buffer_size = 2048;
@@ -48,17 +49,15 @@ public class NetworkService extends Service {
         }
     }
 
-    private byte[] getOpcode(int operation, int size) {
-        byte[] opcode = new byte[8];
+    public static byte[] getHeader(int operation, long question_idx, long size) {
+        byte[] opcode = new byte[20];
         opcode[0] = (byte)(operation >> 24);
         opcode[1] = (byte)(operation >> 16);
         opcode[2] = (byte)(operation >> 8);
         opcode[3] = (byte)(operation);
 
-        opcode[4] = (byte)(size >> 24);
-        opcode[5] = (byte)(size >> 16);
-        opcode[6] = (byte)(size >> 8);
-        opcode[7] = (byte)(size);
+        System.arraycopy(Functions.longToBytes(question_idx), 0, opcode, 4, 8);
+        System.arraycopy(Functions.longToBytes(size), 0, opcode, 12, 8);
         return opcode;
     }
 
@@ -77,7 +76,7 @@ public class NetworkService extends Service {
                     OutputStream networkDataWriter = t_socket.getOutputStream();
 
                     // 송신 명령을 보냄
-                    sendCmd(getOpcode(0, bytes.length), networkDataWriter);
+                    sendCmd(getHeader(0, 0, bytes.length), networkDataWriter);
 
                     // 데이터 송신
                     int offset = 0;
@@ -116,7 +115,7 @@ public class NetworkService extends Service {
                     OutputStream networkDataWriter = t_socket.getOutputStream();
 
                     // 수신 명령을 보냄
-                    sendCmd(getOpcode(1, 0), networkDataWriter);
+                    sendCmd(getHeader(1, 0, 0), networkDataWriter);
 
                     // 데이터 사이즈를 받아옴.
                     networkDataReader.read(temp, 0, 4);

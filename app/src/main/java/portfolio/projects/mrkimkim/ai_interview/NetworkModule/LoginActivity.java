@@ -208,15 +208,15 @@ public class LoginActivity extends AppCompatActivity {
                     networkDataWriter.write(packet);
                     networkDataWriter.flush();
 
-                    // 로그인 결과로 앱 서버의 AccessToken을 얻음
+                    // 로그인 결과로 앱 서버의 AccessToken을 얻음tlsgks
                     app_token = new byte[64];
                     networkDataReader.read(app_token, 0, 64);
                     GlobalApplication.mUserInfoManager.setAppToken(app_token);
+                    Log.d("AppToken : ", app_token.toString());
 
                     // 로컬 DB 버전와 서버 DB를 동기화
                     DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
                     int dbVersion = mDBHelper.getDBVersion();
-                    Log.d("DB VERSION : ", String.valueOf(dbVersion));
                     packet = Functions.intToBytes(dbVersion);
                     networkDataWriter.write(packet);
                     networkDataWriter.flush();

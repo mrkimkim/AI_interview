@@ -49,7 +49,7 @@ class mBackgroundProcessor(object):
                         mResultInfo = Scheme.ResultInfo(user_idx, userdata_idx)
                         
                         
-                        cur.execute("select file_name, folder_path, video_hash, video_format from UserData where `idx` = %s", (userdata_idx))
+                        cur.execute("select video_hash, video_format from UserData where `idx` = %s", (userdata_idx))
                         rows = cur.fetchall()
 
                         mUserData.idx, mUserData.user_idx = userdata_idx, user_idx
