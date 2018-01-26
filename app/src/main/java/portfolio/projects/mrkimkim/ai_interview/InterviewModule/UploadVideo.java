@@ -75,9 +75,9 @@ public class UploadVideo extends AppCompatActivity {
 
                 // 유저 인증 토큰을 전송함.
                 byte[] userId = Functions.longToBytes(GlobalApplication.mUserInfoManager.getUserProfile().getId());
-                byte[] userToken = GlobalApplication.mUserInfoManager.getAppToken();
-                byte[] packet = new byte[userId.length + userToken.length];
-                networkWriter.write(packet);
+                byte[] userToken = GlobalApplication.mUserInfoManager.getAppToken();;
+                networkWriter.write(userId);
+                networkWriter.write(userToken);
                 networkWriter.flush();
 
                 // 비디오를 로드함

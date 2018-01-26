@@ -4,5 +4,5 @@
     <integer name="result_ib_share">202</integer>
     <integer name="result_ib_delete">203</integer>
     <integer name="category_card">301</integer>
-    <integer name="op_upload">100</integer>
+    <integer name="op_upload">1000</integer>
 </resources>

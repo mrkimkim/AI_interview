@@ -13,6 +13,7 @@ def hexToLong(str_hex):
     return str(ret)
 
 def hexToString(bytes_token):
+    print (bytes_token)
     return bytes_token.decode('ascii')
 
 class Session(threading.Thread):
@@ -35,17 +36,22 @@ class Session(threading.Thread):
             64byte - UserToken
         """
         try:
-            packet = self.conn.recv(72)
-            self.user_id = hexToLong(packet[:8])
-            self.user_token = hexToString(packet[:])
-
+            packet = self.conn.recv(8)
+            self.user_id = hexToLong(packet)
+            packet = self.conn.recv(64)
+            self.user_token = hexToString(packet)
+            
             check_query = """select app_token from UserInfo where `idx` = %s"""
             self.curs.execute(check_query, (self.user_id))
-
             rows = self.curs.fetchall()
+            print (len(rows))
+            print (self.user_token)
+            print (rows[0][0])
+            
             if len(rows) < 1 or rows[0][0] != self.user_token: raise Exception
         except Exception as e:
-            print (e)
+            print (Exception)
+             print (e)
             self.curs.close()
             self.sql.close()
             self.conn.close()
@@ -56,7 +62,8 @@ class Session(threading.Thread):
         while True:
             try:
                 print ("Waiting Command...")
-                cmd = hexToLong(self.conn.recv(8))
+                cmd = hexToLong(self.conn.recv(4))
+                print (cmd)
                 if cmd == 4444:
                     print ("Close Program")
                     self.conn.close()
