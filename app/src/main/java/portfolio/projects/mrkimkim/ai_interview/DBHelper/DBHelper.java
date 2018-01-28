@@ -19,7 +19,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static DBHelper instance;
 
     public static String[] column_category = {"idx","parent_idx","title","description","n_subcategory","n_probset","n_problem"};
-    public static String[] column_questioninfo = {"idx","category_idx","probset_idx","title","description","sub_chart","sub_text","duration","language"};
+    public static String[] column_questioninfo = {"idx","category_idx","title","history","duration","src_lang","dest_lang","price", "like_cnt","view_cnt", "markdown_uri"};
+    public static String[] column_interviewdata = {"idx", "user_idx", "video_path", "emotion_path", "stt_path", "task_idx", "result_idx", "question_idx"};
     SQLiteDatabase db;
 
 
@@ -56,6 +57,19 @@ public class DBHelper extends SQLiteOpenHelper {
                 "user_upvote INTEGER," +
                 "user_credit INTEGER);");
 
+
+        // 인터뷰 데이터 관리 테이블
+        db.execSQL("CREATE TABLE InterviewData (idx INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "user_idx INTEGER," +
+                "video_path TEXT," +
+                "emotion_path TEXT," +
+                "stt_path TEXT," +
+                "task_idx INTEGER," +
+                "result_idx INTEGER," +
+                "question_idx INTEGER" +
+                ");");
+
+
         // 카테고리 관리 테이블
         db.execSQL("CREATE TABLE Category (idx INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "parent_idx INTEGER, " +
@@ -66,15 +80,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 "n_problem INTEGER);");
 
         // 문제 관리 테이블
-        db.execSQL("CREATE TABLE Problems (idx INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        db.execSQL("CREATE TABLE Question (idx INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "category_idx INTEGER, " +
-                "probset_idx INTEGER, " +
                 "title STRING, " +
-                "description STRING, " +
-                "sub_chart STRING, " +
-                "sub_text STRING, " +
-                "duration INTEGER, " +
-                "language INT);");
+                "history STRING, " +
+                "duration STRING, " +
+                "src_lang STRING," +
+                "dest_lang STRING," +
+                "price STRING," +
+                "like_cnt STRING, " +
+                "view_cnt STRING, " +
+                "markdown_uri STRING);");
     }
 
     public void insert(String table_name, String[] i_column, String[] i_value, String[] w_column, String[] w_value) {
@@ -152,10 +168,18 @@ public class DBHelper extends SQLiteOpenHelper {
         return dbVersion;
     }
 
+    public boolean updateInterviewData() {
+        return true;
+    }
+
+    public boolean updateResultInfo() {
+        return true;
+    }
+
     public boolean updateCategory(String[] csv) {
         // 기존 테이블 데이터
         cleanTable("Category");
-        cleanTable("Problems");
+        cleanTable("Question");
         try {
             Log.d("CSV LENGTH : ", String.valueOf(csv.length));
             // 새로운 테이블 데이터를 삽입
@@ -166,8 +190,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 if (value.length == 7) {
                     this.insert("Category", column_category, value, null, null);
                 } // QuestionInfo 데이터
-                else if (value.length == 9) {
-                    this.insert("Problems", column_questioninfo, value, null, null);
+                else if (value.length == 11) {
+                    this.insert("Question", column_questioninfo, value, null, null);
                 }
             }
             return true;

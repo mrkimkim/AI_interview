@@ -79,12 +79,15 @@ public class LoginActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkPermissions()) {
                 if (showRequestPermission()) {
-
                 } else {
                     ActivityCompat.requestPermissions(this, permissions, 12345);
                 }
             }
         }
+
+        // Firebase 푸시 기기 등록
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
+        FirebaseInstanceId.getInstance().getToken();
 
         // 세션 콜백 등록
         callback = new SessionCallback();
@@ -112,11 +115,6 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             loginButton.setVisibility(View.VISIBLE);
         }
-
-        // Firebase 푸시 기기 등록
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
-        FirebaseInstanceId.getInstance().getToken();
-
     }
 
     @Override
@@ -208,11 +206,15 @@ public class LoginActivity extends AppCompatActivity {
                     networkDataWriter.write(packet);
                     networkDataWriter.flush();
 
-                    // 로그인 결과로 앱 서버의 AccessToken을 얻음tlsgks
+                    // 로그인 결과로 앱 서버의 AccessToken을 얻음
                     app_token = new byte[64];
                     networkDataReader.read(app_token, 0, 64);
                     GlobalApplication.mUserInfoManager.setAppToken(app_token);
                     Log.d("AppToken : ", app_token.toString());
+
+                    // FCM 푸시 토큰을 전송
+                    networkDataWriter.write(FirebaseInstanceId.getInstance().getToken().getBytes());
+                    networkDataWriter.flush();
 
                     // 로컬 DB 버전와 서버 DB를 동기화
                     DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
@@ -224,6 +226,7 @@ public class LoginActivity extends AppCompatActivity {
                     packet = new byte[4];
                     networkDataReader.read(packet, 0, 4);
                     int db_size = Functions.bytesToInt(packet);
+                    Log.d("Pakcet Size : ", String.valueOf(db_size));
                     if (db_size != 0) {
                         // csv 형태의 데이터를 받음
                         packet = new byte[db_size];

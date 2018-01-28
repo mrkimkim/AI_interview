@@ -2,6 +2,7 @@ package portfolio.projects.mrkimkim.ai_interview;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import com.google.android.youtube.player.YouTubeStandalonePlayer;
 
 import java.util.ArrayList;
 
+import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.InterviewModule.ActivityInterview;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_question;
 import us.feras.mdv.MarkdownView;
@@ -43,6 +45,8 @@ public class ChooseQuestion extends YouTubeBaseActivity implements YouTubePlayer
     RecyclerView.LayoutManager layoutManager;
     Adapter_Question mAdapter_Question;
     ArrayList items_question;
+
+    int category_idx;
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
@@ -67,17 +71,47 @@ public class ChooseQuestion extends YouTubeBaseActivity implements YouTubePlayer
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choosequestion);
 
-        items_question = new ArrayList<item_question>();
-        items_question.add(new item_question(0, 0, "배우가 된 이유에 대해서 뮤지컬 형식을 사용해서 설명해주세요", "2014년 한예종 연극영화과", "30초", "한국어", "1 크레딧", "300만", "21만", "www.naver.com"));
-        items_question.add(new item_question(0, 0, "배우가 된 이유에 대해서 설명해주세요", "2014년 한예종 연극영화과", "30초", "한국어", "1 크레딧", "300만", "21만", "www.naver.com"));
+        Intent intent = getIntent();
+        category_idx = intent.getIntExtra("category_idx", 0);
 
-        mAdapter_Question = new Adapter_Question(items_question, mContext);
+        items_question = new ArrayList<item_question>();
 
         recyclerView = (RecyclerView)findViewById(R.id.cq_recycler_view);
         recyclerView.setHasFixedSize(true);
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mAdapter_Question);
+
+        _LoadQuestion();
+    }
+
+
+    private void _LoadQuestion() {
+        class t_LoadQuestion implements Runnable {
+            @Override
+            public void run() {
+                DBHelper mDBhelper = DBHelper.getInstance(getApplicationContext());
+                ContentValues[] values = mDBhelper.select("Question", DBHelper.column_questioninfo, "category_idx=?", new String[]{String.valueOf(category_idx)}, null, null, null);
+
+                for(int i = 0; i < values.length; ++i) {
+                    items_question.add(new item_question(values[i].getAsInteger("idx"),
+                            values[i].getAsInteger("category_idx"),
+                            values[i].getAsString("title"),
+                            values[i].getAsString("history"),
+                            values[i].getAsString("duration"),
+                            values[i].getAsString("src_lang"),
+                            values[i].getAsString("dest_lang"),
+                            values[i].getAsString("price"),
+                            values[i].getAsString("view_cnt"),
+                            values[i].getAsString("like_cnt"),
+                            values[i].getAsString("markdown_uri")));
+                }
+
+                mAdapter_Question = new Adapter_Question(items_question, mContext);
+                recyclerView.setLayoutManager(layoutManager);
+                recyclerView.setAdapter(mAdapter_Question);
+            }
+        }
+        Runnable t = new t_LoadQuestion();
+        t.run();
     }
 
     public class Adapter_Question extends RecyclerView.Adapter<Adapter_Question.ViewHolder> {
@@ -112,15 +146,15 @@ public class ChooseQuestion extends YouTubeBaseActivity implements YouTubePlayer
             holder.tv_title.setEllipsize(TextUtils.TruncateAt.END);
 
             // 디스크립션 정보
-            String description = mItems.get(position).getDuration() + "  |  " + mItems.get(position).getLanguage() + "  |  " + mItems.get(position).getPrice();
+            String description = mItems.get(position).getDuration() + "  |  " + mItems.get(position).getSrc_lang() + "  |  " + mItems.get(position).getPrice();
             holder.tv_description.setText(description);
 
             // 출처 정보
             holder.tv_history.setText(mItems.get(position).getHistory());
 
             // 뷰 카운트와 좋아요 수
-            holder.tv_totalView.setText(mItems.get(position).getTotal_view());
-            holder.tv_totalLike.setText(mItems.get(position).getTotal_like());
+            holder.tv_totalView.setText(mItems.get(position).getView_cnt());
+            holder.tv_totalLike.setText(mItems.get(position).getLike_cnt());
         }
 
         @Override
@@ -198,6 +232,7 @@ public class ChooseQuestion extends YouTubeBaseActivity implements YouTubePlayer
                                 public void onClick(DialogInterface dialog, int which) {
                                     Toast.makeText(getApplicationContext(),"면접장으로 이동합니다.",Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(ChooseQuestion.this, ActivityInterview.class);
+                                    intent.putExtra("question_idx", mItems.get(getAdapterPosition()).getidx());
                                     startActivity(intent);
                                 }
                             });

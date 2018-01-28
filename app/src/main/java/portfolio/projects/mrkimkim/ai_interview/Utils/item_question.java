@@ -7,21 +7,23 @@ package portfolio.projects.mrkimkim.ai_interview.Utils;
 public class item_question {
     int idx, category_idx;
     String title, history;
-    String duration, language, price;
-    String total_view, total_like;
+    String duration, src_lang, dest_lang, price;
+    String view_cnt, like_cnt;
     String markdown_uri;
 
     public int getidx() { return this.idx;}
-    public int getCategory_idx_idx() { return this.category_idx;}
+    public int getCategoryIdx() { return this.category_idx;}
     public String getTitle() { return this.title; }
     public String getHistory() { return this.history; }
     public String getDuration() { return this.duration; }
-    public String getLanguage() { return this.language; }
+    public String getSrc_lang() { return this.src_lang; }
+    public String getDest_lang() { return this.dest_lang;}
     public String getPrice() { return this.price; }
-    public String getTotal_view() { return this.total_view; }
-    public String getTotal_like() { return this.total_like; }
+    public String getView_cnt() { return this.view_cnt; }
+    public String getLike_cnt() { return this.like_cnt; }
     public String getMarkdown_uri() { return this.markdown_uri; }
-    public item_question(int idx, int category_idx, String title, String history, String duration, String language, String price, String total_view, String total_like, String markdown_uri) {
+
+    public item_question(int idx, int category_idx, String title, String history, String duration, String src_lang, String dest_lang, String price, String view_cnt, String like_cnt, String markdown_uri) {
         this.idx= idx;
         this.category_idx = idx;
 
@@ -29,11 +31,12 @@ public class item_question {
         this.history = history;
 
         this.duration = duration;
-        this.language = language;
+        this.src_lang = src_lang;
+        this.dest_lang = dest_lang;
         this.price = price;
 
-        this.total_view = total_view;
-        this.total_like = total_like;
+        this.view_cnt = view_cnt;
+        this.like_cnt = like_cnt;
 
         this.markdown_uri = markdown_uri;
     }

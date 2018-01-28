@@ -13,6 +13,7 @@ import android.util.Log;
 import com.google.firebase.messaging.RemoteMessage;
 
 import portfolio.projects.mrkimkim.ai_interview.MainActivity;
+import portfolio.projects.mrkimkim.ai_interview.R;
 
 /**
  * Created by 킹조 on 2018-01-03.
@@ -43,8 +44,8 @@ public class MyFireBaseMessagingService extends com.google.firebase.messaging.Fi
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(android.R.mipmap.sym_def_app_icon)
-                .setContentTitle("FCM TEST")
+                .setSmallIcon(R.drawable.icon_power)
+                .setContentTitle("분석 완료")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)

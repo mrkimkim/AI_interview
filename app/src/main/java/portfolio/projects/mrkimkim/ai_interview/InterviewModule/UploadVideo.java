@@ -14,50 +14,52 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
+import portfolio.projects.mrkimkim.ai_interview.MainActivity;
 import portfolio.projects.mrkimkim.ai_interview.NetworkModule.NetworkService;
 import portfolio.projects.mrkimkim.ai_interview.R;
 import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
 
 public class UploadVideo extends AppCompatActivity {
     private Socket socket;
-    private BufferedReader networkReader;
+    private InputStream networkReader;
     private OutputStream networkWriter;
     private Handler mHandler;
-
     private Uri uri;
-    @Override
-    protected void onStop() {
-        super.onStop();
-        try {
-            socket.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
+    private int question_idx;
+    private String video_path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_video);
 
-        // 이전 액티비티의 영상 인텐트 전달
-        Intent intent = getIntent();
-        String path = intent.getStringExtra("uri");
-        uri = Uri.parse(path);
-
+        // 버전 체크
         if (android.os.Build.VERSION.SDK_INT > 9)
         {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
 
-        // Connect to Server
+
+        // 이전 액티비티의 영상 인텐트 전달
+        Intent intent = getIntent();
+        String path = intent.getStringExtra("uri");
+
+        question_idx = intent.getIntExtra("question_idx", 0);
+        video_path = intent.getStringExtra("video_path");
+        uri = Uri.parse(path);
+
+
+        // 서버에 연결
         mHandler = new Handler();
         try {
             setSocket(getString(R.string.server_ip), Integer.parseInt(getString(R.string.cmd_server_port)));
@@ -73,12 +75,14 @@ public class UploadVideo extends AppCompatActivity {
                 int maxBufferSize = 2048;
                 final byte[] buffers = new byte[maxBufferSize];
 
+
                 // 유저 인증 토큰을 전송함.
                 byte[] userId = Functions.longToBytes(GlobalApplication.mUserInfoManager.getUserProfile().getId());
                 byte[] userToken = GlobalApplication.mUserInfoManager.getAppToken();;
                 networkWriter.write(userId);
                 networkWriter.write(userToken);
                 networkWriter.flush();
+
 
                 // 비디오를 로드함
                 String[] FileName = uri.getPath().split("/");
@@ -87,10 +91,12 @@ public class UploadVideo extends AppCompatActivity {
                 long video_size = file.length();
                 int read = 0;
 
+
                 // 헤더 전송 (20byte)
-                byte[] Opcode = NetworkService.getHeader(getResources().getInteger(R.integer.op_upload), 0, video_size);
+                byte[] Opcode = NetworkService.getHeader(getResources().getInteger(R.integer.op_upload), Long.valueOf(String.valueOf(question_idx)), video_size);
                 networkWriter.write(Opcode);
                 networkWriter.flush();
+
 
                 // 비디오 데이터 전송
                 BufferedInputStream bis = new BufferedInputStream(fis);
@@ -98,19 +104,70 @@ public class UploadVideo extends AppCompatActivity {
                     networkWriter.write(buffers, 0, buffers.length);
                 }
                 networkWriter.flush();
+
+
+                // 업로드 된 영상의 task_idx를 DB에 저장한다.
+                byte[] packet = new byte[8];
+                networkReader.read(packet, 0, 8);
+                long task_idx = Functions.bytesToLong(packet);
+
+                DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
+                mDBHelper.update("InterviewData",
+                        new String[]{"task_idx", "question_idx"},
+                        new String[]{String.valueOf(task_idx), String.valueOf(question_idx)}, "video_path= ?", new String[]{video_path});
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(UploadVideo.this, "영상 전송에 성공했습니다.", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                // 메인 액티비티로 돌아간다.
+                Intent intent = new Intent(UploadVideo.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "영상 전송에 실패했습니다.", Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(UploadVideo.this, "영상 전송에 실패했습니다.", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         }
     };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            networkReader.close();
+            networkWriter.close();
+            socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void setSocket(String ip, int port) {
         try {
             socket = new Socket();
             socket.connect(new InetSocketAddress(ip, port), 1000);
             networkWriter = socket.getOutputStream();
-            networkReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            networkReader = socket.getInputStream();
         } catch (IOException e) {
             Log.d("Error : ", "failed to connect server");
             System.out.println(e);

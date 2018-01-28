@@ -1,5 +1,6 @@
 package portfolio.projects.mrkimkim.ai_interview;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -17,7 +18,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import java.util.ArrayList;
 
+import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.Utils.LoadingDialog;
+import portfolio.projects.mrkimkim.ai_interview.Utils.item_question;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_result;
 
 public class ResultActivity extends AppCompatActivity {
@@ -27,6 +30,7 @@ public class ResultActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
 
     LoadingDialog loadingDialog;
+    ArrayList items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,30 +39,58 @@ public class ResultActivity extends AppCompatActivity {
 
         // RecyclerView
         mContext = getApplicationContext();
-
         recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-
-        ArrayList items = new ArrayList<>();
-        items.add(new item_result("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
-        items.add(new item_result("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
-        items.add(new item_result("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
-        items.add(new item_result("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
-        items.add(new item_result("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
-        items.add(new item_result("자신에 대해 소개해주세요.\n어떤 답변이든지 좋습니다.", "한국어", "한국어", "발표시간 (60초)  |  2017-12-24 09:00", "2017 상반기 삼성전자 공채"));
-
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-        Adapter = new ResultAdapter(items, mContext);
-        recyclerView.setAdapter(Adapter);
 
-        // Dialog setting
-        loadingDialog = new LoadingDialog(ResultActivity.this);
-        loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+        // DB에서 InterviewData를 로드함
+        _LoadResult();
     }
 
-    public void updateResult(View v) {
-        loadingDialog.show();
+    private void _LoadResult() {
+        class t_LoadResult implements Runnable {
+            @Override
+            public void run() {
+                items = new ArrayList<>();
+
+                DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
+                ContentValues[] values = mDBHelper.select("InterviewData", DBHelper.column_interviewdata, null, null, null, null, null);
+                for (int i = 0; i < values.length; ++i) {
+
+                    // InterviewData를 로드.
+                    long idx = values[i].getAsLong("idx");
+                    long user_idx = 0;
+                    //long user_idx = values[i].getAsLong("user_idx");
+                    String video_path = values[i].getAsString("video_path");
+                    String emotion_path = values[i].getAsString("emotion_path");
+                    String stt_path = values[i].getAsString("stt_path");
+                    long task_idx = values[i].getAsLong("task_idx");
+                    long result_idx = values[i].getAsLong("result_idx");
+                    long question_idx = values[i].getAsLong("question_idx");
+
+                    // Question 데이터를 로드함
+                    ContentValues[] question = mDBHelper.select("Question", DBHelper.column_questioninfo, "idx=?", new String[]{String.valueOf(question_idx)}, null, null, null);
+                    if (question.length > 0) {
+                        String title = question[0].getAsString("title");
+                        String history = question[0].getAsString("history");
+                        String duration = question[0].getAsString("duration");
+                        String src_lang = question[0].getAsString("src_lang");
+                        String dest_lang = question[0].getAsString("dest_lang");
+                        String like_cnt = question[0].getAsString("like_cnt");
+                        String view_cnt = question[0].getAsString("view_cnt");
+                        String markdown_uri = question[0].getAsString("markdown_uri");
+                        items.add(new item_result(idx, user_idx, video_path, emotion_path, stt_path, task_idx, result_idx, question_idx, title, history, duration, src_lang, dest_lang, view_cnt, like_cnt, markdown_uri));
+                    }
+
+                }
+
+                Adapter = new ResultAdapter(items, mContext);
+                recyclerView.setLayoutManager(layoutManager);
+                recyclerView.setAdapter(Adapter);
+            }
+        }
+        Runnable t = new t_LoadResult();
+        t.run();
     }
 
     class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder> {
@@ -82,10 +114,10 @@ public class ResultActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.t1.setText(mItems.get(position).getInterview_question());
+            holder.t1.setText(mItems.get(position).getTitle());
             holder.t2.setText(mItems.get(position).getSrc_lang() + " -> " + mItems.get(position).getDest_lang() + "\n"
-                    + mItems.get(position).getInterview_time() + "\n"
-                    + mItems.get(position).getInterview_category());
+                    + mItems.get(position).getDuration() + "\n"
+                    + mItems.get(position).getHistory());
         }
 
         @Override

@@ -24,6 +24,8 @@ import android.widget.Toast;
 import java.io.File;
 
 import at.markushi.ui.CircleButton;
+import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
+import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
 import portfolio.projects.mrkimkim.ai_interview.R;
 
 public class ActivityInterview extends AppCompatActivity {
@@ -32,6 +34,7 @@ public class ActivityInterview extends AppCompatActivity {
     private static final String TAG = "ActivityInterview";
     private AppCompatActivity mActivity;
 
+    int question_idx;
     String tempFilePath = "";
     boolean isRecording = false;
 
@@ -46,6 +49,9 @@ public class ActivityInterview extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ctx = this;
         mActivity = this;
+
+        Intent intent = getIntent();
+        question_idx = intent.getIntExtra("question_idx", 0);
 
         clearTitleBar();
         setContentView(R.layout.activity_interview);
@@ -182,6 +188,7 @@ public class ActivityInterview extends AppCompatActivity {
         });
     }
 
+
     public void dialogConnectServer() {
         AlertDialog.Builder builder = new AlertDialog.Builder(ActivityInterview.this);
         builder.setTitle("면접 종료");
@@ -189,9 +196,12 @@ public class ActivityInterview extends AppCompatActivity {
         builder.setPositiveButton("예",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        SaveDB();
                         Toast.makeText(getApplicationContext(),"서버와 연결 시작",Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(ActivityInterview.this, UploadVideo.class);
                         intent.putExtra("uri", "file://" + tempFilePath);
+                        intent.putExtra("question_idx", question_idx);
+                        intent.putExtra("video_path", tempFilePath);
                         startActivity(intent);
                     }
                 });
@@ -204,6 +214,7 @@ public class ActivityInterview extends AppCompatActivity {
         builder.show();
     }
 
+
     public void dialogSaveVideo() {
         AlertDialog.Builder builder = new AlertDialog.Builder(ActivityInterview.this);
         builder.setTitle("동영상 저장");
@@ -211,6 +222,7 @@ public class ActivityInterview extends AppCompatActivity {
         builder.setPositiveButton("예",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        SaveDB();
                         Toast.makeText(getApplicationContext(), tempFilePath + "경로에 영상이 저장되었습니다. 면접 결과 페이지에서 AI 분석을 요청할 수 있습니다.",Toast.LENGTH_LONG).show();
                     }
                 });
@@ -222,6 +234,16 @@ public class ActivityInterview extends AppCompatActivity {
                 });
         builder.show();
     }
+
+
+    public void SaveDB() {
+        DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
+        mDBHelper.insert("InterviewData",
+                new String[]{"user_idx", "video_path", "task_idx", "result_idx", "question_idx"},
+                new String[]{String.valueOf(GlobalApplication.mUserInfoManager.getUserProfile().getId()), tempFilePath, "0", "0", String.valueOf(question_idx)}, null, null);
+        Log.d("User ID User ID User ID", String.valueOf(GlobalApplication.mUserInfoManager.getUserProfile().getId()));
+    }
+
 
     public void HandleCameraException() {
         btn_record.setClickable(false);

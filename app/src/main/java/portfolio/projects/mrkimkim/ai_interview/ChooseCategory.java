@@ -226,6 +226,7 @@ public class ChooseCategory extends AppCompatActivity {
 
                     // 문제 로딩
                     Intent intent = new Intent(ChooseCategory.this, ChooseQuestion.class);
+                    intent.putExtra("category_idx", instance.getidx());
                     startActivity(intent);
                 }
             }
