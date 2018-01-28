@@ -12,24 +12,23 @@ headers = {
 params = urllib.parse.urlencode({})
 
 class mVideoProcessor(object):
-    def __init__(self, UserData):
+    def __init__(self, mTmpInfo):
         print ("Start Video Processor")
-        self.UserData = UserData
-        self.file_name = self.UserData.file_name
+        self.mTmpInfo = mTmpInfo
 
-        self.Folder_path = self.UserData.folder_path
-        self.Frame_path = self.Folder_path + "Frame/"
-
-        self.Emotion_path = self.Folder_path + self.UserData.video_hash + ".emo"
+        self.mTmpInfo.tmp_emotion = self.mTmpInfo.tmp_folder + "emotion.emo"
         self.emotion = []
         
     def run(self):
         print ("---- Process Frame Data ----")
         print ("[1] Connecting to MS Azure Server")
         conn = http.client.HTTPSConnection('westus.api.cognitive.microsoft.com')
+
+
+
         
         print ("[2] Analyzing Frame")
-        targets = os.listdir(self.Frame_path)
+        targets = os.listdir(self.mTmpInfo.tmp_folder)
 
         self.video_frame_count = len(targets)
         Percentile = 0.1
@@ -37,30 +36,32 @@ class mVideoProcessor(object):
 
         targets.sort()
         for target in targets:
-            filename = self.Frame_path + target
-            frame = open(filename, 'rb').read()
-            conn.request("POST", "/emotion/v1.0/recognize?%s" % params, frame, headers)
-            response = conn.getresponse()
-            data = response.read()
-
-            self.emotion.append(data)
-            os.remove(filename)
-
-            Processed_cnt += 1
-            if Processed_cnt >= self.video_frame_count * Percentile:
-                print (str(int(Percentile * 100)) + "% Complete")
-                Percentile += 0.1
-
+            if 'frame' in target:
+                frame = open(self.mTmpInfo.tmp_folder + target, 'rb').read()
+                conn.request("POST", "/emotion/v1.0/recognize?%s" % params, frame, headers)
+                response = conn.getresponse()
+                data = response.read()
+    
+                self.emotion.append(data)
+                os.remove(self.mTmpInfo.tmp_folder + target)
+    
+                Processed_cnt += 1
+                if Processed_cnt >= self.video_frame_count * Percentile:
+                    print (str(int(Percentile * 100)) + "% Complete")
+                    Percentile += 0.1
         conn.close()
-        shutil.rmtree(self.Frame_path)
+
+
+
         
         print ("[3] Write Emotion Data")
-        f = open(self.Emotion_path, 'w')
-        for emotion in self.emotion:
-            emotion = str(emotion).replace('b','')
-            f.write(emotion)
-        f.close()
-        
+        with open(self.mTmpInfo.tmp_emotion, 'w') as f:
+            for emotion in self.emotion:
+                f.write(str(emotion).replace('b',''))
         self.emotion = []
+
+
+
+        
         print ("--- Successfully Write Video Result Data ---")
-        return self.Emotion_path, self.UserData
+        return self.mTmpInfo.tmp_emotion, self.mTmpInfo

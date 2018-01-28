@@ -7,14 +7,17 @@ def hexToLong(str_hex):
     for i in range(len(str_hex)):
         ret *= 256
         ret += int(str_hex[i])
-    return str(ret)
+    return ret
+
+def longToHex(Num):
+    return ("%08X" % (int(Num)))
 
 class mVideoReceiver(object):
-    def __init__(self, conn, sql):
+    def __init__(self, conn, sql, user_idx):
         self.conn = conn
         self.sql = sql
-        self.user_idx = 0
-        self.user_id = hashlib.sha256("Guest").hexdigest()
+        self.user_idx = user_idx
+        self.user_id = hashlib.sha256("Guest".encode('utf-8')).hexdigest()
         
         self.video_hash = ""
         self.video_size = 0
@@ -51,7 +54,7 @@ class mVideoReceiver(object):
 
     def SaveDB(self):
         # Save to UserData DB
-        query = """insert into UserData(user_idx, video_hash, video_size, video_format)
+        query = """insert into InterviewData(user_idx, video_hash, video_size, video_format)
                 values (%s, %s, %s, %s)"""
         print (self.user_idx, self.video_hash, self.video_size, self.video_format)
         data = (self.user_idx, self.video_hash, self.video_size, self.video_format)
@@ -59,13 +62,20 @@ class mVideoReceiver(object):
         curs.execute(query, data)
     
         # Save to TaskQueue DB
-        query = """select idx from UserData where `video_hash` = %s"""
+        query = """select idx from InterviewData where `video_hash` = %s"""
         curs.execute(query, (self.video_hash))
         rows = curs.fetchall()
-        userdata_idx = rows[0][0]
+        interviewdata_idx = rows[0][0]
         
-        query = """insert into TaskQueue(user_idx, userdata_idx) values (%s, %s)"""
-        curs.execute(query, (self.user_idx, userdata_idx))
+        query = """insert into TaskQueue(user_idx, interviewdata_idx) values (%s, %s)"""
+        curs.execute(query, (self.user_idx, interviewdata_idx))
+
+        # Send Client Task_idx
+        query = """select idx from TaskQueue where `interviewdata_idx` = %s"""
+        curs.execute(query, (interviewdata_idx))
+        rows = curs.fetchall()
+        task_idx = rows[0][0]
+        self.conn.send(longToHex(task_idx).encode('ascii'))
 
     def SaveVideo(self):
         from google.cloud import storage
@@ -77,47 +87,37 @@ class mVideoReceiver(object):
         
         storage_client = storage.Client()
         bucket = storage_client.get_bucket("ai_interview")
-        blob = bucket.blob(str(self.user_idx) + self.video_hash)
-        blob.upload_from_file(self.data)
+        blob = bucket.blob(str(self.user_idx) + '_' + self.video_hash)
+        blob.upload_from_string(self.data)
         
         ext = 'mp4'
         self.video_format = extFinder.findExt("Video", ext)
-        
-        f = open(self.folder_path + self.video_hash + '.' + ext, 'wb')
-        f.write(self.data)
-        f.close()
 
     def receive(self, length):
         try:
-            if length <= 1000:
-                data = self.conn.recv(length)
-                if data:
-                    self.signal()
-                    return data.strip()
-            else:
-                print ("start receiving")
-                ret = ""
-                received = 0
-                percentile = 0.1
-                while received < length:
-                    data = self.conn.recv(2048)
-                    received += len(data)
-                    ret += data
+            print ("start receiving")
+            received = 0
+            percentile = 0.1
+            
+            while received < length:
+                data = self.conn.recv(min(2048, length - received))
+                if received == 0: ret = data
+                else: ret += data
+                received += len(data)
 
-                    if received > length * percentile:
-                        print (str(percentile * 100) + "percent received")
-                        percentile += 0.1
+                if received > length * percentile:
+                    print (str(percentile * 100) + "percent received")
+                    percentile += 0.1
+                    
         except Exception as e:
             self.conn.close()
             self.stop()
             raise KeyboardInterrupt
-
-        self.signal()
         return ret
 
     def run(self):
         try:
-            print ("Gettting Question idx...")
+            print ("Getting Question idx...")
             self.get_question_idx()
             
             print ("Getting File Size...")

@@ -6,7 +6,7 @@ from pyfcm import FCMNotification
 push_service = FCMNotification(api_key="AAAAuP9RJiM:APA91bEdTsyNT-zMrUf3nTR1suqSEVLKVOMBKdipBO9kl3Gb1FG9UebsXM08SkuK-elJgPggW0SvveXDOXcUpbZqzEeEK_MpADIEG77m61we50QdvMwmTz1V86zg2xx2l4Rplh8G-y4m")
 
 # Connect to DB Server
-class PushServer(object):
+class mResultPush(object):
     def __init__(self):
         self.sql = pymysql.connect(host='localhost',
                                    user='root',

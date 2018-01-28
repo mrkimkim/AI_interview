@@ -13,14 +13,10 @@ class UserInfo():
         self.Session = ""
         self.last_login_ip = "127.0.0.1"
         
-class UserData():
+class InterviewData():
     def __init__(self, user_idx):
         self.idx = ""
         self.user_idx = user_idx
-
-        """ Directory Info """
-        self.folder_path = ""
-        self.file_name = ""
 
         """ Video Info """
         self.video_hash = "" #
@@ -51,3 +47,15 @@ class ResultInfo():
         ''' Result Info '''
         self.emotion_path = ""
         self.stt_path = ""
+
+class TmpInfo():
+    def __init__(self, video_blob, audio_blob, tmp_folder, tmp_video, tmp_audio):
+        self.video_blob = video_blob
+        self.audio_blob = audio_blob
+
+        self.tmp_folder = tmp_folder
+        self.tmp_video = tmp_video
+        self.tmp_audio = tmp_audio
+        self.tmp_emotion = ''
+        self.tmp_stt = ''
+        

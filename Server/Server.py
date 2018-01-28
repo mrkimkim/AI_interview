@@ -10,7 +10,7 @@ def hexToLong(str_hex):
     for i in range(len(str_hex)):
         ret *= 256
         ret += int(str_hex[i])
-    return str(ret)
+    return ret
 
 def hexToString(bytes_token):
     print (bytes_token)
@@ -51,39 +51,26 @@ class Session(threading.Thread):
             if len(rows) < 1 or rows[0][0] != self.user_token: raise Exception
         except Exception as e:
             print (Exception)
-             print (e)
+            print (e)
             self.curs.close()
             self.sql.close()
             self.conn.close()
             self.stop()
             return
-        
-        # waiting message
-        while True:
-            try:
-                print ("Waiting Command...")
-                cmd = hexToLong(self.conn.recv(4))
-                print (cmd)
-                if cmd == 4444:
-                    print ("Close Program")
-                    self.conn.close()
-                    self.stop()
-                    break
-                elif cmd == 1000:
-                    print ("Start Receving Video")
-                    mVideoReceiver = VideoReceiver.mVideoReceiver(self.conn, self.sql)
-                    file_path = mVideoReceiver.run()
-                    print ("Successfuly register Video Data")
-                elif "resultList" in cmd:
-                    print ("Result List")
-                    mResultSender = ResultSender.mResultSender(self.conn, self.sql, mUserInfo)
-                    mResultSender.run()
-                else: raise KeyboardInterrupt
-                raise KeyboardInterrupt
-            except KeyboardInterrupt:
-                print ("Force Down Server")
-                self.conn.close()
-                self.curs.close()
-                self.sql.close()
-                self.stop()
-                break
+
+        print ("Waiting Command...")
+        cmd = hexToLong(self.conn.recv(4))
+        print (cmd)
+        print (cmd + 1)
+        # interpret command
+        if cmd == 1000:
+            # receive Video from Client
+            mVideoReceiver = VideoReceiver.mVideoReceiver(self.conn, self.sql, self.user_id)
+            file_path = mVideoReceiver.run()
+
+            # PreProcess
+
+        self.conn.close()
+        self.curs.close()
+        self.sql.close()
+        self.stop()

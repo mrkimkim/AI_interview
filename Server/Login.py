@@ -58,6 +58,7 @@ class LoginSession(threading.Thread):
             return -1, "Error : Invalid packet format"
 
 
+
         """
         Verify Kakao_Token by Kakao REST API
         """
@@ -72,6 +73,8 @@ class LoginSession(threading.Thread):
             print (e)
             print ("Error : Fail to verify user")
             return -1, "Error : Fail to verify user"
+
+
 
 
         """
@@ -90,6 +93,8 @@ class LoginSession(threading.Thread):
                             values (%s, %s, %s, %s)"""
             data = (self.user_id, self.user_id, id_hash, 0)
             self.curs.execute(insert_query, data)
+
+
             
         """
         Generate app_token
@@ -100,12 +105,25 @@ class LoginSession(threading.Thread):
             update_query = """Update UserInfo SET `app_token` = %s where `idx` = %s"""
             self.curs.execute(update_query, (app_token, self.user_id))
             self.conn.send(app_token.encode('ascii'))
-            print (app_token.encode('ascii'))
-            print (len(app_token))
         except Exception as e:
-            print ("Token Update Failed.")
+            print ("App Token Update Failed.")
             print (e)
 
+
+
+        """
+        Receive & Register FCM Token
+        """
+        try:
+            push_token = self.conn.recv(152)
+            self.push_token = hexToString(push_token)
+            update_query = """Update UserInfo SET `push_token` = %s where `idx` = %s"""
+            self.curs.execute(update_query, (self.push_token, self.user_id))
+        except Exception as e:
+            print ("Push Token Update Failed.")
+            print (e)
+
+            
 
         """ Send DB File """
         try:
@@ -113,6 +131,7 @@ class LoginSession(threading.Thread):
             data_size = len(data.encode('utf-8'))
             print ("Total Byte is " + str(data_size))
             self.conn.send(bytes.fromhex("{:08x}".format(data_size)))
+            print (bytes.fromhex("{:08x}".format(data_size)))
             self.conn.send(data.encode('utf-8'))
         except Exception as e:
             print ("Send DB Failed")

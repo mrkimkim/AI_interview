@@ -7,8 +7,18 @@ import Scheme
 import preProcessor
 import VideoProcessor
 import AudioProcessor
+import PushServer
 import extFinder
 
+def get_storage_bucket():
+    from google.cloud import storage
+    from google.cloud import speech
+    from google.cloud.speech import enums
+    from google.cloud.speech import types
+
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket("ai_interview")
+    return bucket
 
 # Single Thread Processing Task Queue
 class mBackgroundProcessor(object):
@@ -38,45 +48,56 @@ class mBackgroundProcessor(object):
                     cur.execute("UPDATE TaskQueue SET `lock` = %s, `reg_date` = now() where `idx` = %s", (lock_seed, idx))
 
                     time.sleep(1)
-                    cur.execute("select idx, user_idx, userdata_idx from TaskQueue where (`lock` = " + str(lock_seed) + ") limit 1")
+                    cur.execute("select idx, user_idx, interviewdata_idx from TaskQueue where (`lock` = " + str(lock_seed) + ") limit 1")
                     rows = cur.fetchall()
                     
-                    """ [3] Get Userdata from Database """
+                    """ [3] Get InterviewData from Database """
                     if len(rows) > 0:
-                        task_idx, user_idx, userdata_idx = rows[0][0], rows[0][1], rows[0][2]
+                        task_idx, user_idx, interviewdata_idx = rows[0][0], rows[0][1], rows[0][2]
                         
-                        mUserData = Scheme.UserData(user_idx)
-                        mResultInfo = Scheme.ResultInfo(user_idx, userdata_idx)
+                        mInterviewData = Scheme.InterviewData(user_idx)
+                        mResultInfo = Scheme.ResultInfo(user_idx, interviewdata_idx)
                         
-                        
-                        cur.execute("select video_hash, video_format from UserData where `idx` = %s", (userdata_idx))
+                        cur.execute("select video_hash, video_format from InterviewData where `idx` = %s", (interviewdata_idx))
                         rows = cur.fetchall()
 
-                        mUserData.idx, mUserData.user_idx = userdata_idx, user_idx
-                        mUserData.file_name, mUserData.folder_path, mUserData.video_hash, mUserData.video_format = rows[0][0], rows[0][1], rows[0][2], rows[0][3]
+                        mInterviewData.idx, mInterviewData.user_idx = interviewdata_idx, user_idx
+                        mInterviewData.video_hash, mInterviewData.video_format = rows[0][0], rows[0][1]
+
 
                         """ [4] PreProcess Data """
-                        mPreProcessor = preProcessor.mPreProcessor(mUserData)
-                        mUserData = mPreProcessor.run()
+                        mPreProcessor = preProcessor.mPreProcessor(mInterviewData, get_storage_bucket())
+                        mInterviewData, mTmpInfo = mPreProcessor.run()
                         mPreProcessoor = None
+
                         
                         ''' [5-1] Process Video Data '''
-                        mVideoProcessor = VideoProcessor.mVideoProcessor(mUserData)
-                        mResultInfo.emotion_path, mUserData = mVideoProcessor.run()
+                        mVideoProcessor = VideoProcessor.mVideoProcessor(mTmpInfo)
+                        mResultInfo.emotion_path, mTmpInfo = mVideoProcessor.run()
                         mVideoProcessor = None
+
                         
                         ''' [5-2] Process Audio Data '''
-                        mAudioProcessor = AudioProcessor.mAudioProcessor(mUserData)
-                        mResultInfo.stt_path = mAudioProcessor.run()
+                        mAudioProcessor = AudioProcessor.mAudioProcessor(mInterviewData, mTmpInfo)
+                        mResultInfo.stt_path, mTmpInfo = mAudioProcessor.run()
                         mAudioProcessor = None
 
                         ''' [6] Update Result DB '''
-                        cur.execute("insert into ResultInfo (user_idx, userdata_idx, question_idx, emotion_path, stt_path) values(%s, %s, %s, %s, %s)",
-                                    (mUserData.user_idx, mUserData.idx, mUserData.question_idx, mResultInfo.emotion_path, mResultInfo.stt_path))
+                        cur.execute("insert into ResultInfo (user_idx, interviewdata_idx, question_idx, emotion_path, stt_path) values(%s, %s, %s, %s, %s)",
+                                    (mInterviewData.user_idx, mInterviewData.idx, mInterviewData.question_idx, mResultInfo.emotion_path, mResultInfo.stt_path))
+
                         
                         ''' [7] Patch TaskQueue '''
                         cur.execute("update TaskQueue SET `isProcessed`=%s where idx=%s", (1, task_idx))
 
+                        ''' [8] Push Message '''
+                        print ("Make Push")
+                        cur.execute("select push_token from UserInfo where `idx` = %s", (mInterviewData.user_idx))
+                        rows = cur.fetchall()
+
+                        push_token = [rows[0][0]]
+                        mPushServer = PushServer.mPushServer()
+                        mPushServer.run(push_token, "Finish", "Analyze Success")
                         print ("Finish Analyze")
                         
                 break

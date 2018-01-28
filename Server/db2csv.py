@@ -14,10 +14,12 @@ with open('DB.csv', 'w', newline='', encoding='utf-8') as csv_file:
 
     for i in range(len(rows)):
         writer.writerow(rows[i])
+        print (rows[i])
 
-    query = """select * from Problems"""
+    query = """select * from Question"""
     curs.execute(query)
     rows = curs.fetchall()
 
     for i in range(len(rows)):
         writer.writerow(rows[i])
+        print (rows[i])
