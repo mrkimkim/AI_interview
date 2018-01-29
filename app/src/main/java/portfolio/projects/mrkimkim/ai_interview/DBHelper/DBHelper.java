@@ -136,11 +136,13 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         for(int i = 0; i < u_column.length; ++i) values.put(u_column[i], u_value[i]);
         db.update(table_name, values, selection, selectionArgs);
+        db.close();
     }
 
     public void delete(String table_name, String selection, String[] selectionArgs) {
         db = getWritableDatabase();
-        db.execSQL("delete from " + table_name);
+        db.delete(table_name, selection, selectionArgs);
+        db.close();
     }
 
     // DB 업그레이드를 위해 버전이 변경될 때 호출되는 함수
@@ -154,6 +156,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db = getWritableDatabase();
             Log.d("TableName : ", tableName);
             db.execSQL("delete from " + tableName);
+            db.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

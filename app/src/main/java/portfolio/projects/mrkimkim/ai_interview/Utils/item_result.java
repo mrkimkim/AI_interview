@@ -33,6 +33,9 @@ public class item_result {
     public String getLike_cnt() { return this.like_cnt;}
     public String getMarkdown_uri() { return this.markdown_uri;}
 
+    public void setTask_idx(long task_idx) { this.task_idx = task_idx; }
+    public void setResult_idx(long result_idx) { this.result_idx = result_idx; }
+
     public item_result(long idx, long user_idx, String video_path, String emotion_path, String stt_path,
                        long task_idx, long result_idx, long question_idx,
                        String title, String history, String duration, String src_lang, String dest_lang, String view_cnt, String like_cnt, String markdown_uri) {

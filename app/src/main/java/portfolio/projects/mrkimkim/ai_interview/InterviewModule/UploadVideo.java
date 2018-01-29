@@ -34,7 +34,7 @@ public class UploadVideo extends AppCompatActivity {
     private Handler mHandler;
     private Uri uri;
 
-    private int question_idx;
+    private long question_idx;
     private String video_path;
 
     @Override
@@ -54,7 +54,7 @@ public class UploadVideo extends AppCompatActivity {
         Intent intent = getIntent();
         String path = intent.getStringExtra("uri");
 
-        question_idx = intent.getIntExtra("question_idx", 0);
+        question_idx = intent.getLongExtra("question_idx", 0);
         video_path = intent.getStringExtra("video_path");
         uri = Uri.parse(path);
 
@@ -75,14 +75,8 @@ public class UploadVideo extends AppCompatActivity {
                 int maxBufferSize = 2048;
                 final byte[] buffers = new byte[maxBufferSize];
 
-
                 // 유저 인증 토큰을 전송함.
-                byte[] userId = Functions.longToBytes(GlobalApplication.mUserInfoManager.getUserProfile().getId());
-                byte[] userToken = GlobalApplication.mUserInfoManager.getAppToken();;
-                networkWriter.write(userId);
-                networkWriter.write(userToken);
-                networkWriter.flush();
-
+                NetworkService.Auth_User(networkReader, networkWriter);
 
                 // 비디오를 로드함
                 String[] FileName = uri.getPath().split("/");

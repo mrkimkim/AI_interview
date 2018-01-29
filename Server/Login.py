@@ -131,7 +131,6 @@ class LoginSession(threading.Thread):
             data_size = len(data.encode('utf-8'))
             print ("Total Byte is " + str(data_size))
             self.conn.send(bytes.fromhex("{:08x}".format(data_size)))
-            print (bytes.fromhex("{:08x}".format(data_size)))
             self.conn.send(data.encode('utf-8'))
         except Exception as e:
             print ("Send DB Failed")

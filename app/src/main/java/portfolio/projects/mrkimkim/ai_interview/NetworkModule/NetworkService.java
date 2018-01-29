@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
 import portfolio.projects.mrkimkim.ai_interview.R;
 import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
 
@@ -142,4 +143,18 @@ public class NetworkService extends Service {
         Runnable t = new t_receiveData();
         t.run();
     }
+
+    public static void Auth_User(InputStream networkReader, OutputStream networkWriter) {
+        // 유저 인증 토큰을 전송함.
+        try {
+            byte[] userId = Functions.longToBytes(GlobalApplication.mUserInfoManager.getUserProfile().getId());
+            byte[] userToken = GlobalApplication.mUserInfoManager.getAppToken();
+            networkWriter.write(userId);
+            networkWriter.write(userToken);
+            networkWriter.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

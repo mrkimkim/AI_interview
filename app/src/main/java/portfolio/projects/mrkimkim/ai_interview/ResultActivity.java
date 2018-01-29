@@ -1,9 +1,10 @@
 package portfolio.projects.mrkimkim.ai_interview;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -16,11 +17,20 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
-import portfolio.projects.mrkimkim.ai_interview.Utils.LoadingDialog;
-import portfolio.projects.mrkimkim.ai_interview.Utils.item_question;
+import portfolio.projects.mrkimkim.ai_interview.InterviewModule.UploadVideo;
+import portfolio.projects.mrkimkim.ai_interview.NetworkModule.NetworkService;
+import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_result;
 
 public class ResultActivity extends AppCompatActivity {
@@ -29,8 +39,8 @@ public class ResultActivity extends AppCompatActivity {
     ResultAdapter Adapter;
     RecyclerView.LayoutManager layoutManager;
 
-    LoadingDialog loadingDialog;
-    ArrayList items;
+    ArrayList<item_result> items;
+    ArrayList<Long> ServerData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,20 +53,70 @@ public class ResultActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
 
-        // DB에서 InterviewData를 로드함
-        _LoadResult();
+        items = new ArrayList<item_result>();
+
+        // DB를 업데이트 함
+        _downloadServerDB();
     }
 
-    private void _LoadResult() {
-        class t_LoadResult implements Runnable {
+    private void _downloadServerDB() {
+        class t_downloadServerDB implements Runnable {
             @Override
             public void run() {
-                items = new ArrayList<>();
+                try {
+                    Socket socket = new Socket();
+                    socket.connect(new InetSocketAddress(getString(R.string.server_ip), Integer.parseInt(getString(R.string.cmd_server_port))), 1000);
+                    InputStream networkReader = socket.getInputStream();
+                    OutputStream networkWriter = socket.getOutputStream();
 
+                    // 유저 인증 정보 전송
+                    NetworkService.Auth_User(networkReader, networkWriter);
+
+                    // 명령 코드 전송
+                    networkWriter.write(Functions.intToBytes(2000));
+
+                    // 결과 데이터 크기 수신
+                    byte[] packet_size = new byte[8];
+                    networkReader.read(packet_size, 0, 8);
+
+                    // 결과 데이터 수신 후 task_idx, result_idx 생성
+                    byte[] packet = new byte[8];
+                    ServerData = new ArrayList<Long>();
+                    for(int i = 0; i < Functions.bytesToInt(packet_size); i += 8) {
+                        networkReader.read(packet, 0, 8);
+                        ServerData.add(Functions.bytesToLong(packet));
+                    }
+
+                    _updateLocalDB();
+                    _LoadInterviewData();
+                    _setAdapter();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        Runnable t = new t_downloadServerDB();
+        t.run();
+    }
+
+    public void _updateLocalDB() {
+        DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
+        for(int i = 0; i < ServerData.size(); i += 2) {
+            long task_idx = ServerData.get(i);
+            long result_idx = ServerData.get(i + 1);
+            mDBHelper.update("InterviewData", new String[]{"result_idx"}, new String[]{String.valueOf(result_idx)}, "task_idx=?", new String[]{String.valueOf(task_idx)});
+        }
+    }
+
+    private void _LoadInterviewData() {
+        class t_LoadInterviewData implements Runnable {
+            @Override
+            public void run() {
                 DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
                 ContentValues[] values = mDBHelper.select("InterviewData", DBHelper.column_interviewdata, null, null, null, null, null);
-                for (int i = 0; i < values.length; ++i) {
+                if (values == null) return;
 
+                for (int i = 0; i < values.length; ++i) {
                     // InterviewData를 로드.
                     long idx = values[i].getAsLong("idx");
                     long user_idx = 0;
@@ -81,22 +141,22 @@ public class ResultActivity extends AppCompatActivity {
                         String markdown_uri = question[0].getAsString("markdown_uri");
                         items.add(new item_result(idx, user_idx, video_path, emotion_path, stt_path, task_idx, result_idx, question_idx, title, history, duration, src_lang, dest_lang, view_cnt, like_cnt, markdown_uri));
                     }
-
                 }
-
-                Adapter = new ResultAdapter(items, mContext);
-                recyclerView.setLayoutManager(layoutManager);
-                recyclerView.setAdapter(Adapter);
             }
         }
-        Runnable t = new t_LoadResult();
+        Runnable t = new t_LoadInterviewData();
         t.run();
+    }
+
+    private void _setAdapter() {
+        Adapter = new ResultAdapter(items, mContext);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(Adapter);
     }
 
     class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder> {
         private Context context;
         private ArrayList<item_result> mItems;
-
         private int lastPosition = -1;
 
         public ResultAdapter(ArrayList items, Context mContext) {
@@ -112,6 +172,7 @@ public class ResultActivity extends AppCompatActivity {
             return holder;
         }
 
+
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             holder.t1.setText(mItems.get(position).getTitle());
@@ -119,6 +180,7 @@ public class ResultActivity extends AppCompatActivity {
                     + mItems.get(position).getDuration() + "\n"
                     + mItems.get(position).getHistory());
         }
+
 
         @Override
         public int getItemCount() {
@@ -149,31 +211,134 @@ public class ResultActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                item_result instance = mItems.get(getAdapterPosition());
+
                 if (v.getId() == ib_download.getId()) {
                     Log.d("Button Click Event", "Download " + String.valueOf(getAdapterPosition()));
 
-                    // Case 1 데이터 파일이 아직 없는 경우
+                    // Case 1 온라인에 업로드 되지 않은 파일인 경우
+                    if (instance.getTask_idx() == 0) {
+                        showDialog_uploadVideo(instance.getIdx(), instance.getQuestion_idx(), instance.getVideo_path());
+                    }
 
-                    // Case 2 데이터 파일이 존재하는 경우
+                    // Case 2 온라인에 업로드 되어 아직 처리되지 않은 파일
+                    else if (instance.getResult_idx() == 0) {
+                        showDialog_isprocessing();
+                    }
 
+                    // Case 3 온라인에 업로드 되어 처리된 파일
+                    else {
+                        showDialog_showResult();
+                    }
 
+                    notifyDataSetChanged();
                 }
+
                 else if (v.getId() == ib_share.getId()) {
                     Log.d("Button Click Event", "Share " + String.valueOf(getAdapterPosition()));
                 }
 
                 else if (v.getId() == ib_delete.getId()) {
-                    Log.d("Button Click Event", "Delete " + String.valueOf(getAdapterPosition()));
+                    showDialog_deleteDB(instance.getIdx());
+                    notifyDataSetChanged();
                 }
             }
         }
+    }
 
-        private void setAnimation(View viewToAnimate, int position) {
-            // 새로 보여지는 뷰라면 애니메이션을 해줍니다
-            if (position > lastPosition) {
-                Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
-                viewToAnimate.startAnimation(animation);
-                lastPosition = position; }
-        }
+
+    public void showDialog_showResult() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
+        builder.setTitle("결과 확인");
+        builder.setMessage("면접 결과를 확인하시겠습니까?");
+        builder.setPositiveButton("예",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 로딩 다이얼로그
+
+                        // 결과 Activity 로드
+                    }
+                });
+        builder.setNegativeButton("아니오", null);
+        builder.show();
+    }
+
+
+
+    public void showDialog_isprocessing() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
+        builder.setTitle("분석 중");
+        builder.setMessage("서버에서 분석 중이에요. 결과가 나오면 푸시로 알려드릴게요.");
+        builder.setPositiveButton("확인", null);
+        builder.show();
+    }
+
+
+    public void showDialog_uploadVideo(final long idx, final long question_idx, final String video_path) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
+        builder.setTitle("분석 의뢰");
+        builder.setMessage("영상을 서버로 업로드하여 분석을 진행할까요?");
+        builder.setPositiveButton("예",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 파일이 존재하는지 확인
+                        File file = new File(video_path);
+                        if(file.exists() != true) {
+                            showDialog_fileNotexist();
+                            delete_DB(idx);
+                        }
+                        else {
+                            // 영상을 서버로 전송함
+                            upload_video(idx, question_idx, video_path);
+                        }
+                    }
+                });
+        builder.setNegativeButton("아니오", null);
+        builder.show();
+    }
+
+
+    public void showDialog_fileNotexist() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
+        builder.setTitle("데이터 에러");
+        builder.setMessage("기기에 저장된 영상 정보가 삭제되었습니다. 기록을 삭제합니다.");
+        builder.setPositiveButton("확인", null);
+        builder.show();
+    }
+
+
+    public void showDialog_deleteDB(final long idx) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
+        builder.setTitle("데이터 삭제");
+        builder.setMessage("인터뷰 기록을 삭제할까요?");
+        builder.setPositiveButton("예",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        delete_DB(idx);
+                    }
+                });
+        builder.setNegativeButton("아니오", null);
+        builder.show();
+    }
+
+
+    public void delete_DB(long idx) {
+        DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
+        // 로컬 DB에서 해당 InterviewData를 삭제함
+        mDBHelper.delete("InterviewData", "idx=?", new String[]{String.valueOf(idx)});
+    }
+
+
+    public void upload_video(final long idx, final long question_idx, final String video_path) {
+        Intent intent = new Intent(ResultActivity.this, UploadVideo.class);
+        intent.putExtra("question_idx", question_idx);
+        intent.putExtra("video_path", video_path);
+        intent.putExtra("uri", "file://" + video_path);
+        startActivity(intent);
+    }
+
+    public void refreshAdapter() {
+
     }
 }
+

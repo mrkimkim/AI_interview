@@ -241,7 +241,6 @@ public class ActivityInterview extends AppCompatActivity {
         mDBHelper.insert("InterviewData",
                 new String[]{"user_idx", "video_path", "task_idx", "result_idx", "question_idx"},
                 new String[]{String.valueOf(GlobalApplication.mUserInfoManager.getUserProfile().getId()), tempFilePath, "0", "0", String.valueOf(question_idx)}, null, null);
-        Log.d("User ID User ID User ID", String.valueOf(GlobalApplication.mUserInfoManager.getUserProfile().getId()));
     }
 
 

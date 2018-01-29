@@ -2,6 +2,7 @@ import socket
 import sys
 import threading
 import VideoReceiver
+import ResultSender
 import pymysql
 from Background.Scheme import UserInfo
 
@@ -50,25 +51,27 @@ class Session(threading.Thread):
             
             if len(rows) < 1 or rows[0][0] != self.user_token: raise Exception
         except Exception as e:
-            print (Exception)
             print (e)
             self.curs.close()
-            self.sql.close()
             self.conn.close()
             self.stop()
             return
 
+
         print ("Waiting Command...")
+        """ Header Packet
+            4byte - Opcode
+        """
         cmd = hexToLong(self.conn.recv(4))
-        print (cmd)
-        print (cmd + 1)
         # interpret command
+        """ Video Upload """
         if cmd == 1000:
             # receive Video from Client
             mVideoReceiver = VideoReceiver.mVideoReceiver(self.conn, self.sql, self.user_id)
             file_path = mVideoReceiver.run()
-
-            # PreProcess
+        elif cmd == 2000:
+            mResultSender = ResultSender.mResultSender(self.conn, self.sql, self.user_id)
+            mResultSender.run()
 
         self.conn.close()
         self.curs.close()

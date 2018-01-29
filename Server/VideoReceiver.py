@@ -10,7 +10,7 @@ def hexToLong(str_hex):
     return ret
 
 def longToHex(Num):
-    return ("%08X" % (int(Num)))
+    return bytes.fromhex("{:016x}".format(data_size))
 
 class mVideoReceiver(object):
     def __init__(self, conn, sql, user_idx):
@@ -75,7 +75,7 @@ class mVideoReceiver(object):
         curs.execute(query, (interviewdata_idx))
         rows = curs.fetchall()
         task_idx = rows[0][0]
-        self.conn.send(longToHex(task_idx).encode('ascii'))
+        self.conn.send(longToHex(task_idx))
 
     def SaveVideo(self):
         from google.cloud import storage
