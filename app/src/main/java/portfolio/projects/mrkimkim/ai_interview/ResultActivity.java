@@ -16,7 +16,9 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +44,8 @@ public class ResultActivity extends AppCompatActivity {
     ArrayList<item_result> items;
     ArrayList<Long> ServerData;
 
+    LinearLayout btn_back;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +58,18 @@ public class ResultActivity extends AppCompatActivity {
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
 
         items = new ArrayList<item_result>();
+
+        // 뒤로가기 버튼
+        btn_back = (LinearLayout) findViewById(R.id.result_btn_back);
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        // 리프레시 버튼
+
 
         // DB를 업데이트 함
         _downloadServerDB();
@@ -130,7 +146,7 @@ public class ResultActivity extends AppCompatActivity {
 
                     // Question 데이터를 로드함
                     ContentValues[] question = mDBHelper.select("Question", DBHelper.column_questioninfo, "idx=?", new String[]{String.valueOf(question_idx)}, null, null, null);
-                    if (question.length > 0) {
+                    if (question != null && question.length > 0) {
                         String title = question[0].getAsString("title");
                         String history = question[0].getAsString("history");
                         String duration = question[0].getAsString("duration");
@@ -181,6 +197,10 @@ public class ResultActivity extends AppCompatActivity {
                     + mItems.get(position).getHistory());
         }
 
+        public void removeItem(int position) {
+            mItems.remove(position);
+            notifyDataSetChanged();
+        }
 
         @Override
         public int getItemCount() {
@@ -218,7 +238,7 @@ public class ResultActivity extends AppCompatActivity {
 
                     // Case 1 온라인에 업로드 되지 않은 파일인 경우
                     if (instance.getTask_idx() == 0) {
-                        showDialog_uploadVideo(instance.getIdx(), instance.getQuestion_idx(), instance.getVideo_path());
+                        showDialog_uploadVideo(getAdapterPosition(), instance.getIdx(), instance.getQuestion_idx(), instance.getVideo_path());
                     }
 
                     // Case 2 온라인에 업로드 되어 아직 처리되지 않은 파일
@@ -235,19 +255,18 @@ public class ResultActivity extends AppCompatActivity {
                 }
 
                 else if (v.getId() == ib_share.getId()) {
-                    Log.d("Button Click Event", "Share " + String.valueOf(getAdapterPosition()));
+                    Toast.makeText(getApplicationContext(), "준비중인 기능이에요!", Toast.LENGTH_LONG).show();
                 }
 
                 else if (v.getId() == ib_delete.getId()) {
-                    showDialog_deleteDB(instance.getIdx());
-                    notifyDataSetChanged();
+                    showDialog_deleteDB(getAdapterPosition(), instance.getIdx());
                 }
             }
         }
     }
 
 
-    public void showDialog_showResult() {
+    public AlertDialog.Builder showDialog_showResult() {
         AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
         builder.setTitle("결과 확인");
         builder.setMessage("면접 결과를 확인하시겠습니까?");
@@ -260,10 +279,8 @@ public class ResultActivity extends AppCompatActivity {
                     }
                 });
         builder.setNegativeButton("아니오", null);
-        builder.show();
+        return builder;
     }
-
-
 
     public void showDialog_isprocessing() {
         AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
@@ -274,7 +291,7 @@ public class ResultActivity extends AppCompatActivity {
     }
 
 
-    public void showDialog_uploadVideo(final long idx, final long question_idx, final String video_path) {
+    public void showDialog_uploadVideo(final int position, final long idx, final long question_idx, final String video_path) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
         builder.setTitle("분석 의뢰");
         builder.setMessage("영상을 서버로 업로드하여 분석을 진행할까요?");
@@ -285,6 +302,7 @@ public class ResultActivity extends AppCompatActivity {
                         File file = new File(video_path);
                         if(file.exists() != true) {
                             showDialog_fileNotexist();
+                            Adapter.removeItem(position);
                             delete_DB(idx);
                         }
                         else {
@@ -297,17 +315,15 @@ public class ResultActivity extends AppCompatActivity {
         builder.show();
     }
 
-
     public void showDialog_fileNotexist() {
         AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
         builder.setTitle("데이터 에러");
-        builder.setMessage("기기에 저장된 영상 정보가 삭제되었습니다. 기록을 삭제합니다.");
+        builder.setMessage("촬영된 면접 영상을 기기에서 찾을 수 없어요.");
         builder.setPositiveButton("확인", null);
         builder.show();
     }
 
-
-    public void showDialog_deleteDB(final long idx) {
+    public void showDialog_deleteDB(final int position, final long idx) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
         builder.setTitle("데이터 삭제");
         builder.setMessage("인터뷰 기록을 삭제할까요?");
@@ -315,6 +331,7 @@ public class ResultActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         delete_DB(idx);
+                        Adapter.removeItem(position);
                     }
                 });
         builder.setNegativeButton("아니오", null);
@@ -335,10 +352,6 @@ public class ResultActivity extends AppCompatActivity {
         intent.putExtra("video_path", video_path);
         intent.putExtra("uri", "file://" + video_path);
         startActivity(intent);
-    }
-
-    public void refreshAdapter() {
-
     }
 }
 

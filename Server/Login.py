@@ -5,6 +5,7 @@ import ast
 import hashlib
 import pymysql
 import time
+import os
 
 def intToHex(num):
     return ''.join([chr(num >> i & 0xff) for i in (24,16,8,0)])
@@ -127,14 +128,24 @@ class LoginSession(threading.Thread):
 
         """ Send DB File """
         try:
-            data = open("DB.csv","r").read()
-            data_size = len(data.encode('utf-8'))
+            db_version = self.conn.recv(4)
+            data = open("DB.csv","rb").read()
+            data_size = len(data)
             print ("Total Byte is " + str(data_size))
             self.conn.send(bytes.fromhex("{:08x}".format(data_size)))
-            self.conn.send(data.encode('utf-8'))
+            
+            buf = 1024
+            offset = 0
+            while offset < data_size:
+                if offset + buf < data_size:
+                    self.conn.sendall(data[offset:offset + buf])
+                else:
+                    self.conn.sendall(data[offset:])
+                offset += buf
         except Exception as e:
             print ("Send DB Failed")
             print (e)
+            self.curs.close()
         self.conn.close()
         print ("Connection Closed")
     
@@ -158,7 +169,6 @@ class LoginServer(object):
             t = LoginSession(conn, self.sql)
             t.start()
             t.join()
-            break
 
     def __del__(self):
         print ("Program finished")
@@ -166,7 +176,7 @@ class LoginServer(object):
         self.socket = ""
 
 if __name__ == "__main__":
-    login_server = LoginServer('', 8426)
+    login_server = LoginServer('', 8425)
     try:
         login_server.start()
     except Exception as e:

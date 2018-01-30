@@ -10,7 +10,7 @@ def hexToLong(str_hex):
     return ret
 
 def longToHex(Num):
-    return bytes.fromhex("{:016x}".format(data_size))
+    return bytes.fromhex("{:016x}".format(Num))
 
 class mVideoReceiver(object):
     def __init__(self, conn, sql, user_idx):

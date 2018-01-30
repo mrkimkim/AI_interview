@@ -37,17 +37,22 @@ import com.kakao.util.helper.log.Logger;
 
 import org.jsoup.Jsoup;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.function.Function;
 
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
 import portfolio.projects.mrkimkim.ai_interview.MainActivity;
 import portfolio.projects.mrkimkim.ai_interview.R;
 import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
+
+import static android.system.OsConstants.SOCK_STREAM;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -195,10 +200,12 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    int buf_size = 512;
                     // 로그인 서버와 연결
                     Socket t_socket = new Socket();
+                    t_socket.setReceiveBufferSize(buf_size);
                     t_socket.connect(new InetSocketAddress(getString(R.string.server_ip), Integer.parseInt(getString(R.string.login_server_port))), 1000);
-                    InputStream networkDataReader = t_socket.getInputStream();
+                    DataInputStream networkDataReader = new DataInputStream(t_socket.getInputStream());
                     OutputStream networkDataWriter = t_socket.getOutputStream();
 
                     // 로그인 인증 패킷 전송
@@ -230,8 +237,18 @@ public class LoginActivity extends AppCompatActivity {
                     if (db_size != 0) {
                         // csv 형태의 데이터를 받음
                         packet = new byte[db_size];
-                        networkDataReader.read(packet, 0, db_size);
-                        String[] csv = new String(packet, "UTF-8").split("\\r?\\n");
+
+                        int offset = 0;
+                        int len;
+                        byte[] buffer = new byte[1024];
+                        while (offset < db_size) {
+                            len = networkDataReader.read(buffer);
+                            if (len > 0) {
+                                System.arraycopy(buffer, 0, packet, offset, len);
+                                offset += len;
+                            }
+                        }
+                        String[] csv = new String(packet, "utf-8").split("\\r?\\n");
                         mDBHelper.updateCategory(csv);
                     }
 

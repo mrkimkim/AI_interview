@@ -14,9 +14,11 @@
 
         <LinearLayout
             android:id="@+id/result_btn_back"
+            android:clickable="true"
             style="@style/common_titlebar_leftlayout">
 
             <ImageButton
+                android:clickable="false"
                 style="@style/common_titlebar_imagebtn"
                 android:src="@drawable/leftarrow" />
         </LinearLayout>

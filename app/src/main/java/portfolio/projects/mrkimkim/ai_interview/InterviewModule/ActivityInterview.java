@@ -52,7 +52,7 @@ public class ActivityInterview extends AppCompatActivity {
 
         Intent intent = getIntent();
         question_idx = intent.getIntExtra("question_idx", 0);
-
+        Log.d("Question_IDX : ", String.valueOf(question_idx));
         clearTitleBar();
         setContentView(R.layout.activity_interview);
 
@@ -200,7 +200,7 @@ public class ActivityInterview extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"서버와 연결 시작",Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(ActivityInterview.this, UploadVideo.class);
                         intent.putExtra("uri", "file://" + tempFilePath);
-                        intent.putExtra("question_idx", question_idx);
+                        intent.putExtra("question_idx", Long.valueOf(String.valueOf(question_idx)));
                         intent.putExtra("video_path", tempFilePath);
                         startActivity(intent);
                     }

@@ -184,10 +184,8 @@ public class DBHelper extends SQLiteOpenHelper {
         cleanTable("Category");
         cleanTable("Question");
         try {
-            Log.d("CSV LENGTH : ", String.valueOf(csv.length));
             // 새로운 테이블 데이터를 삽입
             for (int i = 0; i < csv.length; ++i) {
-                Log.d("CSV : ", csv[i]);
                 String[] value = csv[i].split(",");
                 // Category 데이터
                 if (value.length == 7) {

@@ -3,6 +3,7 @@ import sys
 import threading
 import VideoReceiver
 import ResultSender
+from Login import LoginSession
 import pymysql
 from Background.Scheme import UserInfo
 
@@ -70,10 +71,12 @@ class Session(threading.Thread):
             mVideoReceiver = VideoReceiver.mVideoReceiver(self.conn, self.sql, self.user_id)
             file_path = mVideoReceiver.run()
         elif cmd == 2000:
+            """ Request InterviewResult """
             mResultSender = ResultSender.mResultSender(self.conn, self.sql, self.user_id)
             mResultSender.run()
 
+        # Close Session
         self.conn.close()
         self.curs.close()
-        self.sql.close()
         self.stop()
+        return

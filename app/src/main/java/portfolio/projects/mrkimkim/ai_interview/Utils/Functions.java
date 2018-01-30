@@ -21,6 +21,13 @@ public class Functions {
         return buffer.array();
     };
 
+    public static String byteArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder();
+        for(final byte b: a)
+            sb.append(String.format("%02x ", b&0xff));
+        return sb.toString();
+    }
+
     public static long bytesToLong(byte[] buf) {
         long l = ((buf[0] & 0xFFL) << 56) |
                 ((buf[1] & 0xFFL) << 48) |

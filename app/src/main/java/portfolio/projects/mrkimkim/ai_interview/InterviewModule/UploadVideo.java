@@ -4,10 +4,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.androidquery.util.Progress;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -37,10 +42,15 @@ public class UploadVideo extends AppCompatActivity {
     private long question_idx;
     private String video_path;
 
+    ProgressBar progressBar;
+    TextView tv_progress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_video);
+
+        progressBar = (ProgressBar) findViewById(R.id.upload_video_progress_bar);
+        tv_progress = (TextView) findViewById(R.id.upload_video_tv_progress);
 
         // 버전 체크
         if (android.os.Build.VERSION.SDK_INT > 9)
@@ -48,7 +58,6 @@ public class UploadVideo extends AppCompatActivity {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-
 
         // 이전 액티비티의 영상 인텐트 전달
         Intent intent = getIntent();
@@ -69,6 +78,25 @@ public class UploadVideo extends AppCompatActivity {
         }
     }
 
+    public void setProgressBar(final int p) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setProgress(p);
+                tv_progress.setText(String.valueOf(p/10) + "% 전송 완료");
+            }
+        });
+    }
+
+    public void setProgressText(final String msg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tv_progress.setText(msg);
+            }
+        });
+    }
+
     private Thread Upload = new Thread() {
         public void run() {
             try {
@@ -82,7 +110,7 @@ public class UploadVideo extends AppCompatActivity {
                 String[] FileName = uri.getPath().split("/");
                 File file = new File(uri.getPath());
                 FileInputStream fis = new FileInputStream(file);
-                long video_size = file.length();
+                final long video_size = file.length();
                 int read = 0;
 
 
@@ -93,14 +121,20 @@ public class UploadVideo extends AppCompatActivity {
 
 
                 // 비디오 데이터 전송
+                int uploaded_size = 0;
                 BufferedInputStream bis = new BufferedInputStream(fis);
                 while((read = bis.read(buffers, 0, maxBufferSize)) != -1) {
-                    networkWriter.write(buffers, 0, buffers.length);
+                    networkWriter.write(buffers, 0, read);
+                    uploaded_size += read;
+                    Log.d("BUFFER SIZE : ", String.valueOf(uploaded_size));
+                    setProgressBar((uploaded_size * 1000) / Integer.valueOf(String.valueOf(video_size)));
                 }
                 networkWriter.flush();
 
 
                 // 업로드 된 영상의 task_idx를 DB에 저장한다.
+                setProgressText("DB를 업데이트 중입니다.");
+
                 byte[] packet = new byte[8];
                 networkReader.read(packet, 0, 8);
                 long task_idx = Functions.bytesToLong(packet);
