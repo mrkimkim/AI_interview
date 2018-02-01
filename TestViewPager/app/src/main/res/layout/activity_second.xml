@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#ffffffff"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 타이틀바 -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="REPORT"
+                android:textSize="20sp"
+                android:textColor="#fff"
+                android:gravity="center"
+                android:background="#50b7ff"
+                android:layout_width="match_parent"
+                android:layout_height="53dp" />
+        </LinearLayout>
+        <!-- //end 타이틀바 -->
+
+        <!-- 키워드 순위 -->
+        <TextView
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nanumsquareroundb"
+            android:text="Keyword"
+            android:textSize="20sp"
+            />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/flexbox"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:alignContent="space_around"
+            app:alignItems="flex_start"
+            app:dividerDrawable="@drawable/div"
+            app:flexWrap="wrap"
+            app:showDivider="middle"
+            />
+
+        <!-- 가로 구분 선 -->
+        <View
+            android:layout_margin="10dp"
+            android:background="#66bdbdbd"
+            android:layout_width="match_parent"
+            android:layout_height="1dp" />
+
+        <!-- 감정 차트 -->
+
+        <TextView
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nanumsquareroundb"
+            android:text="Emotion"
+            android:textSize="20sp"
+            />
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+
+            <!-- 행복 -->
+            <ImageView
+                android:id="@+id/happy"
+                android:layout_marginTop="5dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/icon_happy"
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/h1"/>
+
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="#0093f7"
+                app:layout_constraintStart_toEndOf="@id/happy"
+                app:layout_constraintEnd_toEndOf="@id/v3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/h1"
+                ></LinearLayout>
+
+            <!-- 중립 -->
+            <ImageView
+
+                android:layout_marginTop="5dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/icon_neutral"
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/h1"
+                app:layout_constraintBottom_toBottomOf="@id/h2"/>
+
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="#37a4ff"
+                app:layout_constraintStart_toEndOf="@id/happy"
+                app:layout_constraintEnd_toEndOf="@id/v6"
+                app:layout_constraintTop_toTopOf="@id/h1"
+                app:layout_constraintBottom_toBottomOf="@id/h2"
+                ></LinearLayout>
+
+            <!-- 슬픔 -->
+            <ImageView
+                android:layout_marginTop="5dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/icon_sad"
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/h2"
+                app:layout_constraintBottom_toBottomOf="@id/h3"/>
+
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="#8bd0ff"
+                app:layout_constraintStart_toEndOf="@id/happy"
+                app:layout_constraintEnd_toEndOf="@id/v4"
+                app:layout_constraintTop_toTopOf="@id/h2"
+                app:layout_constraintBottom_toBottomOf="@id/h3"
+                ></LinearLayout>
+
+            <!-- 긴장 -->
+            <ImageView
+                android:layout_marginTop="5dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/icon_fear"
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/h3"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="#d1ecff"
+                app:layout_constraintStart_toEndOf="@id/happy"
+                app:layout_constraintEnd_toEndOf="@id/v4"
+                app:layout_constraintTop_toTopOf="@id/h3"
+                app:layout_constraintBottom_toBottomOf="parent"
+                ></LinearLayout>
+
+            <!-- 세로 구분선 -->
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:background="#dddddd"
+                app:layout_constraintEnd_toEndOf="@id/v7"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+            </LinearLayout>
+
+            <android.support.constraint.Guideline
+                android:id="@+id/h1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.25"
+                />
+
+
+            <android.support.constraint.Guideline
+                android:id="@+id/h2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.5"
+                />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/h3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.75"
+                />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/h4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.1"
+                />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/v1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.1" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/v2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.2"/>
+
+            <android.support.constraint.Guideline
+                android:id="@+id/v3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.65"/>
+
+            <android.support.constraint.Guideline
+                android:id="@+id/v4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.15"/>
+
+            <android.support.constraint.Guideline
+                android:id="@+id/v5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.25"/>
+
+            <android.support.constraint.Guideline
+                android:id="@+id/v6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.35"/>
+
+            <android.support.constraint.Guideline
+                android:id="@+id/v7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.7"/>
+        </android.support.constraint.ConstraintLayout>
+
+        <view
+            android:layout_margin="10dp"
+            android:paddingBottom="10dp"
+            android:id="@+id/line_view"
+            android:background="@drawable/border"
+            class="im.dacer.androidcharts.LineView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"/>
+
+        <!-- 가로 구분 선 -->
+        <View
+            android:layout_margin="10dp"
+            android:background="#66bdbdbd"
+            android:layout_width="match_parent"
+            android:layout_height="1dp" />
+
+        <!-- 음성 분석 -->
+        <TextView
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nanumsquareroundb"
+            android:text="Voice Analysis"
+            android:textSize="20sp" />
+
+        <!-- 센티먼트 분석 -->
+
+        <!-- 가로 구분 선 -->
+        <View
+            android:layout_margin="10dp"
+            android:background="#66bdbdbd"
+            android:layout_width="match_parent"
+            android:layout_height="1dp" />
+
+        <!-- 음성 분석 -->
+        <TextView
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nanumsquareroundb"
+            android:text="Sentimet Analysis"
+            android:textSize="20sp" />
+
+        <!-- 가로 구분 선 -->
+        <View
+            android:layout_margin="10dp"
+            android:background="#66bdbdbd"
+            android:layout_width="match_parent"
+            android:layout_height="1dp" />
+
+        <!-- 음성 분석 -->
+        <TextView
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nanumsquareroundb"
+            android:text="Transcript"
+            android:textSize="20sp" />
+    </LinearLayout>
+</ScrollView>

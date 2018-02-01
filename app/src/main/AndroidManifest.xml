@@ -58,8 +58,8 @@
         <activity android:name=".ChooseCategory" />
         <activity android:name=".TestActivity" />
         <activity android:name=".InterviewModule.StartInterviewActivity" />
-        <activity android:name=".InterviewResultActivity" />
-        <activity android:name=".InterviewReportActivity"></activity>
+        <activity android:name=".InterviewVideoActivity" />
+        <activity android:name=".InterviewReportActivity" android:theme="@android:style/Theme.Dialog"></activity>
     </application>
 
 </manifest>

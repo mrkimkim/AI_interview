@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TestViewPager</string>
+    <string name="view_video">view_video</string>
+    <string name="view_report">view_report</string>
+</resources>
