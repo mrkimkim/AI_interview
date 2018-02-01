@@ -28,10 +28,10 @@ import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
 import portfolio.projects.mrkimkim.ai_interview.R;
 
-public class ActivityInterview extends AppCompatActivity {
+public class StartInterviewActivity extends AppCompatActivity {
     // Camera.CameraInfo.CAMERA_FACING_FRONT or Camera.CameraInfo.CAMERA_FACING_BACK
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_FRONT;
-    private static final String TAG = "ActivityInterview";
+    private static final String TAG = "StartInterviewActivity";
     private AppCompatActivity mActivity;
 
     int question_idx;
@@ -190,7 +190,7 @@ public class ActivityInterview extends AppCompatActivity {
 
 
     public void dialogConnectServer() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityInterview.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(StartInterviewActivity.this);
         builder.setTitle("면접 종료");
         builder.setMessage("지금 AI 분석을 시작하시겠습니까? (1크레딧)");
         builder.setPositiveButton("예",
@@ -198,7 +198,7 @@ public class ActivityInterview extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         SaveDB();
                         Toast.makeText(getApplicationContext(),"서버와 연결 시작",Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(ActivityInterview.this, UploadVideo.class);
+                        Intent intent = new Intent(StartInterviewActivity.this, UploadVideo.class);
                         intent.putExtra("uri", "file://" + tempFilePath);
                         intent.putExtra("question_idx", Long.valueOf(String.valueOf(question_idx)));
                         intent.putExtra("video_path", tempFilePath);
@@ -216,7 +216,7 @@ public class ActivityInterview extends AppCompatActivity {
 
 
     public void dialogSaveVideo() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityInterview.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(StartInterviewActivity.this);
         builder.setTitle("동영상 저장");
         builder.setMessage("면접 영상 및 정보를 기기에 저장하시겠습니까?");
         builder.setPositiveButton("예",

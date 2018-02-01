@@ -27,7 +27,7 @@ import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import java.util.ArrayList;
 
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
-import portfolio.projects.mrkimkim.ai_interview.InterviewModule.ActivityInterview;
+import portfolio.projects.mrkimkim.ai_interview.InterviewModule.StartInterviewActivity;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_question;
 import us.feras.mdv.MarkdownView;
 
@@ -231,7 +231,7 @@ public class ChooseQuestion extends YouTubeBaseActivity implements YouTubePlayer
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     Toast.makeText(getApplicationContext(),"면접장으로 이동합니다.",Toast.LENGTH_LONG).show();
-                                    Intent intent = new Intent(ChooseQuestion.this, ActivityInterview.class);
+                                    Intent intent = new Intent(ChooseQuestion.this, StartInterviewActivity.class);
                                     intent.putExtra("question_idx", mItems.get(getAdapterPosition()).getidx());
                                     startActivity(intent);
                                 }

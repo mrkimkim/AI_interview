@@ -57,7 +57,9 @@
 
         <activity android:name=".ChooseCategory" />
         <activity android:name=".TestActivity" />
-        <activity android:name=".InterviewModule.ActivityInterview"></activity>
+        <activity android:name=".InterviewModule.StartInterviewActivity" />
+        <activity android:name=".InterviewResultActivity" />
+        <activity android:name=".InterviewReportActivity"></activity>
     </application>
 
 </manifest>
