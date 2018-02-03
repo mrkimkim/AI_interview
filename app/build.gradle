@@ -61,6 +61,14 @@ dependencies {
 
     // Circle Button
     compile 'com.github.markushi:circlebutton:1.1'
+
+    // Tag
+    compile 'com.github.fiskurgit:ChipCloud:3.0.5'
+    compile 'com.google.android:flexbox:0.3.2'
+
+    // Chart
+    compile 'im.dacer:AndroidCharts:1.0.4'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 }
 
 apply plugin: 'com.google.gms.google-services'
