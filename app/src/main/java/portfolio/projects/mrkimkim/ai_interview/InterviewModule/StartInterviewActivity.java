@@ -135,7 +135,7 @@ public class StartInterviewActivity extends AppCompatActivity {
 
                     // 파일 준비
                     File sdCard = Environment.getExternalStorageDirectory();
-                    File dir = new File (sdCard.getAbsolutePath() + "/interview");
+                    File dir = new File (sdCard.getAbsolutePath() + "/interview/");
                     dir.mkdirs();
 
                     tempFilePath = dir + String.format("%d.mp4", System.currentTimeMillis());

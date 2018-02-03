@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 
-public class InterviewVideoActivity extends AppCompatActivity {
+public class ActivityInterviewVideo extends AppCompatActivity {
     int MAX_PAGE = 2;
     android.support.v4.app.Fragment cur_fragment = new android.support.v4.app.Fragment();
 

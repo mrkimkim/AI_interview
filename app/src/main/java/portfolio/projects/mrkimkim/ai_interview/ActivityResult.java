@@ -13,21 +13,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.InterviewModule.UploadVideo;
@@ -35,7 +31,7 @@ import portfolio.projects.mrkimkim.ai_interview.NetworkModule.NetworkService;
 import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_result;
 
-public class ResultActivity extends AppCompatActivity {
+public class ActivityResult extends AppCompatActivity {
     Context mContext;
     RecyclerView recyclerView;
     ResultAdapter Adapter;
@@ -267,13 +263,17 @@ public class ResultActivity extends AppCompatActivity {
 
 
     public AlertDialog.Builder showDialog_showResult() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityResult.this);
         builder.setTitle("결과 확인");
         builder.setMessage("면접 결과를 확인하시겠습니까?");
         builder.setPositiveButton("예",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // 로딩 다이얼로그
+
+                        // result_idx로부터 STT와 Emotion을 가져온다.
+
+                        // STT와 Emotion을 처리한다.
 
                         // 결과 Activity 로드
                     }
@@ -283,7 +283,7 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     public void showDialog_isprocessing() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityResult.this);
         builder.setTitle("분석 중");
         builder.setMessage("서버에서 분석 중이에요. 결과가 나오면 푸시로 알려드릴게요.");
         builder.setPositiveButton("확인", null);
@@ -292,7 +292,7 @@ public class ResultActivity extends AppCompatActivity {
 
 
     public void showDialog_uploadVideo(final int position, final long idx, final long question_idx, final String video_path) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityResult.this);
         builder.setTitle("분석 의뢰");
         builder.setMessage("영상을 서버로 업로드하여 분석을 진행할까요?");
         builder.setPositiveButton("예",
@@ -316,7 +316,7 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     public void showDialog_fileNotexist() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityResult.this);
         builder.setTitle("데이터 에러");
         builder.setMessage("촬영된 면접 영상을 기기에서 찾을 수 없어요.");
         builder.setPositiveButton("확인", null);
@@ -324,7 +324,7 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     public void showDialog_deleteDB(final int position, final long idx) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ResultActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityResult.this);
         builder.setTitle("데이터 삭제");
         builder.setMessage("인터뷰 기록을 삭제할까요?");
         builder.setPositiveButton("예",
@@ -347,7 +347,7 @@ public class ResultActivity extends AppCompatActivity {
 
 
     public void upload_video(final long idx, final long question_idx, final String video_path) {
-        Intent intent = new Intent(ResultActivity.this, UploadVideo.class);
+        Intent intent = new Intent(ActivityResult.this, UploadVideo.class);
         intent.putExtra("question_idx", question_idx);
         intent.putExtra("video_path", video_path);
         intent.putExtra("uri", "file://" + video_path);

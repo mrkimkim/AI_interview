@@ -21,7 +21,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:26.1.+'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     implementation 'com.android.support:cardview-v7:26.1.0'
@@ -35,6 +35,9 @@ dependencies {
     compile group: 'com.kakao.sdk', name: 'usermgmt', version: project.KAKAO_SDK_VERSION
     compile 'com.googlecode.android-query:android-query:0.25.9' //AQuery
     compile 'de.hdodenhof:circleimageview:1.2.1' // CircleImageView
+
+    // Json Parser를 사용
+    compile 'com.google.code.gson:gson:2.8.2'
 
     // CircleImageView
     compile 'com.mikhaellopez:circularimageview:3.0.2'

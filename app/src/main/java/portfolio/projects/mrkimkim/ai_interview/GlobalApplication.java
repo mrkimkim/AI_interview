@@ -6,6 +6,8 @@ package portfolio.projects.mrkimkim.ai_interview;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Environment;
+
 import com.kakao.auth.ApprovalType;
 import com.kakao.auth.AuthType;
 import com.kakao.auth.IApplicationConfig;
@@ -24,6 +26,8 @@ public class GlobalApplication extends Application {
 
     public static DBHelper mDBHelper;
     public static UserInfoManager mUserInfoManager;
+
+    public static String ApplicationDataPath;
 
     public class UserInfoManager {
         final byte[] invalid_token = "                                                                ".getBytes();
@@ -116,5 +120,8 @@ public class GlobalApplication extends Application {
         singleton = this;
         KakaoSDK.init(new KakaoSDKAdapter());
         mUserInfoManager = new UserInfoManager();
+
+        ApplicationDataPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/interview/";
+
     }
 }

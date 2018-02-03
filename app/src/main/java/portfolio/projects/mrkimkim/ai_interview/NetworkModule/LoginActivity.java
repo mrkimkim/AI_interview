@@ -37,22 +37,17 @@ import com.kakao.util.helper.log.Logger;
 
 import org.jsoup.Jsoup;
 
-import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.function.Function;
 
+import portfolio.projects.mrkimkim.ai_interview.ActivityMain;
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
-import portfolio.projects.mrkimkim.ai_interview.MainActivity;
 import portfolio.projects.mrkimkim.ai_interview.R;
 import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
-
-import static android.system.OsConstants.SOCK_STREAM;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -303,9 +298,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // MainActivity Activity로 전환
+    // ActivityMain Activity로 전환
     private void redirectMainMenu() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, ActivityMain.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

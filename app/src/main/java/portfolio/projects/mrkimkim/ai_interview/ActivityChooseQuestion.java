@@ -35,7 +35,7 @@ import us.feras.mdv.MarkdownView;
  * Created by mrkimkim on 2017-12-06.
  */
 
-public class ChooseQuestion extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
+public class ActivityChooseQuestion extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
     private static final int RECOVERY_REQUEST = 1;
     private static final String YOUTUBE_API_KEY = "AIzaSyCsBC6KFCzSWwA9qy7byEZ7tElx0EEjHos";
     private static final String VIDEO_ID = "hOLVzFm-nPk";
@@ -202,7 +202,7 @@ public class ChooseQuestion extends YouTubeBaseActivity implements YouTubePlayer
                     // 마크다운 URI를 얻음
                     String markdown_uri = instance.getMarkdown_uri();
 
-                    Dialog dialog = new Dialog(ChooseQuestion.this);
+                    Dialog dialog = new Dialog(ActivityChooseQuestion.this);
                     dialog.setContentView(R.layout.dialog_question);
                     dialog.setTitle("문제 보기");
 
@@ -219,19 +219,19 @@ public class ChooseQuestion extends YouTubeBaseActivity implements YouTubePlayer
 
                 // 샘플 가이드 영상을 클릭한 경우
                 else if (v.getId() == R.id.question_card_left_btn_guide) {
-                    Intent intent = YouTubeStandalonePlayer.createVideoIntent(ChooseQuestion.this, YOUTUBE_API_KEY, VIDEO_ID);
+                    Intent intent = YouTubeStandalonePlayer.createVideoIntent(ActivityChooseQuestion.this, YOUTUBE_API_KEY, VIDEO_ID);
                     startActivity(intent);
                 }
 
                 else if (v.getId() == R.id.question_card) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ChooseQuestion.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ActivityChooseQuestion.this);
                     builder.setTitle("면접 시작");
                     builder.setMessage("1 크레딧을 차감하여 면접을 시작하시겠습니까?");
                     builder.setPositiveButton("예",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     Toast.makeText(getApplicationContext(),"면접장으로 이동합니다.",Toast.LENGTH_LONG).show();
-                                    Intent intent = new Intent(ChooseQuestion.this, StartInterviewActivity.class);
+                                    Intent intent = new Intent(ActivityChooseQuestion.this, StartInterviewActivity.class);
                                     intent.putExtra("question_idx", mItems.get(getAdapterPosition()).getidx());
                                     startActivity(intent);
                                 }

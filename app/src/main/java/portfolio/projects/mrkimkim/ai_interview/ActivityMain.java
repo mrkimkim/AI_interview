@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+public class ActivityMain extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,22 +16,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickUserInfo(View v) {
-        Intent intent = new Intent(MainActivity.this, UserinfoActivity.class);
+        Intent intent = new Intent(ActivityMain.this, ActivityUserInfo.class);
         startActivity(intent);
     }
 
     public void onClickStartInterview(View v) {
-        Intent intent = new Intent(MainActivity.this, ChooseCategory.class);
+        Intent intent = new Intent(ActivityMain.this, ActivityChooseCategory.class);
         startActivity(intent);
     }
 
     public void onClickSearchQuestion(View v) {
-        Intent intent = new Intent(MainActivity.this, InterviewVideoActivity.class);
+        Intent intent = new Intent(ActivityMain.this, ActivityInterviewVideo.class);
         startActivity(intent);
     }
 
     public void onClickInterviewResult(View v) {
-        Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+        Intent intent = new Intent(ActivityMain.this, ActivityResult.class);
         startActivity(intent);
     }
 
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onSuccess(Long result) {
-                                            Toast.makeText(MainActivity.this, "회원 탈퇴 완료", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(ActivityMain.this, "회원 탈퇴 완료", Toast.LENGTH_LONG).show();
                                             redirectLoginActivity();
                                         }
                                     });

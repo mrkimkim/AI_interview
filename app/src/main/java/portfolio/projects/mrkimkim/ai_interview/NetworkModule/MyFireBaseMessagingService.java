@@ -12,7 +12,7 @@ import android.util.Log;
 
 import com.google.firebase.messaging.RemoteMessage;
 
-import portfolio.projects.mrkimkim.ai_interview.MainActivity;
+import portfolio.projects.mrkimkim.ai_interview.ActivityMain;
 import portfolio.projects.mrkimkim.ai_interview.R;
 
 /**
@@ -38,7 +38,7 @@ public class MyFireBaseMessagingService extends com.google.firebase.messaging.Fi
     private void sendNotification(String messageBody) {
         Log.d("MyFirebaseIIDService", "received message :" + messageBody);
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, ActivityMain.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0, intent, PendingIntent.FLAG_ONE_SHOT);
 

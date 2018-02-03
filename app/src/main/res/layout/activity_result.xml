@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#ffffffff"
     android:fitsSystemWindows="true"
-    tools:context="portfolio.projects.mrkimkim.ai_interview.ResultActivity">
+    tools:context="portfolio.projects.mrkimkim.ai_interview.ActivityResult">
 
     <RelativeLayout
         android:id="@+id/result_title"

@@ -21,9 +21,8 @@ import java.util.ArrayList;
 
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_category;
-import portfolio.projects.mrkimkim.ai_interview.Utils.item_question;
 
-public class ChooseCategory extends AppCompatActivity {
+public class ActivityChooseCategory extends AppCompatActivity {
     static final int n_category_parent = 4;
     int n_subcategory_parent = 0;
 
@@ -225,7 +224,7 @@ public class ChooseCategory extends AppCompatActivity {
                     mView.show(getSupportFragmentManager(), "");
 
                     // 문제 로딩
-                    Intent intent = new Intent(ChooseCategory.this, ChooseQuestion.class);
+                    Intent intent = new Intent(ActivityChooseCategory.this, ActivityChooseQuestion.class);
                     intent.putExtra("category_idx", instance.getidx());
                     startActivity(intent);
                 }

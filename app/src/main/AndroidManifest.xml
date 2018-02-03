@@ -27,16 +27,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".ChooseQuestion" />
+        <activity android:name=".ActivityMain" />
+        <activity android:name=".ActivityChooseQuestion" />
         <activity android:name=".InterviewModule.UploadVideo" />
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="5207d8f5691153fb22fb9e7950e4e9c1" />
 
-        <activity android:name=".UserinfoActivity" />
-        <activity android:name=".ResultActivity" />
+        <activity android:name=".ActivityUserInfo" />
+        <activity android:name=".ActivityResult" />
 
         <service
             android:name=".NetworkModule.MyFireBaseMessagingService"
@@ -55,11 +55,11 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".ChooseCategory" />
+        <activity android:name=".ActivityChooseCategory" />
         <activity android:name=".TestActivity" />
         <activity android:name=".InterviewModule.StartInterviewActivity" />
-        <activity android:name=".InterviewVideoActivity" />
-        <activity android:name=".InterviewReportActivity" android:theme="@android:style/Theme.Dialog"></activity>
+        <activity android:name=".ActivityInterviewVideo" />
+        <activity android:name=".ActivityInterviewReport" android:theme="@android:style/Theme.Dialog"></activity>
     </application>
 
 </manifest>

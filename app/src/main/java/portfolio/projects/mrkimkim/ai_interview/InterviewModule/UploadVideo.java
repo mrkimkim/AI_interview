@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.StrictMode;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,22 +11,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidquery.util.Progress;
-
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
-import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
-import portfolio.projects.mrkimkim.ai_interview.MainActivity;
+import portfolio.projects.mrkimkim.ai_interview.ActivityMain;
 import portfolio.projects.mrkimkim.ai_interview.NetworkModule.NetworkService;
 import portfolio.projects.mrkimkim.ai_interview.R;
 import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
@@ -152,7 +146,7 @@ public class UploadVideo extends AppCompatActivity {
                 });
 
                 // 메인 액티비티로 돌아간다.
-                Intent intent = new Intent(UploadVideo.this, MainActivity.class);
+                Intent intent = new Intent(UploadVideo.this, ActivityMain.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
 

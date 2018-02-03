@@ -33,7 +33,7 @@ import fisk.chipcloud.ChipCloudConfig;
 import im.dacer.androidcharts.LineView;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_subtitle;
 
-public class InterviewReportActivity extends Activity {
+public class ActivityInterviewReport extends Activity {
     FlexboxLayout flexbox;
     LineView chart_emotion;
     LineChart chart_wps, chart_pitch;

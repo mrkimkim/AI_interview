@@ -3,7 +3,7 @@ package portfolio.projects.mrkimkim.ai_interview;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class UserinfoActivity extends AppCompatActivity {
+public class ActivityUserInfo extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
