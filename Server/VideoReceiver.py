@@ -54,10 +54,10 @@ class mVideoReceiver(object):
 
     def SaveDB(self):
         # Save to UserData DB
-        query = """insert into InterviewData(user_idx, video_hash, video_size, video_format)
-                values (%s, %s, %s, %s)"""
-        print (self.user_idx, self.video_hash, self.video_size, self.video_format)
-        data = (self.user_idx, self.video_hash, self.video_size, self.video_format)
+        query = """insert into InterviewData(user_idx, video_hash, video_size, video_format, is_deleted)
+                values (%s, %s, %s, %s, %s)"""
+        print (self.user_idx, self.video_hash, self.video_size, self.video_format, 0)
+        data = (self.user_idx, self.video_hash, self.video_size, self.video_format, 0)
         curs = self.sql.cursor()
         curs.execute(query, data)
     

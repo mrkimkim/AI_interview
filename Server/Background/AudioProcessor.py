@@ -28,7 +28,7 @@ class mAudioProcessor(object):
         operation = client.long_running_recognize(config, audio)
 
         print('Waiting for operation to complete...')
-        result = operation.result(timeout=900)
+        result = operation.result()
 
 
 

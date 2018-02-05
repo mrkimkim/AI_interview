@@ -58,14 +58,6 @@ public class LoginActivity extends AppCompatActivity {
     private byte[] app_token;
     UserProfile mUserProfile;
 
-    String[] permissions = new String[] {
-            Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.INTERNET,
-            Manifest.permission.ACCESS_NETWORK_STATE};
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,16 +66,6 @@ public class LoginActivity extends AppCompatActivity {
         // Thread Policy를 지정
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-        // 기기 버전 체크 후 퍼미션 요청
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkPermissions()) {
-                if (showRequestPermission()) {
-                } else {
-                    ActivityCompat.requestPermissions(this, permissions, 12345);
-                }
-            }
-        }
 
         // Firebase 푸시 기기 등록
         FirebaseMessaging.getInstance().subscribeToTopic("news");
@@ -303,22 +285,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ActivityMain.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-    }
-
-    // 퍼미션 체크
-    private boolean checkPermissions() {
-        for (int i = 0; i < permissions.length; ++i) {
-            if (ContextCompat.checkSelfPermission(this, permissions[i]) == PackageManager.PERMISSION_DENIED) return true;
-        }
-        return false;
-    }
-
-    // 퍼미션 요구 이유 체크
-    private boolean showRequestPermission() {
-        for (int i = 0; i < permissions.length; ++i) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) return true;
-        }
-        return false;
     }
 
     //인터넷 연결상태 확인

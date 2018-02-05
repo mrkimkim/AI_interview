@@ -46,10 +46,7 @@ class Session(threading.Thread):
             check_query = """select app_token from UserInfo where `idx` = %s"""
             self.curs.execute(check_query, (self.user_id))
             rows = self.curs.fetchall()
-            print (len(rows))
-            print (self.user_token)
-            print (rows[0][0])
-            
+
             if len(rows) < 1 or rows[0][0] != self.user_token: raise Exception
         except Exception as e:
             print (e)

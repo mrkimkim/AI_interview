@@ -13,36 +13,35 @@ class mResultSender(object):
         from google.cloud import storage
         storage_client = storage.Client()
         bucket = storage_client.get_bucket("ai_interview")
-        
-        """ Search Valid ResultInfo """
-        query = """select idx, interviewdata_idx from ResultInfo where `interviewdata_idx` in (select idx from InterviewData where `user_idx` = %s and `is_deleted` = %s)"""
+
+        """ Search Valid ResultInfo's interviewdata_idx """
+        query = """select idx, interviewdata_idx, emotion_blob, subtitle_blob from ResultInfo where `interviewdata_idx` in (select idx from InterviewData where `user_idx` = %s and `is_deleted` = %s)"""
         self.curs.execute(query, (self.user_idx, 0))
         rows = self.curs.fetchall()
 
         interview_idxs = []
         task_dics = {}
         for row in rows:
-            task_dics[row[1]] = row[0]
+            task_dics[row[1]] = [row[0], row[2], row[3]] # [task_idx, result_idx, emotion_blob, subtitle_blob]
             interview_idxs.append(row[1])
 
-        print (tuple(interview_idxs))
         """ Search InterviewData Idx """
         format_strings = ','.join(['%s'] * len(interview_idxs))
-        query = """select idx, interviewdata_idx, emotion_blob, subtitle_blob from ResultInfo where `interviewdata_idx` IN (%s)""" % format_strings
+        query = """select idx, interviewdata_idx from TaskQueue where `interviewdata_idx` IN (%s)""" % format_strings
         self.curs.execute(query, tuple(interview_idxs))
         rows = self.curs.fetchall()
 
         data = []
         for row in rows:
             if row[1] in task_dics:
-                emotion_blob = bucket.blob(row[2])
+                tmp = task_dics[row[1]]
+                emotion_blob = bucket.blob(tmp[1])
                 emotion_data = emotion_blob.download_as_string()
                 
-                subtitle_blob = bucket.blob(row[3])
+                subtitle_blob = bucket.blob(tmp[2])
                 subtitle_data = subtitle_blob.download_as_string()
 
-                data.append([task_dics[row[1]], row[0], emotion_data, subtitle_data])
-
+                data.append([row[1], tmp[0], emotion_data, subtitle_data])
     
         """ Packet Structure
             Size - Length of Chunk
@@ -62,5 +61,6 @@ class mResultSender(object):
             packet += longToHex(len(row[3]))
             packet += row[3]
 
-        packet_size = longToHex(len(packet))    
+        print ("Packet Size is : " + str(len(packet)))
+        packet_size = longToHex(len(packet))
         self.conn.send(packet_size + packet)

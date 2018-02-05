@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.function.Function;
 
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.InterviewModule.UploadVideo;
@@ -117,17 +118,29 @@ public class ActivityInterviewResult extends AppCompatActivity {
                     // 명령 코드 전송
                     networkWriter.write(Functions.intToBytes(2000));
 
-                    // 결과 데이터 크기 수신
                     int offset = 0;
                     byte[] packet_size = new byte[8];
                     byte[] buffer = new byte[1024];
-                    networkReader.read(packet_size, 0, 8);
-                    byte[] packet = new byte[Functions.bytesToInt(packet_size)];
+
+                    // 결과 데이터 크기 수신
+                    while(offset < 8) {
+                        int len = networkReader.read(buffer, 0, 8);
+                        if (len > 0) {
+                            System.arraycopy(buffer, 0, packet_size, offset, len);
+                            offset += len;
+                        }
+                    }
+
+                    byte[] packet = new byte[Integer.valueOf(String.valueOf(Functions.bytesToLong(packet_size)))];
                     mServerData = new ArrayList<ServerData>();
 
-                    if (Functions.bytesToInt(packet_size) > 0) {
+                    Log.d("Packet Size : ", "====================================================================================");
+                    Log.d("Packet Size : ", String.valueOf(Functions.bytesToLong(packet_size)));
+
+                    offset = 0;
+                    if (Integer.valueOf(String.valueOf(Functions.bytesToLong(packet_size))) > 0) {
                         // 전체 데이터 수집
-                        while (offset < Functions.bytesToInt(packet)) {
+                        while (offset < Integer.valueOf(String.valueOf(Functions.bytesToLong(packet_size)))) {
                             int len = networkReader.read(buffer);
                             if (len > 0) {
                                 System.arraycopy(buffer, 0, packet, offset, len);
@@ -137,12 +150,15 @@ public class ActivityInterviewResult extends AppCompatActivity {
 
                         offset = 0;
                         // 청크 사이즈
-                        byte[] chunkCnt = new byte[8];
-                        System.arraycopy(packet, 0, chunkCnt, 0, 8);
+                        int chunkCnt = 0;
+                        byte[] buffer_chunkCnt = new byte[8];
+                        System.arraycopy(packet, 0, buffer_chunkCnt, 0, 8);
+                        chunkCnt = Integer.valueOf(String.valueOf(Functions.bytesToLong(buffer_chunkCnt)));
                         offset += 8;
 
+
                         // 각각의 청크를 탐색함
-                        for(int i = 0; i < Functions.bytesToInt(chunkCnt); ++i) {
+                        for(int i = 0; i < chunkCnt; ++i) {
                             // TaskIdx와 ResultIdx
                             byte[] taskIdx = new byte[8];
                             byte[] resultIdx = new byte[8];
@@ -150,19 +166,29 @@ public class ActivityInterviewResult extends AppCompatActivity {
                             System.arraycopy(packet, offset + 8, resultIdx, 0, 8);
                             offset += 16;
 
+
                             // Emotion
-                            byte[] emotion_size = new byte[8];
-                            System.arraycopy(packet, offset, emotion_size, 0, 8);
-                            byte[] emotion = new byte[Functions.bytesToInt(emotion_size)];
-                            System.arraycopy(packet, offset + 8, emotion, 0, Functions.bytesToInt(emotion_size));
-                            offset += 8 + Functions.bytesToInt(emotion_size);
+                            int emotion_size = 0;
+                            byte[] buffer_emotion_size = new byte[8];
+                            System.arraycopy(packet, offset, buffer_emotion_size, 0, 8);
+
+                            emotion_size = Integer.valueOf(String.valueOf(Functions.bytesToLong(buffer_emotion_size)));
+
+                            byte[] emotion = new byte[emotion_size];
+                            System.arraycopy(packet, offset + 8, emotion, 0, emotion_size);
+                            offset += 8 + emotion_size;
+
 
                             // Subtitle
-                            byte[] subtitle_size = new byte[8];
-                            System.arraycopy(packet, offset, subtitle_size, 0, 8);
-                            byte[] subtitle = new byte[Functions.bytesToInt(subtitle_size)];
-                            System.arraycopy(packet, offset + 8, subtitle, 0, Functions.bytesToInt(subtitle_size));
-                            offset += 8 + Functions.bytesToInt(subtitle_size);
+                            int subtitle_size = 0;
+                            byte[] buffer_subtitle_size = new byte[8];
+                            System.arraycopy(packet, offset, buffer_subtitle_size, 0, 8);
+
+                            subtitle_size = Integer.valueOf(String.valueOf(Functions.bytesToLong(buffer_subtitle_size)));
+
+                            byte[] subtitle = new byte[subtitle_size];
+                            System.arraycopy(packet, offset + 8, subtitle, 0, subtitle_size);
+                            offset += 8 + subtitle_size;
 
                             mServerData.add(new ServerData(Functions.bytesToLong(taskIdx),
                                     Functions.bytesToLong(resultIdx),
@@ -333,6 +359,7 @@ public class ActivityInterviewResult extends AppCompatActivity {
 
                 if (v.getId() == ib_download.getId()) {
                     Log.d("Button Click Event", "Download " + String.valueOf(getAdapterPosition()));
+                    Log.d("ResultInfo : ", String.valueOf(instance.getTask_idx()) + "/" + String.valueOf(instance.getResult_idx()));
 
                     // Case 1 온라인에 업로드 되지 않은 파일인 경우
                     if (instance.getTask_idx() == 0) {
@@ -346,7 +373,8 @@ public class ActivityInterviewResult extends AppCompatActivity {
 
                     // Case 3 온라인에 업로드 되어 처리된 파일
                     else {
-                        showDialog_showResult(instance.getVideo_path(), instance.getEmotion_path(), instance.getStt_path());
+                        AlertDialog.Builder builder = showDialog_showResult(instance.getVideo_path(), instance.getEmotion_path(), instance.getStt_path());
+                        builder.show();
                     }
 
                     notifyDataSetChanged();

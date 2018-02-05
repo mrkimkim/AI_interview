@@ -92,7 +92,7 @@ class mBackgroundProcessor(object):
 
 
                         ''' [6] Update Result DB '''
-                        cur.execute("insert into ResultInfo (user_idx, interviewdata_idx, question_idx, storage_blob, video_blob, audio_blob, emotion_blob, subtitle_blob) values(%s, %s, %s, %s, %s, %s, %s)",
+                        cur.execute("insert into ResultInfo (user_idx, interviewdata_idx, question_idx, storage_blob, video_blob, audio_blob, emotion_blob, subtitle_blob) values(%s, %s, %s, %s, %s, %s, %s, %s)",
                                     (mInterviewData.user_idx, mInterviewData.idx, mInterviewData.question_idx, mTmpInfo.storage_blob, mTmpInfo.video_blob, mTmpInfo.audio_blob, mTmpInfo.emotion_blob, mTmpInfo.subtitle_blob))
 
 
