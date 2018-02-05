@@ -12,13 +12,15 @@ import extFinder
 
 def get_storage_bucket():
     from google.cloud import storage
-    from google.cloud import speech
-    from google.cloud.speech import enums
-    from google.cloud.speech import types
-
+    
     storage_client = storage.Client()
     bucket = storage_client.get_bucket("ai_interview")
     return bucket
+
+def deleteTmpFile(tmpinfo):
+    import shutil
+    shutil.rmtree(tmpinfo.tmp_folder)
+    return
 
 # Single Thread Processing Task Queue
 class mBackgroundProcessor(object):
@@ -30,7 +32,8 @@ class mBackgroundProcessor(object):
                                    charset='utf8',
                                    autocommit=True
                                    )
-
+        self.bucket = get_storage_bucket()
+        
     def generate_seed(self):
         return random.randrange(1, 2 ** 31)
         
@@ -65,39 +68,52 @@ class mBackgroundProcessor(object):
                         mInterviewData.video_hash, mInterviewData.video_format = rows[0][0], rows[0][1]
 
 
+
                         """ [4] PreProcess Data """
-                        mPreProcessor = preProcessor.mPreProcessor(mInterviewData, get_storage_bucket())
+                        mPreProcessor = preProcessor.mPreProcessor(mInterviewData, self.bucket)
                         mInterviewData, mTmpInfo = mPreProcessor.run()
                         mPreProcessoor = None
 
+
                         
                         ''' [5-1] Process Video Data '''
-                        mVideoProcessor = VideoProcessor.mVideoProcessor(mTmpInfo)
+                        mVideoProcessor = VideoProcessor.mVideoProcessor(mTmpInfo, self.bucket)
                         mResultInfo.emotion_path, mTmpInfo = mVideoProcessor.run()
                         mVideoProcessor = None
 
+
+
                         
                         ''' [5-2] Process Audio Data '''
-                        mAudioProcessor = AudioProcessor.mAudioProcessor(mInterviewData, mTmpInfo)
+                        mAudioProcessor = AudioProcessor.mAudioProcessor(mInterviewData, mTmpInfo, self.bucket)
                         mResultInfo.stt_path, mTmpInfo = mAudioProcessor.run()
                         mAudioProcessor = None
 
+
+
                         ''' [6] Update Result DB '''
-                        cur.execute("insert into ResultInfo (user_idx, interviewdata_idx, question_idx, emotion_path, stt_path) values(%s, %s, %s, %s, %s)",
-                                    (mInterviewData.user_idx, mInterviewData.idx, mInterviewData.question_idx, mResultInfo.emotion_path, mResultInfo.stt_path))
+                        cur.execute("insert into ResultInfo (user_idx, interviewdata_idx, question_idx, storage_blob, video_blob, audio_blob, emotion_blob, subtitle_blob) values(%s, %s, %s, %s, %s, %s, %s)",
+                                    (mInterviewData.user_idx, mInterviewData.idx, mInterviewData.question_idx, mTmpInfo.storage_blob, mTmpInfo.video_blob, mTmpInfo.audio_blob, mTmpInfo.emotion_blob, mTmpInfo.subtitle_blob))
+
 
                         
                         ''' [7] Patch TaskQueue '''
                         cur.execute("update TaskQueue SET `isProcessed`=%s where idx=%s", (1, task_idx))
 
+
+
                         ''' [8] Push Message '''
                         print ("Make Push")
                         cur.execute("select push_token from UserInfo where `idx` = %s", (mInterviewData.user_idx))
                         rows = cur.fetchall()
-
                         push_token = [rows[0][0]]
                         mPushServer = PushServer.mPushServer()
                         mPushServer.run(push_token, "Finish", "Analyze Success")
+
+
+                        ''' [9] Delete Tmp File '''
+                        deleteTmpFile(mTmpInfo)
+                        
                         print ("Finish Analyze")
                         
                 break

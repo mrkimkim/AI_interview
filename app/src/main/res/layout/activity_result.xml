@@ -6,8 +6,9 @@
     android:layout_height="match_parent"
     android:background="#ffffffff"
     android:fitsSystemWindows="true"
-    tools:context="portfolio.projects.mrkimkim.ai_interview.ActivityResult">
+    tools:context="portfolio.projects.mrkimkim.ai_interview.ActivityInterviewResult">
 
+    <!-- 타이틀 바 -->
     <RelativeLayout
         android:id="@+id/result_title"
         style="@style/common_titlebar">
@@ -29,14 +30,17 @@
             />
 
         <LinearLayout
+            android:id="@+id/result_btn_refresh"
+            android:clickable="true"
             style="@style/common_titlebar_rightlayout">
-
             <ImageButton
-                style="@style/common_titlebar_imagebtn"
-                android:src="@drawable/reload" />
+                android:clickable="false"
+                android:src="@drawable/reload"
+                style="@style/common_titlebar_imagebtn"/>
         </LinearLayout>
     </RelativeLayout>
 
+    <!-- 인터뷰 카드 리스트 -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"

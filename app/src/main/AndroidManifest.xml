@@ -36,7 +36,7 @@
             android:value="5207d8f5691153fb22fb9e7950e4e9c1" />
 
         <activity android:name=".ActivityUserInfo" />
-        <activity android:name=".ActivityResult" />
+        <activity android:name=".ActivityInterviewResult" />
 
         <service
             android:name=".NetworkModule.MyFireBaseMessagingService"

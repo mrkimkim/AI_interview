@@ -43,7 +43,7 @@ public class UploadVideo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_video);
 
-        progressBar = (ProgressBar) findViewById(R.id.upload_video_progress_bar);
+        progressBar = (ProgressBar) findViewById(R.id.show_interview_video_seekbar);
         tv_progress = (TextView) findViewById(R.id.upload_video_tv_progress);
 
         // 버전 체크

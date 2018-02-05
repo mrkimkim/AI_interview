@@ -31,7 +31,7 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     public void onClickInterviewResult(View v) {
-        Intent intent = new Intent(ActivityMain.this, ActivityResult.class);
+        Intent intent = new Intent(ActivityMain.this, ActivityInterviewResult.class);
         startActivity(intent);
     }
 

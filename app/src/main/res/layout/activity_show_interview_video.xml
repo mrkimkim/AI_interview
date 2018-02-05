@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     tools:context="portfolio.projects.mrkimkim.ai_interview.ActivityInterviewVideo">
 
-    <VideoView
+    <SurfaceView
+        android:id="@+id/show_interview_video_surface"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -69,10 +70,10 @@
         />
 
     <SeekBar
-        android:id="@+id/upload_video_progress_bar"
+        android:id="@+id/show_interview_video_seekbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        style="@android:style/Widget.ProgressBar.Horizontal"
+        style="@android:style/Widget.SeekBar"
         android:max="1000"
         android:progressDrawable="@drawable/blueprogress"
         app:layout_constraintBottom_toBottomOf="@id/show_interview_result_horizon_guide8"
@@ -97,10 +98,10 @@
         android:id="@+id/show_interview_result_btn_report"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/icon_power"
+        android:src="@drawable/icon_report"
         android:layout_margin="5dp"
-        app:cb_color="#ffffffff"
-        app:cb_pressedRingWidth="8dip"
+        app:cb_color="#00ffffff"
+        app:cb_pressedRingWidth="0dp"
         app:layout_constraintDimensionRatio="W,1:1"
         app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide7"
         app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide9"

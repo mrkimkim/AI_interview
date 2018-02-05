@@ -9,11 +9,12 @@ class mPreProcessor(object):
     def __init__(self, InterviewData, bucket):
         self.mInterviewData = InterviewData
         self.bucket = bucket
+
+        self.storage_blob = str(self.mInterviewData.user_idx) + '/' + self.mInterviewData.video_hash + '/'
+        self.video_blob = self.storage_blob + 'Video'
+        self.audio_blob = self.storage_blob + 'Audio'
         
-        self.video_blob = str(self.mInterviewData.user_idx) + '_' + self.mInterviewData.video_hash
-        self.audio_blob = str(self.mInterviewData.user_idx) + '_'
-        
-        self.tmp_folder = '/tmp/' + self.video_blob + '/'
+        self.tmp_folder = '/tmp/' + str(self.mInterviewData.user_idx) + '_' + self.mInterviewData.video_hash + '/'
         self.tmp_video = self.tmp_folder + 'video.mp4'
         self.tmp_audio = self.tmp_folder + 'audio.flac'
         
@@ -38,7 +39,6 @@ class mPreProcessor(object):
         self.mInterviewData.video_frame_count = len(frames) - 1
 
 
-
         try:
             print ("[2] Extract Audio from Video")
             ''' Generate flac audio from video '''
@@ -61,7 +61,7 @@ class mPreProcessor(object):
             ff.run(stdout = output)
         data = open(self.tmp_folder + 'temp', 'r').readlines()
 
-        """ save duration info """
+        """ Save Duration Info """
         self.mInterviewData.video_duration = int(float(data[1][data[1].find('=') + 1:].strip()) * 100)
         self.mInterviewData.audio_duration = self.mInterviewData.video_duration
             
@@ -82,11 +82,11 @@ class mPreProcessor(object):
 
         print ("[5] Save Audio to GCS")
         self.mInterviewData.audio_hash = hashlib.sha256(audio_data).hexdigest()
-        self.audio_blob = self.audio_blob + self.mInterviewData.audio_hash + '.flac'
+
         blob = self.bucket.blob(self.audio_blob)
         blob.upload_from_string(audio_data)
 
-        mTmpInfo = TmpInfo(self.video_blob, self.audio_blob, self.tmp_folder, self.tmp_video, self.tmp_audio)
+        mTmpInfo = TmpInfo(self.storage_blob, self.video_blob, self.audio_blob, self.tmp_folder, self.tmp_video, self.tmp_audio)
 
         return self.mInterviewData, mTmpInfo
         

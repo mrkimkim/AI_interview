@@ -14,12 +14,15 @@ import java.util.ArrayList;
 
 public class InterviewData {
     public EmotionData mEmotionData;
-    public TextData mTextData;
+    public SubtitleData mSubtitleData;
 
     public InterviewData(String Emotion_path, String STT_path) {
         mEmotionData = new EmotionData(this.readFile(Emotion_path));
-        mTextData = new TextData(this.readFile(STT_path));
+        mSubtitleData = new SubtitleData(this.readFile(STT_path));
     }
+
+    public EmotionData getmEmotionData() { return this.mEmotionData; }
+    public SubtitleData getmSubtitleData() { return this.mSubtitleData; }
 
     // UTF-8 형태의 파일을 읽음
     public static String readFile(String path) {
@@ -100,13 +103,13 @@ public class InterviewData {
 
 
 
-    class TextData {
+    class SubtitleData {
         String text;
         ArrayList<Double> timestamp;
         ArrayList<String> word;
 
 
-        public TextData(String data) {
+        public SubtitleData(String data) {
             timestamp = new ArrayList<Double>();
             word = new ArrayList<String>();
             this.loadData(data);

@@ -79,15 +79,13 @@ class mVideoReceiver(object):
 
     def SaveVideo(self):
         from google.cloud import storage
-        from google.cloud import speech
-        from google.cloud.speech import enums
-        from google.cloud.speech import types
-
-        self.video_hash = hashlib.sha256(self.data).hexdigest()
         
+        self.video_hash = hashlib.sha256(self.data).hexdigest()
+
         storage_client = storage.Client()
         bucket = storage_client.get_bucket("ai_interview")
-        blob = bucket.blob(str(self.user_idx) + '_' + self.video_hash)
+        
+        blob = bucket.blob(str(self.user_idx) + '/' + self.video_hash + '/' + 'Video')
         blob.upload_from_string(self.data)
         
         ext = 'mp4'

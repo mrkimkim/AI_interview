@@ -1,11 +1,12 @@
 class mAudioProcessor(object):
-    def __init__(self, mInterviewData, mTmpInfo):
+    def __init__(self, mInterviewData, mTmpInfo, bucket):
         self.idx = 0
         self.mInterviewData = mInterviewData
         self.mTmpInfo = mTmpInfo
         self.mTmpInfo.tmp_stt = self.mTmpInfo.tmp_folder + "text.stt"
+        self.mTmpInfo.subtitle_blob = self.mTmpInfo.storage_blob + 'subtitle'
 
-
+        self.bucket = bucket
         
     def run(self):
         from google.cloud import storage
@@ -53,7 +54,10 @@ class mAudioProcessor(object):
                     STT_output.write(str(start_time.seconds + start_time.nanos * 1e-9) + ',')
                     STT_output.write(str(end_time.seconds + end_time.nanos * 1e-9) + "\n")
 
-
+        with open(self.mTmpInfo.tmp_stt, 'rb') as f:
+            data = f.read()
+            blob = self.bucket.blob(self.mTmpInfo.subtitle_blob)
+            blob.upload_from_string(data)
 
 
         print ("Successfully Analyze Audio Data")

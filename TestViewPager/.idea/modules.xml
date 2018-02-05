@@ -3,9 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TestViewPager.iml" filepath="$PROJECT_DIR$/TestViewPager.iml" />
-      <module fileurl="file://C:\Users\john\Desktop\Udacity\DeepLearning\AI_interview\TestViewPager\TestViewPager.iml" filepath="C:\Users\john\Desktop\Udacity\DeepLearning\AI_interview\TestViewPager\TestViewPager.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:\Users\john\Desktop\Udacity\DeepLearning\AI_interview\TestViewPager\app\app.iml" filepath="C:\Users\john\Desktop\Udacity\DeepLearning\AI_interview\TestViewPager\app\app.iml" />
     </modules>
   </component>
 </project>

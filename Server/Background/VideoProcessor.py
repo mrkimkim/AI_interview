@@ -12,14 +12,18 @@ headers = {
 params = urllib.parse.urlencode({})
 
 class mVideoProcessor(object):
-    def __init__(self, mTmpInfo):
+    def __init__(self, mTmpInfo, bucket):
         print ("Start Video Processor")
         self.mTmpInfo = mTmpInfo
-
         self.mTmpInfo.tmp_emotion = self.mTmpInfo.tmp_folder + "emotion.emo"
+        
+        self.bucket = bucket
         self.emotion = []
+        self.mTmpInfo.emotion_blob = self.mTmpInfo.storage_blob + 'emotion'
+
         
     def run(self):
+        from google.cloud import storage
         print ("---- Process Frame Data ----")
         print ("[1] Connecting to MS Azure Server")
         conn = http.client.HTTPSConnection('westus.api.cognitive.microsoft.com')
@@ -60,8 +64,13 @@ class mVideoProcessor(object):
                 f.write(str(emotion).replace('b',''))
         self.emotion = []
 
+        with open(self.mTmpInfo.tmp_emotion, 'rb') as f:
+            data = f.read()
+            blob = self.bucket.blob(self.mTmpInfo.emotion_blob)
+            blob.upload_from_string(data)
 
 
-        
+
+            
         print ("--- Successfully Write Video Result Data ---")
         return self.mTmpInfo.tmp_emotion, self.mTmpInfo

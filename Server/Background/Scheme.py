@@ -49,10 +49,13 @@ class ResultInfo():
         self.stt_path = ""
 
 class TmpInfo():
-    def __init__(self, video_blob, audio_blob, tmp_folder, tmp_video, tmp_audio):
+    def __init__(self, storage_blob, video_blob, audio_blob, tmp_folder, tmp_video, tmp_audio):
+        self.storage_blob = storage_blob
         self.video_blob = video_blob
         self.audio_blob = audio_blob
-
+        self.emotion_blob = ''
+        self.subtitle_blob = ''
+        
         self.tmp_folder = tmp_folder
         self.tmp_video = tmp_video
         self.tmp_audio = tmp_audio

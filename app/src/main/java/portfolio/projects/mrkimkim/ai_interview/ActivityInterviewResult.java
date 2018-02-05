@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +19,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.roger.catloadinglibrary.CatLoadingView;
+
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -31,16 +36,34 @@ import portfolio.projects.mrkimkim.ai_interview.NetworkModule.NetworkService;
 import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_result;
 
-public class ActivityResult extends AppCompatActivity {
+public class ActivityInterviewResult extends AppCompatActivity {
     Context mContext;
     RecyclerView recyclerView;
     ResultAdapter Adapter;
     RecyclerView.LayoutManager layoutManager;
 
-    ArrayList<item_result> items;
-    ArrayList<Long> ServerData;
+    CatLoadingView catLoadingView;
+    LinearLayout btn_back, btn_refresh;
 
-    LinearLayout btn_back;
+    ArrayList<item_result> items;
+    ArrayList<ServerData> mServerData;
+
+    class ServerData{
+        Long task_idx, result_idx;
+        String emotion, subtitle;
+
+        public ServerData(Long task_idx, Long result_idx, String emotion, String subtitle) {
+            this.task_idx = task_idx;
+            this.result_idx = result_idx;
+            this.emotion = emotion;
+            this.subtitle = subtitle;
+        }
+
+        public Long getTask_idx() { return this.task_idx; }
+        public Long getResult_idx() { return this.result_idx; }
+        public String getEmotion() { return this.emotion; }
+        public String getSubtitle() { return this.subtitle; }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +87,17 @@ public class ActivityResult extends AppCompatActivity {
             }
         });
 
-        // 리프레시 버튼
-
+        // 리프레시 버튼 등록
+        btn_refresh = (LinearLayout)findViewById(R.id.result_btn_refresh);
 
         // DB를 업데이트 함
+        refreshDB(getCurrentFocus());
+    }
+
+    public void refreshDB(View v) {
+        catLoadingView = new CatLoadingView();
+        catLoadingView.setCancelable(false);
+        catLoadingView.show(getSupportFragmentManager(), "Loading DB");
         _downloadServerDB();
     }
 
@@ -88,20 +118,62 @@ public class ActivityResult extends AppCompatActivity {
                     networkWriter.write(Functions.intToBytes(2000));
 
                     // 결과 데이터 크기 수신
+                    int offset = 0;
                     byte[] packet_size = new byte[8];
+                    byte[] buffer = new byte[1024];
                     networkReader.read(packet_size, 0, 8);
+                    byte[] packet = new byte[Functions.bytesToInt(packet_size)];
+                    mServerData = new ArrayList<ServerData>();
 
-                    // 결과 데이터 수신 후 task_idx, result_idx 생성
-                    byte[] packet = new byte[8];
-                    ServerData = new ArrayList<Long>();
-                    for(int i = 0; i < Functions.bytesToInt(packet_size); i += 8) {
-                        networkReader.read(packet, 0, 8);
-                        ServerData.add(Functions.bytesToLong(packet));
+                    if (Functions.bytesToInt(packet_size) > 0) {
+                        // 전체 데이터 수집
+                        while (offset < Functions.bytesToInt(packet)) {
+                            int len = networkReader.read(buffer);
+                            if (len > 0) {
+                                System.arraycopy(buffer, 0, packet, offset, len);
+                                offset += len;
+                            }
+                        }
+
+                        offset = 0;
+                        // 청크 사이즈
+                        byte[] chunkCnt = new byte[8];
+                        System.arraycopy(packet, 0, chunkCnt, 0, 8);
+                        offset += 8;
+
+                        // 각각의 청크를 탐색함
+                        for(int i = 0; i < Functions.bytesToInt(chunkCnt); ++i) {
+                            // TaskIdx와 ResultIdx
+                            byte[] taskIdx = new byte[8];
+                            byte[] resultIdx = new byte[8];
+                            System.arraycopy(packet, offset, taskIdx, 0, 8);
+                            System.arraycopy(packet, offset + 8, resultIdx, 0, 8);
+                            offset += 16;
+
+                            // Emotion
+                            byte[] emotion_size = new byte[8];
+                            System.arraycopy(packet, offset, emotion_size, 0, 8);
+                            byte[] emotion = new byte[Functions.bytesToInt(emotion_size)];
+                            System.arraycopy(packet, offset + 8, emotion, 0, Functions.bytesToInt(emotion_size));
+                            offset += 8 + Functions.bytesToInt(emotion_size);
+
+                            // Subtitle
+                            byte[] subtitle_size = new byte[8];
+                            System.arraycopy(packet, offset, subtitle_size, 0, 8);
+                            byte[] subtitle = new byte[Functions.bytesToInt(subtitle_size)];
+                            System.arraycopy(packet, offset + 8, subtitle, 0, Functions.bytesToInt(subtitle_size));
+                            offset += 8 + Functions.bytesToInt(subtitle_size);
+
+                            mServerData.add(new ServerData(Functions.bytesToLong(taskIdx),
+                                    Functions.bytesToLong(resultIdx),
+                                    new String(emotion, "utf-8"),
+                                    new String(subtitle, "utf-8")));
+                        }
+
                     }
 
                     _updateLocalDB();
                     _LoadInterviewData();
-                    _setAdapter();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -113,10 +185,34 @@ public class ActivityResult extends AppCompatActivity {
 
     public void _updateLocalDB() {
         DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
-        for(int i = 0; i < ServerData.size(); i += 2) {
-            long task_idx = ServerData.get(i);
-            long result_idx = ServerData.get(i + 1);
-            mDBHelper.update("InterviewData", new String[]{"result_idx"}, new String[]{String.valueOf(result_idx)}, "task_idx=?", new String[]{String.valueOf(task_idx)});
+        for(int i = 0; i < mServerData.size(); i++) {
+            long task_idx = mServerData.get(i).getTask_idx();
+            long result_idx = mServerData.get(i).getResult_idx();
+
+            try {
+                // 기기에 파일을 씀
+                File emotion = new File(GlobalApplication.ApplicationDataPath + String.valueOf(result_idx) + "_emo");
+                BufferedWriter out_emotion = new BufferedWriter(new FileWriter(emotion));
+                out_emotion.write(mServerData.get(i).getEmotion());
+                out_emotion.flush();
+                out_emotion.close();
+
+                File subtitle = new File(GlobalApplication.ApplicationDataPath + String.valueOf(result_idx) + "_stt");
+                BufferedWriter out_subtitle = new BufferedWriter(new FileWriter(subtitle));
+                out_subtitle.write(mServerData.get(i).getSubtitle());
+                out_subtitle.flush();
+                out_subtitle.close();
+
+                // DB에 정보를 저장
+                mDBHelper.update("InterviewData",
+                        new String[]{"result_idx", "emotion_path", "stt_path"},
+                        new String[]{String.valueOf(result_idx), emotion.getAbsolutePath(), subtitle.getAbsolutePath()},
+                        "task_idx=?",
+                        new String[]{String.valueOf(task_idx)});
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -154,6 +250,12 @@ public class ActivityResult extends AppCompatActivity {
                         items.add(new item_result(idx, user_idx, video_path, emotion_path, stt_path, task_idx, result_idx, question_idx, title, history, duration, src_lang, dest_lang, view_cnt, like_cnt, markdown_uri));
                     }
                 }
+
+                // 어댑터 설정
+                _setAdapter();
+
+                // 다이얼로그 제거
+                catLoadingView.dismiss();
             }
         }
         Runnable t = new t_LoadInterviewData();
@@ -244,7 +346,7 @@ public class ActivityResult extends AppCompatActivity {
 
                     // Case 3 온라인에 업로드 되어 처리된 파일
                     else {
-                        showDialog_showResult();
+                        showDialog_showResult(instance.getVideo_path(), instance.getEmotion_path(), instance.getStt_path());
                     }
 
                     notifyDataSetChanged();
@@ -262,20 +364,19 @@ public class ActivityResult extends AppCompatActivity {
     }
 
 
-    public AlertDialog.Builder showDialog_showResult() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityResult.this);
+    public AlertDialog.Builder showDialog_showResult(final String Video_path, final String Emotion_path, final String Subtitle_path) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityInterviewResult.this);
         builder.setTitle("결과 확인");
         builder.setMessage("면접 결과를 확인하시겠습니까?");
         builder.setPositiveButton("예",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // 로딩 다이얼로그
-
-                        // result_idx로부터 STT와 Emotion을 가져온다.
-
                         // STT와 Emotion을 처리한다.
-
-                        // 결과 Activity 로드
+                        Intent intent = new Intent(ActivityInterviewResult.this, ActivityInterviewVideo.class);
+                        intent.putExtra("Video_path", Video_path);
+                        intent.putExtra("Emotion_path", Emotion_path);
+                        intent.putExtra("Subtitle_path", Subtitle_path);
+                        startActivity(intent);
                     }
                 });
         builder.setNegativeButton("아니오", null);
@@ -283,7 +384,7 @@ public class ActivityResult extends AppCompatActivity {
     }
 
     public void showDialog_isprocessing() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityResult.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityInterviewResult.this);
         builder.setTitle("분석 중");
         builder.setMessage("서버에서 분석 중이에요. 결과가 나오면 푸시로 알려드릴게요.");
         builder.setPositiveButton("확인", null);
@@ -292,7 +393,7 @@ public class ActivityResult extends AppCompatActivity {
 
 
     public void showDialog_uploadVideo(final int position, final long idx, final long question_idx, final String video_path) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityResult.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityInterviewResult.this);
         builder.setTitle("분석 의뢰");
         builder.setMessage("영상을 서버로 업로드하여 분석을 진행할까요?");
         builder.setPositiveButton("예",
@@ -316,7 +417,7 @@ public class ActivityResult extends AppCompatActivity {
     }
 
     public void showDialog_fileNotexist() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityResult.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityInterviewResult.this);
         builder.setTitle("데이터 에러");
         builder.setMessage("촬영된 면접 영상을 기기에서 찾을 수 없어요.");
         builder.setPositiveButton("확인", null);
@@ -324,7 +425,7 @@ public class ActivityResult extends AppCompatActivity {
     }
 
     public void showDialog_deleteDB(final int position, final long idx) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityResult.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityInterviewResult.this);
         builder.setTitle("데이터 삭제");
         builder.setMessage("인터뷰 기록을 삭제할까요?");
         builder.setPositiveButton("예",
@@ -347,7 +448,7 @@ public class ActivityResult extends AppCompatActivity {
 
 
     public void upload_video(final long idx, final long question_idx, final String video_path) {
-        Intent intent = new Intent(ActivityResult.this, UploadVideo.class);
+        Intent intent = new Intent(ActivityInterviewResult.this, UploadVideo.class);
         intent.putExtra("question_idx", question_idx);
         intent.putExtra("video_path", video_path);
         intent.putExtra("uri", "file://" + video_path);
