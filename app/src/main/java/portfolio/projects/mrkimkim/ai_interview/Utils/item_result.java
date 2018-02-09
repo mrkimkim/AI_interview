@@ -6,7 +6,7 @@ package portfolio.projects.mrkimkim.ai_interview.Utils;
 
 public class item_result {
     long idx, user_idx;
-    String video_path, emotion_path, stt_path;
+    String video_path, emotion_path, stt_path, pitch_path;
     long task_idx, result_idx, question_idx;
 
     String title, history;
@@ -20,6 +20,7 @@ public class item_result {
     public String getVideo_path() { return this.video_path;}
     public String getEmotion_path() { return this.emotion_path;}
     public String getStt_path() { return this.stt_path;}
+    public String getPitch_path() { return this.pitch_path; }
     public long getTask_idx() { return this.task_idx;}
     public long getResult_idx() { return this.result_idx;}
     public long getQuestion_idx() { return this.question_idx;}
@@ -36,7 +37,7 @@ public class item_result {
     public void setTask_idx(long task_idx) { this.task_idx = task_idx; }
     public void setResult_idx(long result_idx) { this.result_idx = result_idx; }
 
-    public item_result(long idx, long user_idx, String video_path, String emotion_path, String stt_path,
+    public item_result(long idx, long user_idx, String video_path, String emotion_path, String stt_path, String pitch_path,
                        long task_idx, long result_idx, long question_idx,
                        String title, String history, String duration, String src_lang, String dest_lang, String view_cnt, String like_cnt, String markdown_uri) {
 
@@ -45,6 +46,7 @@ public class item_result {
         this.video_path = video_path;
         this.emotion_path = emotion_path;
         this.stt_path = stt_path;
+        this.pitch_path = pitch_path;
         this.task_idx = task_idx;
         this.result_idx = result_idx;
         this.question_idx = question_idx;

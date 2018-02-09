@@ -33,7 +33,7 @@ class mPreProcessor(object):
         print ("[1] Breakdown Video to Frame image")
         """ Generate 4 frame per second """
         ff = ffmpy.FFmpeg(inputs={self.tmp_video:None},
-                          outputs = {self.tmp_folder + 'frame_%04d.png': '-r 4 '})
+                          outputs = {self.tmp_folder + 'frame_%04d.png': '-r 5 '})
         ff.run()
         _, _, frames = os.walk(self.tmp_folder).__next__()
         self.mInterviewData.video_frame_count = len(frames) - 1

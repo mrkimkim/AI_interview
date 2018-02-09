@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.roger.catloadinglibrary.CatLoadingView;
+
 public class ActivityMain extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +33,8 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     public void onClickInterviewResult(View v) {
-        Intent intent = new Intent(ActivityMain.this, ActivityInterviewResult.class);
-        startActivity(intent);
+       Intent intent = new Intent(ActivityMain.this, ActivityInterviewResult.class);
+       startActivity(intent);
     }
 
     public void onClickGroupStudy(View v) {

@@ -7,6 +7,7 @@ import Scheme
 import preProcessor
 import VideoProcessor
 import AudioProcessor
+import PitchAnalyzer
 import PushServer
 import extFinder
 
@@ -85,15 +86,19 @@ class mBackgroundProcessor(object):
 
                         
                         ''' [5-2] Process Audio Data '''
-                        mAudioProcessor = AudioProcessor.mAudioProcessor(mInterviewData, mTmpInfo, self.bucket)
+                        mAudioProcessor = AudioProcessor.mAudioProcessor(mTmpInfo, self.bucket)
                         mResultInfo.stt_path, mTmpInfo = mAudioProcessor.run()
                         mAudioProcessor = None
+
+                        ''' [5-3] Process Audio Pitch '''
+                        mPitchAnalyzer = PitchAnalyzer.mPitchAnalyzer(mTmpInfo, self.bucket)
+                        mTmpInfo = mPitchAnalyzer.run()
 
 
 
                         ''' [6] Update Result DB '''
-                        cur.execute("insert into ResultInfo (user_idx, interviewdata_idx, question_idx, storage_blob, video_blob, audio_blob, emotion_blob, subtitle_blob) values(%s, %s, %s, %s, %s, %s, %s, %s)",
-                                    (mInterviewData.user_idx, mInterviewData.idx, mInterviewData.question_idx, mTmpInfo.storage_blob, mTmpInfo.video_blob, mTmpInfo.audio_blob, mTmpInfo.emotion_blob, mTmpInfo.subtitle_blob))
+                        cur.execute("insert into ResultInfo (user_idx, interviewdata_idx, question_idx, storage_blob, video_blob, audio_blob, emotion_blob, subtitle_blob, pitch_blob) values(%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                                    (mInterviewData.user_idx, mInterviewData.idx, mInterviewData.question_idx, mTmpInfo.storage_blob, mTmpInfo.video_blob, mTmpInfo.audio_blob, mTmpInfo.emotion_blob, mTmpInfo.subtitle_blob, mTmpInfo.pitch_blob))
 
 
                         
