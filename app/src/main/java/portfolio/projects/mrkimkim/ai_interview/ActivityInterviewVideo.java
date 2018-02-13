@@ -37,6 +37,7 @@ public class ActivityInterviewVideo extends Activity implements SurfaceHolder.Ca
     TextView tv_happy, tv_neutral, tv_sad, tv_nervous;
     TextView tv_wps, tv_pitch;
     ImageView btnEmotion, btnWps, btnPitch, btnSubtitle;
+    ImageView btnReport;
     CircleButton btn_Play;
 
 
@@ -56,11 +57,10 @@ public class ActivityInterviewVideo extends Activity implements SurfaceHolder.Ca
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        // 현재 진행상황 표시
                         tv_progress.setText(String.format("%02d", pos/600) + ":" + String.format("%02d", (pos%600)/10));
 
                         // 현재 Emotion 표시
-                        Log.d("TimeStamp :", String.valueOf(pos));
-                        Log.d("Subtitle : ", subtitleData.getSingleWord(pos));
                         tv_subtitle.setText(subtitleData.getSingleWord(pos + 2));
 
                         // 현재 WPS 표시
@@ -74,8 +74,6 @@ public class ActivityInterviewVideo extends Activity implements SurfaceHolder.Ca
                         tv_neutral.setText(emotionData.getSingleNeutral(pos));
                         tv_sad.setText(emotionData.getSingleSad(pos));
                         tv_nervous.setText(emotionData.getSingleNervous(pos));
-
-
                     }
                 });
 
@@ -120,6 +118,7 @@ public class ActivityInterviewVideo extends Activity implements SurfaceHolder.Ca
         subtitleData = interviewData.getmSubtitleData();
         pitchData = interviewData.getmPitchData();
 
+
         // 비디오 설정
         surfaceView = (SurfaceView)findViewById(R.id.show_interview_video_surface);
         surfaceHolder = surfaceView.getHolder();
@@ -128,7 +127,6 @@ public class ActivityInterviewVideo extends Activity implements SurfaceHolder.Ca
 
         // SeekBar 설정
         seekBar = (SeekBar)findViewById(R.id.show_interview_video_seekbar);
-
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
@@ -155,6 +153,8 @@ public class ActivityInterviewVideo extends Activity implements SurfaceHolder.Ca
         btn_Play = (CircleButton)findViewById(R.id.show_interview_video_btn_play);
         btn_Play.setClickable(false);
 
+        // Report 버튼 설정
+        btnReport = (ImageView)findViewById(R.id.show_interview_result_btn_report);
 
         // Progress / Duration 텍스트 뷰 설정
         tv_duration = (TextView)findViewById(R.id.show_interview_video_tv_Duration);
@@ -210,18 +210,44 @@ public class ActivityInterviewVideo extends Activity implements SurfaceHolder.Ca
         btn_Play.setClickable(true);
     }
 
+    // 리포트 버튼
+    public void onViewReport(View v) {
+        Intent intent = new Intent(ActivityInterviewVideo.this, ActivityInterviewReport.class);
 
-    @Override
-    public void surfaceDestroyed(SurfaceHolder Holder) {
+        // Emotion 평균 데이터
+        intent.putExtra("avg_happy", emotionData.getAvg_happy());
+        intent.putExtra("avg_neutral", emotionData.getAvg_neutral());
+        intent.putExtra("avg_sad", emotionData.getAvg_sad());
+        intent.putExtra("avg_nervous", emotionData.getAvg_nervous());
 
+        // Emotion 그래프 데이터
+        intent.putExtra("emotion_timestamp", emotionData.getTimestamp());
+        intent.putExtra("happy", emotionData.getHappy());
+        intent.putExtra("neutral", emotionData.getNeutral());
+        intent.putExtra("sad", emotionData.getSad());
+        intent.putExtra("nervous", emotionData.getNervous());
+
+        // WPS 그래프 데이터
+        intent.putExtra("wps_timestamp", subtitleData.getTimestamp());
+        intent.putExtra("wps", subtitleData.getWps());
+        intent.putExtra("avg_wps", subtitleData.getAvg_wps());
+
+        // Pitch 그래프 데이터
+        intent.putExtra("pitch_timestamp", pitchData.getTimestamp());
+        intent.putExtra("pitch", pitchData.getPitch());
+        intent.putExtra("avg_pitch", pitchData.getAvg_pitch());
+
+        startActivityForResult(intent, 1);
     }
 
-
     @Override
-    public void surfaceChanged(SurfaceHolder Holder, int i, int j, int k) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
 
+            }
+        }
     }
-
 
     // 토글 버튼 설정
     public void onTogglePlay(View v) {
@@ -280,4 +306,11 @@ public class ActivityInterviewVideo extends Activity implements SurfaceHolder.Ca
             btnSubtitle.setImageResource(R.drawable.icon_subtitle_pressed);
         }
     }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder Holder) { }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder Holder, int i, int j, int k) { }
+
 }
