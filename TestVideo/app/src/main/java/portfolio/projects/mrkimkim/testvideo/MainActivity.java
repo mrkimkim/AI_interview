@@ -56,8 +56,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Me
             @Override
             public void run() {
                 try {
-                    mediaPlayer.setDataSource(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + "/sample2.mp4");
-                    duration = mediaPlayer.getDuration();
+                    mediaPlayer.setDataSource(Environment.getExternalStorageDirectory().getAbsolutePath() + "/interview/sample.mp4");
                     mediaPlayer.prepare();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -95,6 +94,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback, Me
         }
         surfaceView.setLayoutParams(lp);
         */
+        duration = mediaPlayer.getDuration();
         if (!mediaPlayer.isPlaying()) {
             mediaPlayer.start();
         }

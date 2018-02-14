@@ -32,7 +32,7 @@ public class ActivityChooseCategory extends AppCompatActivity {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-    Adapter_Category mAdapter_Category, mAdapter_SubCategory;;
+    Adapter_Category mAdapter_Category, mAdapter_SubCategory;
     ArrayList[] items_category = new ArrayList[4];
     ArrayList[] items_subcategory;
 
@@ -218,11 +218,6 @@ public class ActivityChooseCategory extends AppCompatActivity {
 
                 // 서브 카테고리인 경우 문제를 로드한다.
                 else if (n_category_parent < parent_idx && parent_idx <= n_category_parent + n_subcategory_parent) {
-                    // 로딩 다이얼로그 생성
-                    mView = new CatLoadingView();
-                    mView.setCancelable(true);
-                    mView.show(getSupportFragmentManager(), "");
-
                     // 문제 로딩
                     Intent intent = new Intent(ActivityChooseCategory.this, ActivityChooseQuestion.class);
                     intent.putExtra("category_idx", instance.getidx());

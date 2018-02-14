@@ -23,27 +23,5 @@ public class MyFireBaseInstanceIDService extends FirebaseInstanceIdService {
         // Get updated InstanceID token.
         String token = FirebaseInstanceId.getInstance().getToken();
                 Log.d(TAG, "Refreshed token : " + token);
-
-        sendRegistrationToServer(token);
-    }
-
-    private void sendRegistrationToServer(String token) {
-        // Add custom implementation, as needed
-        OkHttpClient client = new OkHttpClient();
-        RequestBody body = new FormBody.Builder().add("Token", token).build();
-
-        // request
-        Request request = new Request.Builder()
-                .url("127.0.0.1")
-                .post(body)
-                .build();
-
-        /*
-        try {
-            client.newCall(request).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
     }
 }

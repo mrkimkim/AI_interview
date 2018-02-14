@@ -1,7 +1,6 @@
 class mAudioProcessor(object):
-    def __init__(self, mInterviewData, mTmpInfo, bucket):
+    def __init__(self, mTmpInfo, bucket):
         self.idx = 0
-        self.mInterviewData = mInterviewData
         self.mTmpInfo = mTmpInfo
         self.mTmpInfo.tmp_stt = self.mTmpInfo.tmp_folder + "text.stt"
         self.mTmpInfo.subtitle_blob = self.mTmpInfo.storage_blob + 'subtitle'
@@ -25,10 +24,15 @@ class mAudioProcessor(object):
             language_code='ko-KR',
             enable_word_time_offsets=True)
 
-        operation = client.long_running_recognize(config, audio)
-
-        print('Waiting for operation to complete...')
-        result = operation.result(timeout=900)
+        while True:
+            try:
+                operation = client.long_running_recognize(config, audio)
+                print('Waiting for operation to complete...')
+                result = operation.result()
+                break
+            except:
+                print ("Failed ... but Retry")
+            
 
 
 

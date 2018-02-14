@@ -55,6 +55,7 @@ class TmpInfo():
         self.audio_blob = audio_blob
         self.emotion_blob = ''
         self.subtitle_blob = ''
+        self.pitch_blob = ''
         
         self.tmp_folder = tmp_folder
         self.tmp_video = tmp_video

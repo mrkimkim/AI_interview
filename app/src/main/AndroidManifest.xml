@@ -15,28 +15,43 @@
     <application
         android:name=".GlobalApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/icon_tablet"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <activity android:name=".NetworkModule.LoginActivity">
+
+        <activity android:name=".ActivityCheckPermission">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".ActivityMain" />
+
+        <activity android:name=".NetworkModule.LoginActivity"/>
+
         <activity android:name=".ActivityChooseQuestion" />
+
         <activity android:name=".InterviewModule.UploadVideo" />
 
-        <meta-data
-            android:name="com.kakao.sdk.AppKey"
-            android:value="5207d8f5691153fb22fb9e7950e4e9c1" />
-
         <activity android:name=".ActivityUserInfo" />
+
         <activity android:name=".ActivityInterviewResult" />
+
+        <activity android:name=".ActivityChooseCategory" />
+
+        <activity android:name=".TestActivity" />
+
+        <activity android:name=".InterviewModule.StartInterviewActivity" />
+
+        <activity android:name=".ActivityInterviewVideo" />
+
+        <activity
+            android:name=".ActivityInterviewReport"
+            android:theme="@android:style/Theme.Dialog" />
 
         <service
             android:name=".NetworkModule.MyFireBaseMessagingService"
@@ -46,6 +61,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <service
             android:name=".NetworkModule.MyFireBaseInstanceIDService"
             android:enabled="true"
@@ -55,11 +71,9 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".ActivityChooseCategory" />
-        <activity android:name=".TestActivity" />
-        <activity android:name=".InterviewModule.StartInterviewActivity" />
-        <activity android:name=".ActivityInterviewVideo" />
-        <activity android:name=".ActivityInterviewReport" android:theme="@android:style/Theme.Dialog"></activity>
-    </application>
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="5207d8f5691153fb22fb9e7950e4e9c1" />
 
+    </application>
 </manifest>

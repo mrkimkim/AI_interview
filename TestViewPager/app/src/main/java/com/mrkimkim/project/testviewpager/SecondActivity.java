@@ -128,15 +128,13 @@ public class SecondActivity extends Activity {
 
     public LineData getLineData(List<Entry> entries) {
         LineDataSet dataSet = new LineDataSet(entries, "WPS");
-        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        dataSet.setCubicIntensity(0.2f);
-        dataSet.setDrawFilled(true);
-        dataSet.setDrawCircles(true);
-        dataSet.setLineWidth(1.8f);
-        dataSet.setCircleRadius(4f);
+        dataSet.setMode(LineDataSet.Mode.LINEAR);
+        dataSet.setCubicIntensity(0.1f);
+        dataSet.setDrawCircles(false);
+        dataSet.setLineWidth(1.0f);
         dataSet.setCircleColor(Color.BLUE);
         dataSet.setHighLightColor(Color.rgb(244, 117, 117));
-        dataSet.setColor(Color.WHITE);
+        dataSet.setColor(Color.BLACK);
         dataSet.setFillColor(Color.GREEN);
         dataSet.setFillAlpha(100);
         dataSet.setDrawHorizontalHighlightIndicator(false);
@@ -200,7 +198,9 @@ public class SecondActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        //안드로이드 백버튼 막기
-        return;
+        Intent intent = new Intent();
+        intent.putExtra("result", "Close PopUp");
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

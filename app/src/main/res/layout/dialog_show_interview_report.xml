@@ -2,7 +2,7 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#ffffffff"
+    android:background="#fdfdfd"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,14 +16,15 @@
         <!-- 타이틀바 -->
         <LinearLayout
             android:orientation="horizontal"
+            android:background="#50b7ff"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
                 android:text="REPORT"
                 android:textSize="20sp"
                 android:textColor="#fff"
+                android:fontFamily="@font/nanumsquareb"
                 android:gravity="center"
-                android:background="#50b7ff"
                 android:layout_width="match_parent"
                 android:layout_height="53dp" />
         </LinearLayout>
@@ -36,6 +37,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/nanumsquareroundb"
             android:text="Keyword"
+            android:textColor="#50c8d8"
             android:textSize="20sp"
             />
 
@@ -67,9 +69,11 @@
             android:fontFamily="@font/nanumsquareroundb"
             android:text="Emotion"
             android:textSize="20sp"
+            android:textColor="#50c8d8"
             />
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/show_interview_result_emotionBox"
             android:layout_marginLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="100dp">
@@ -86,21 +90,22 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="@id/h1"/>
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/show_interview_result_barHappy"
+                android:orientation="horizontal"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="#0093f7"
                 app:layout_constraintStart_toEndOf="@id/happy"
-                app:layout_constraintEnd_toEndOf="@id/v3"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/v7"
                 app:layout_constraintBottom_toBottomOf="@id/h1"
-                ></LinearLayout>
+                ></RelativeLayout>
 
             <!-- 중립 -->
             <ImageView
-
                 android:layout_marginTop="5dp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -110,17 +115,19 @@
                 app:layout_constraintTop_toTopOf="@id/h1"
                 app:layout_constraintBottom_toBottomOf="@id/h2"/>
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/show_interview_result_barNeutral"
+                android:orientation="horizontal"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="#37a4ff"
                 app:layout_constraintStart_toEndOf="@id/happy"
-                app:layout_constraintEnd_toEndOf="@id/v6"
                 app:layout_constraintTop_toTopOf="@id/h1"
+                app:layout_constraintEnd_toEndOf="@id/v7"
                 app:layout_constraintBottom_toBottomOf="@id/h2"
-                ></LinearLayout>
+                ></RelativeLayout>
 
             <!-- 슬픔 -->
             <ImageView
@@ -133,17 +140,19 @@
                 app:layout_constraintTop_toTopOf="@id/h2"
                 app:layout_constraintBottom_toBottomOf="@id/h3"/>
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/show_interview_result_barSad"
+                android:orientation="horizontal"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="#8bd0ff"
                 app:layout_constraintStart_toEndOf="@id/happy"
-                app:layout_constraintEnd_toEndOf="@id/v4"
                 app:layout_constraintTop_toTopOf="@id/h2"
+                app:layout_constraintEnd_toEndOf="@id/v7"
                 app:layout_constraintBottom_toBottomOf="@id/h3"
-                ></LinearLayout>
+                ></RelativeLayout>
 
             <!-- 긴장 -->
             <ImageView
@@ -156,17 +165,19 @@
                 app:layout_constraintTop_toTopOf="@id/h3"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/show_interview_result_barNervous"
+                android:orientation="horizontal"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="#d1ecff"
                 app:layout_constraintStart_toEndOf="@id/happy"
-                app:layout_constraintEnd_toEndOf="@id/v4"
                 app:layout_constraintTop_toTopOf="@id/h3"
+                app:layout_constraintEnd_toEndOf="@id/v7"
                 app:layout_constraintBottom_toBottomOf="parent"
-                ></LinearLayout>
+                ></RelativeLayout>
 
             <!-- 세로 구분선 -->
             <LinearLayout
@@ -263,14 +274,12 @@
         </android.support.constraint.ConstraintLayout>
 
         <!-- 감정 차트 꺾은 선 -->
-        <view
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart_emotion"
             android:layout_margin="10dp"
-            android:paddingBottom="10dp"
-            android:id="@+id/line_view"
-            android:background="@drawable/border_lineview"
-            class="im.dacer.androidcharts.LineView"
             android:layout_width="match_parent"
-            android:layout_height="200dp"/>
+            android:layout_height="200dp">
+        </com.github.mikephil.charting.charts.LineChart>
 
         <!-- 가로 구분 선 -->
         <View
@@ -286,7 +295,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/nanumsquareroundb"
             android:text="Voice Analysis"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textColor="#50c8d8"/>
 
         <!-- WPS -->
         <TextView
@@ -338,7 +348,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/nanumsquareroundb"
             android:text="Sentimet Analysis"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textColor="#50c8d8"/>
 
         <android.support.constraint.ConstraintLayout
             android:layout_marginLeft="10dp"
@@ -507,7 +518,8 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/nanumsquareroundb"
             android:text="Transcript"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textColor="#50c8d8"/>
 
         <!-- 시간별 자막 카드 -->
         <ListView

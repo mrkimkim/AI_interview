@@ -20,7 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static String[] column_category = {"idx","parent_idx","title","description","n_subcategory","n_probset","n_problem"};
     public static String[] column_questioninfo = {"idx","category_idx","title","history","duration","src_lang","dest_lang","price", "like_cnt","view_cnt", "markdown_uri"};
-    public static String[] column_interviewdata = {"idx", "user_idx", "video_path", "emotion_path", "stt_path", "task_idx", "result_idx", "question_idx"};
+    public static String[] column_interviewdata = {"idx", "user_idx", "video_path", "emotion_path", "stt_path", "task_idx", "result_idx", "question_idx", "pitch_path"};
     SQLiteDatabase db;
 
 
@@ -64,6 +64,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "video_path TEXT," +
                 "emotion_path TEXT," +
                 "stt_path TEXT," +
+                "pitch_path TEXT," +
                 "task_idx INTEGER," +
                 "result_idx INTEGER," +
                 "question_idx INTEGER" +

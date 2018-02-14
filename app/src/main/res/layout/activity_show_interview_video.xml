@@ -11,191 +11,512 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-
-    <ImageView
-        android:id="@+id/show_interview_result_btn_cancel"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/show_interview_video_hud1"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="5dp"
-        android:alpha="0.6"
-        android:src="@drawable/icon_cancel"
-        app:layout_constraintDimensionRatio="H,1:1"
-        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide0"
+        android:layout_height="wrap_content"
+        android:background="#10000000"
         app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide0"
-        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide1"
+        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide40"
+        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide1">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/show_interview_video_emo_guide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1"
+            />
+
+        <LinearLayout
+            android:id="@+id/show_interview_video_emo_gadget"
+            android:layout_width="5dp"
+            android:layout_height="0dp"
+            android:background="#ffa0ff7d"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/show_interview_video_emo_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:includeFontPadding="false"
+            android:text="EMOTION"
+            android:textSize="12sp"
+            android:textColor="#ffa0ff7d"
+            android:fontFamily="@font/nanumsquareeb"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/show_interview_video_emo_gadget"/>
+
+        <TextView
+            android:id="@+id/show_interview_video_emo_happy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:layout_marginLeft="5dp"
+            android:text="HAPPY (98%)"
+            android:textColor="#ffffffff"
+            android:textSize="12sp"
+            android:fontFamily="@font/nanumgothic"
+            app:layout_constraintStart_toEndOf="@id/show_interview_video_emo_gadget"
+            app:layout_constraintTop_toBottomOf="@id/show_interview_video_emo_title" />
+
+        <TextView
+            android:id="@+id/show_interview_video_emo_neutral"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:layout_marginLeft="5dp"
+            android:text="NEUTRAL (2%)"
+            android:textSize="12sp"
+            android:textColor="#ffffffff"
+            android:fontFamily="@font/nanumgothic"
+            app:layout_constraintTop_toBottomOf="@id/show_interview_video_emo_happy"
+            app:layout_constraintStart_toEndOf="@id/show_interview_video_emo_gadget"/>
+
+        <TextView
+            android:id="@+id/show_interview_video_emo_sad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:layout_marginLeft="5dp"
+            android:text="SAD (0%)"
+            android:textSize="12sp"
+            android:textColor="#ffffffff"
+            android:fontFamily="@font/nanumgothic"
+            app:layout_constraintTop_toBottomOf="@id/show_interview_video_emo_neutral"
+            app:layout_constraintStart_toEndOf="@id/show_interview_video_emo_gadget"/>
+
+        <TextView
+            android:id="@+id/show_interview_video_emo_nervous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:includeFontPadding="false"
+            android:text="NERVOUS (0%)"
+            android:textSize="12sp"
+            android:textColor="#ffffffff"
+            android:fontFamily="@font/nanumgothic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/show_interview_video_emo_sad"
+            app:layout_constraintStart_toEndOf="@id/show_interview_video_emo_gadget"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/show_interview_video_hud2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#10000000"
+        app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide0"
+        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide40"
+        app:layout_constraintTop_toBottomOf="@id/show_interview_video_hud1">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/show_interview_video_wps_guide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1"
+            />
+
+        <LinearLayout
+            android:id="@+id/show_interview_video_wps_gadget"
+            android:layout_width="5dp"
+            android:layout_height="0dp"
+            android:background="#ffa0ff7d"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/show_interview_video_wps_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:includeFontPadding="false"
+            android:layout_marginLeft="5dp"
+            android:text="WORD/10s"
+            android:fontFamily="@font/nanumsquareeb"
+            android:textSize="12sp"
+            android:textColor="#ffa0ff7d"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/show_interview_video_wps_gadget"/>
+
+        <TextView
+            android:id="@+id/show_interview_video_tv_wps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:includeFontPadding="false"
+            android:text="4.02"
+            android:textSize="20sp"
+            android:textColor="#ffffffff"
+            android:fontFamily="@font/nanumgothicextrabold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/show_interview_video_wps_title"
+            app:layout_constraintStart_toEndOf="@id/show_interview_video_wps_gadget"/>
+    </android.support.constraint.ConstraintLayout>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/show_interview_video_hud3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#10000000"
+        app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide0"
+        app:layout_constraintEnd_toStartOf="@id/show_interview_result_vertical_guide40"
+        app:layout_constraintTop_toBottomOf="@id/show_interview_video_hud2">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/show_interview_video_pitch_guide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1"
+            />
+
+        <LinearLayout
+            android:id="@+id/show_interview_video_pitch_gadget"
+            android:layout_width="5dp"
+            android:layout_height="0dp"
+            android:background="#ffa0ff7d"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/show_interview_video_pitch_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:text="VOICE PITCH"
+            android:textSize="12sp"
+            android:textColor="#ffa0ff7d"
+            android:fontFamily="@font/nanumsquareeb"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/show_interview_video_pitch_gadget"
+            />
+
+        <TextView
+            android:id="@+id/show_interview_video_tv_pitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="C3"
+            android:textSize="20sp"
+            android:textColor="#ffffffff"
+            android:fontFamily="@font/nanumgothicextrabold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/show_interview_video_pitch_title"
+            app:layout_constraintStart_toEndOf="@id/show_interview_video_pitch_gadget"/>
+    </android.support.constraint.ConstraintLayout>
+
+    <!-- 좌측 상단 메뉴 -->
+    <ImageView
+        android:id="@+id/show_interview_video_btn_emotion"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="onToggleEmotion"
+        android:alpha="0.8"
+        android:src="@drawable/icon_emotion_pressed"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide1"
+        app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide80"
+        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide95"
         />
 
     <ImageView
-        android:id="@+id/show_interview_result_btn_emotion"
+        android:id="@+id/show_interview_video_btn_wps"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/icon_emotion"
-        app:layout_constraintDimensionRatio="H,1:1"
-        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide0"
-        app:layout_constraintBottom_toBottomOf="@id/show_interview_result_horizon_guide1"
-        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide10"
+        android:layout_marginTop="20dp"
+        android:onClick="onToggleWps"
+        android:alpha="0.8"
+        android:src="@drawable/icon_wps_pressed"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintTop_toBottomOf="@id/show_interview_video_btn_emotion"
+        app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide80"
+        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide95"
         />
 
     <ImageView
-        android:id="@+id/show_interview_result_btn_wps"
+        android:id="@+id/show_interview_video_btn_pitch"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/icon_wps"
-        app:layout_constraintDimensionRatio="H,1:1"
-        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide2"
-        app:layout_constraintBottom_toBottomOf="@id/show_interview_result_horizon_guide3"
-        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide10"
+        android:layout_marginTop="20dp"
+        android:onClick="onTogglePitch"
+        android:alpha="0.8"
+        android:src="@drawable/icon_pitch_pressed"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintTop_toBottomOf="@id/show_interview_video_btn_wps"
+        app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide80"
+        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide95"
         />
 
     <ImageView
-        android:id="@+id/show_interview_result_btn_pitch"
+        android:id="@+id/show_interview_video_btn_subtitle"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/icon_pitch"
+        android:layout_marginTop="20dp"
+        android:onClick="onToggleSubtitle"
+        android:alpha="0.8"
+        android:src="@drawable/icon_subtitle_pressed"
         app:layout_constraintDimensionRatio="H,1:1"
-        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide4"
-        app:layout_constraintBottom_toBottomOf="@id/show_interview_result_horizon_guide5"
-        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide10"
-        />
+        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide95"
+        app:layout_constraintTop_toBottomOf="@id/show_interview_video_btn_pitch"
+        app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide80"/>
 
-    <ImageView
-        android:id="@+id/show_interview_result_btn_subtitle"
+    <TextView
+        android:id="@+id/show_interview_video_tv_subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#88000000"
+        android:fontFamily="@font/nanumsquareb"
+        android:padding="10dp"
+        android:text="안녕하세요 제 이름은 김김김이 입니다."
+        android:textAlignment="center"
+        android:textColor="#ffffffff"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@id/show_interview_result_horizon_guide15"
+        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide95"
+        app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide0" />
+
+
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/icon_subtitle"
-        app:layout_constraintDimensionRatio="H,1:1"
-        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide6"
-        app:layout_constraintBottom_toBottomOf="@id/show_interview_result_horizon_guide7"
-        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide10"
+        android:background="#22000000"
+        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         />
 
     <SeekBar
         android:id="@+id/show_interview_video_seekbar"
         android:layout_width="0dp"
+        android:layout_height="15dp"
+        android:padding="0dp"
+        android:paddingEnd="0dp"
+        android:paddingStart="0dp"
+        android:thumb="@drawable/drawable_thumb"
+        style="@style/CustomSeekBar"
+        app:layout_constraintBottom_toBottomOf="@id/show_interview_result_horizon_guide17"
+        app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide0"
+        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide95"/>
+
+    <TextView
+        android:id="@+id/show_interview_video_tv_Progress"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@android:style/Widget.SeekBar"
-        android:max="1000"
-        android:progressDrawable="@drawable/blueprogress"
-        app:layout_constraintBottom_toBottomOf="@id/show_interview_result_horizon_guide8"
-        app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide1"
-        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide9"/>
+        android:text="00:00"
+        android:textColor="#ffffffff"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@id/show_interview_video_seekbar"
+        app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide0"
+        />
+
+    <TextView
+        android:id="@+id/show_interview_video_tv_Duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textColor="#ffffffff"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@id/show_interview_video_seekbar"
+        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide95"
+        />
 
 
     <at.markushi.ui.CircleButton
-        android:id="@+id/show_interview_result_btn_play"
+        android:id="@+id/show_interview_video_btn_play"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/icon_power"
+        android:src="@drawable/icon_play"
+        android:onClick="onTogglePlay"
         app:cb_color="#ffffffff"
-        app:cb_pressedRingWidth="8dip"
-        app:layout_constraintDimensionRatio="W,1:1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide9"
-        app:layout_constraintBottom_toBottomOf="@id/show_interview_result_horizon_guide10"/>
+        app:cb_pressedRingWidth="0dp"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide40"
+        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide6"
+        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide17"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <at.markushi.ui.CircleButton
+    <ImageView
         android:id="@+id/show_interview_result_btn_report"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:onClick="onViewReport"
         android:src="@drawable/icon_report"
-        android:layout_margin="5dp"
-        app:cb_color="#00ffffff"
-        app:cb_pressedRingWidth="0dp"
-        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide7"
-        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide9"
-        app:layout_constraintBottom_toBottomOf="@id/show_interview_result_horizon_guide10"/>
+        app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide85"
+        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide17" />
 
-    <at.markushi.ui.CircleButton
+
+    <ImageView
         android:id="@+id/show_interview_result_btn_tmp"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/icon_power"
-        android:layout_margin="5dp"
-        app:cb_color="#ffffffff"
-        app:cb_pressedRingWidth="8dip"
-        app:layout_constraintDimensionRatio="W,1:1"
+        android:src="@drawable/icon_more"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintStart_toStartOf="@id/show_interview_result_vertical_guide1"
         app:layout_constraintEnd_toEndOf="@id/show_interview_result_vertical_guide3"
-        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide9"
-        app:layout_constraintBottom_toBottomOf="@id/show_interview_result_horizon_guide10"/>
-
-    <android.support.constraint.Guideline
-        android:id="@+id/show_interview_result_horizon_guide0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.05"/>
+        app:layout_constraintTop_toTopOf="@id/show_interview_result_horizon_guide17"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_horizon_guide1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.15"/>
+        app:layout_constraintGuide_percent="0.05"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_horizon_guide2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2"/>
+        app:layout_constraintGuide_percent="0.1"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_horizon_guide3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.3"/>
+        app:layout_constraintGuide_percent="0.15"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_horizon_guide4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.35"/>
+        app:layout_constraintGuide_percent="0.2"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_horizon_guide5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.45"/>
+        app:layout_constraintGuide_percent="0.25"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_horizon_guide6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5"/>
+        app:layout_constraintGuide_percent="0.3"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_horizon_guide7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.6"/>
+        app:layout_constraintGuide_percent="0.35"/>
+
 
     <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_horizon_guide8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.8"/>
+        app:layout_constraintGuide_percent="0.4"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_horizon_guide9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.85"/>
+        app:layout_constraintGuide_percent="0.45"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_horizon_guide10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.95"/>
+        app:layout_constraintGuide_percent="0.5"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_horizon_guide11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.55"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_horizon_guide12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_horizon_guide13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.65"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_horizon_guide14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_horizon_guide15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_horizon_guide16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_horizon_guide17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.85"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_horizon_guide18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_horizon_guide19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.95" />
 
     <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_vertical_guide0"
@@ -219,6 +540,13 @@
         app:layout_constraintGuide_percent="0.2"/>
 
     <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_vertical_guide25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.25"/>
+
+    <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_vertical_guide3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -226,14 +554,28 @@
         app:layout_constraintGuide_percent="0.3"/>
 
     <android.support.constraint.Guideline
-        android:id="@+id/show_interview_result_vertical_guide4"
+        android:id="@+id/show_interview_result_vertical_guide35"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.35"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_vertical_guide40"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.4"/>
 
     <android.support.constraint.Guideline
-        android:id="@+id/show_interview_result_vertical_guide5"
+        android:id="@+id/show_interview_result_vertical_guide45"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.45"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_vertical_guide50"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -247,6 +589,13 @@
         app:layout_constraintGuide_percent="0.6"/>
 
     <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_vertical_guide65"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.65"/>
+
+    <android.support.constraint.Guideline
         android:id="@+id/show_interview_result_vertical_guide7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -254,7 +603,21 @@
         app:layout_constraintGuide_percent="0.7"/>
 
     <android.support.constraint.Guideline
-        android:id="@+id/show_interview_result_vertical_guide8"
+        android:id="@+id/show_interview_result_vertical_guide75"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_vertical_guide80"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/show_interview_result_vertical_guide85"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -268,7 +631,7 @@
         app:layout_constraintGuide_percent="0.9"/>
 
     <android.support.constraint.Guideline
-        android:id="@+id/show_interview_result_vertical_guide10"
+        android:id="@+id/show_interview_result_vertical_guide95"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
