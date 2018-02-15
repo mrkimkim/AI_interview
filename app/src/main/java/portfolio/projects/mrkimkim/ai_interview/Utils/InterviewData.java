@@ -77,17 +77,20 @@ public class InterviewData {
             data = data.replace("'[", "");
 
             Float Timeoffset = 0.0f;
+            Float tick = 0.0f;
+
             for (String s : data.split("\\]'")) {
                 s = s.replace("]'", "");
 
+                Float happy, neutral, sad, nervous;
+
                 // Json 파싱
                 element = parser.parse(s);
-                JsonObject o = element.getAsJsonObject().get("scores").getAsJsonObject();
-
-                Float happy, neutral, sad, nervous;
 
                 // 스코어 로드
                 try {
+                    JsonObject o = element.getAsJsonObject().get("scores").getAsJsonObject();
+
                     happy = Float.parseFloat(String.format("%.1f", o.get("happiness").getAsDouble() * 100.0));
                     avg_happy += happy;
 
@@ -99,6 +102,8 @@ public class InterviewData {
 
                     nervous = Float.parseFloat(String.format("%.1f", o.get("fear").getAsDouble() * 100.0 + o.get("contempt").getAsDouble() * 100.0 + o.get("disgust").getAsDouble() * 100.0));
                     avg_nervous += nervous;
+
+                    tick += 1.0f;
                 } catch (Exception e) {
                     happy = 0.0f;
                     neutral = 0.0f;
@@ -113,10 +118,10 @@ public class InterviewData {
 
             // 평균 값
             if (Timeoffset > 0) {
-                avg_happy /= (Timeoffset * 5);
-                avg_neutral /= (Timeoffset * 5);
-                avg_sad /= (Timeoffset * 5);
-                avg_nervous /= (Timeoffset * 5);
+                avg_happy /= tick;
+                avg_neutral /= tick;
+                avg_sad /= tick;
+                avg_nervous /= tick;
             }
         }
 

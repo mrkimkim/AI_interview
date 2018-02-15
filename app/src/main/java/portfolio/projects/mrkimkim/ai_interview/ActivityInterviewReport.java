@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -39,6 +41,8 @@ import im.dacer.androidcharts.LineView;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_subtitle;
 
 public class ActivityInterviewReport extends Activity {
+    int parentWidth = 0;
+    ConstraintLayout parentConstraintLayout;
     RelativeLayout barHappy, barNeutral, barSad, barNervous;
     FlexboxLayout flexbox;
     LineChart chart_emotion, chart_wps, chart_pitch;
@@ -147,16 +151,26 @@ public class ActivityInterviewReport extends Activity {
 
 
     public void setGraph_emotion() {
-
-        ConstraintLayout C = (ConstraintLayout)findViewById(R.id.show_interview_result_emotionBox);
+        parentConstraintLayout = (ConstraintLayout)findViewById(R.id.show_interview_result_emotionBox);
+        parentConstraintLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                parentConstraintLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                parentWidth = (int)(parentConstraintLayout.getMeasuredWidth() * 0.55);
+            }
+        });
 
         barHappy = (RelativeLayout)findViewById(R.id.show_interview_result_barHappy);
         barHappy.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                Log.d("HAPPY : ", String.valueOf(barHappy.getWidth()));
-                barHappy.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                barHappy.setLayoutParams(new ConstraintLayout.LayoutParams((int)(Math.round(barHappy.getWidth() * avg_happy / 100.0f)), barHappy.getHeight()));
+                if (parentWidth > 0) {
+                    Log.d("HAPPY : ", String.valueOf(avg_happy));
+                    barHappy.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) barHappy.getLayoutParams();
+                    lp.width = (int) (parentWidth * avg_happy / 100.0);
+                    barHappy.setLayoutParams(lp);
+                }
             }
         });
 
@@ -164,9 +178,13 @@ public class ActivityInterviewReport extends Activity {
         barNeutral.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                Log.d("NEUTRAL : ", String.valueOf(barNeutral.getWidth()));
-                barNeutral.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                barNeutral.setLayoutParams(new ConstraintLayout.LayoutParams((int)(Math.round(barNeutral.getWidth() * avg_neutral / 100.0f)), barNeutral.getHeight()));
+                if (parentWidth > 0) {
+                    Log.d("NEUTRAL : ", String.valueOf(avg_neutral));
+                    barNeutral.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) barNeutral.getLayoutParams();
+                    lp.width = (int) (parentWidth * avg_neutral / 100.0);
+                    barNeutral.setLayoutParams(lp);
+                }
             }
         });
 
@@ -174,9 +192,13 @@ public class ActivityInterviewReport extends Activity {
         barSad.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                Log.d("SAD : ", String.valueOf(barSad.getWidth()));
-                barSad.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                barSad.setLayoutParams(new ConstraintLayout.LayoutParams((int)(Math.round(barSad.getWidth() * avg_sad / 100.0f)), barSad.getHeight()));
+                if (parentWidth > 0) {
+                    Log.d("SAD : ", String.valueOf(avg_sad));
+                    barSad.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) barSad.getLayoutParams();
+                    lp.width = (int) (parentWidth * avg_sad / 100.0);
+                    barSad.setLayoutParams(lp);
+                }
             }
         });
 
@@ -185,9 +207,14 @@ public class ActivityInterviewReport extends Activity {
         barNervous.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                Log.d("NERVOUS : ", String.valueOf(barNervous.getWidth()));
-                barNervous.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                barNervous.setLayoutParams(new ConstraintLayout.LayoutParams((int)(Math.round(barNervous.getWidth() * avg_nervous / 100.0f)), barNervous.getHeight()));
+                if (parentWidth > 0) {
+                    Log.d("NERVOUS : ", String.valueOf(avg_nervous));
+                    barNervous.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) barNervous.getLayoutParams();
+                    lp.width = (int) (parentWidth * avg_nervous / 100.0);
+                    barNervous.setLayoutParams(lp);
+                }
+
             }
         });
     }

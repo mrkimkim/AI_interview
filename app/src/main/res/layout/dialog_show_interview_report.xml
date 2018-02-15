@@ -100,7 +100,6 @@
                 android:background="#0093f7"
                 app:layout_constraintStart_toEndOf="@id/happy"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/v7"
                 app:layout_constraintBottom_toBottomOf="@id/h1"
                 ></RelativeLayout>
 
@@ -125,7 +124,6 @@
                 android:background="#37a4ff"
                 app:layout_constraintStart_toEndOf="@id/happy"
                 app:layout_constraintTop_toTopOf="@id/h1"
-                app:layout_constraintEnd_toEndOf="@id/v7"
                 app:layout_constraintBottom_toBottomOf="@id/h2"
                 ></RelativeLayout>
 
@@ -150,7 +148,6 @@
                 android:background="#8bd0ff"
                 app:layout_constraintStart_toEndOf="@id/happy"
                 app:layout_constraintTop_toTopOf="@id/h2"
-                app:layout_constraintEnd_toEndOf="@id/v7"
                 app:layout_constraintBottom_toBottomOf="@id/h3"
                 ></RelativeLayout>
 
@@ -175,7 +172,6 @@
                 android:background="#d1ecff"
                 app:layout_constraintStart_toEndOf="@id/happy"
                 app:layout_constraintTop_toTopOf="@id/h3"
-                app:layout_constraintEnd_toEndOf="@id/v7"
                 app:layout_constraintBottom_toBottomOf="parent"
                 ></RelativeLayout>
 
