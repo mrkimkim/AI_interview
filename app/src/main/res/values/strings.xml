@@ -11,4 +11,21 @@
     <string name="player_error">Error initializing YouTube player: %s</string>
     <string name="seek_to">Jump To</string>
     <string name="seek_to_hint">Seconds</string>
+
+    <string name="confirm">확인</string>
+    <string name="cancel">취소</string>
+
+    <!-- Activity UserInfo -->
+
+    <!-- Activity Login -->
+    <string name="connectionFailedTitle">앱 서버 로그인 실패</string>
+    <string name="connectionFailedBody">앱 서버 로그인 실패</string>
+    <!-- Activity UserInfo -->
+    <!-- Activity UserInfo -->
+    <!-- Activity UserInfo -->
+    <!-- Activity UserInfo -->
+    <!-- Activity UserInfo -->
+    <!-- Activity UserInfo -->
+    <!-- Activity UserInfo -->
+
 </resources>

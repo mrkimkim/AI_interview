@@ -8,7 +8,7 @@ import time
 import os
 
 def intToHex(num):
-    return ''.join([chr(num >> i & 0xff) for i in (24,16,8,0)])
+    return bytes.fromhex("{:08x}".format(num))
 
 def hexToLong(str_hex):
     ret = 0
@@ -82,18 +82,36 @@ class LoginSession(threading.Thread):
         Check if user info is in DB and generate hash
         """
         try:
-            login_query = """select idx from UserInfo where `idx` = %s"""
+            login_query = """select userMsg, userNumtry, userUpvote, userCredit from UserInfo where `user_id` = %s"""
             self.curs.execute(login_query, (self.user_id))
             rows = self.curs.fetchall()
-
+            # If User isn't signed up
             if len(rows) < 1: raise Exception("user isn't signed up")
         except Exception as e:
+            # Create New User
             id_hash = hashlib.sha256(self.user_id.encode('utf-8')).hexdigest()
-            
             insert_query = """insert into UserInfo(idx, user_id, id_hash, credit)
                             values (%s, %s, %s, %s)"""
-            data = (self.user_id, self.user_id, id_hash, 0)
-            self.curs.execute(insert_query, data)
+            self.curs.execute(insert_query, (self.user_id, self.user_id, id_hash, 0))
+            # Default DataSet
+            rows = ['write your message', 0, 0, 0]
+
+
+        """
+        Send UserInfo and Update UserInfo
+        """
+        try:
+            update_query = """update UserInfo SET `last_login` = now()"""
+            self.curs.execute(update_query)
+            userMsg, userNumtry, userUpvote, userCredit = rows[0][0], rows[0][1], rows[0][2], rows[0][3]
+
+            packet = intToHex(int(userNumtry)) + intToHex(int(userUpvote)) + intToHex(int(userCredit))
+            self.conn.send(packet)
+            packet = intToHex(len(userMsg.encode('utf-8'))) + userMsg.encode('utf-8')
+            self.conn.send(packet)
+            
+        except Exception as e:
+            print (e)
 
 
             

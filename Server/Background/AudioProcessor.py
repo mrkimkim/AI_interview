@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 class mAudioProcessor(object):
     def __init__(self, mTmpInfo, bucket):
         self.idx = 0
@@ -30,7 +32,8 @@ class mAudioProcessor(object):
                 print('Waiting for operation to complete...')
                 result = operation.result()
                 break
-            except:
+            except Exception as e:
+                print (e)
                 print ("Failed ... but Retry")
             
 
@@ -38,25 +41,19 @@ class mAudioProcessor(object):
 
 
         print ("[3] Write Result ")
-        with open(self.mTmpInfo.tmp_stt, 'w') as STT_output:
+        with open(self.mTmpInfo.tmp_stt, 'wb') as STT_output:
             for result in result.results:
                 alternative = result.alternatives[0]
-                print('Transcript: {}'.format(alternative.transcript))
-                print('Confidence: {}'.format(alternative.confidence))
-                STT_output.write('Transcript: {}'.format(alternative.transcript) + "\n")
-                STT_output.write('Confidence: {}'.format(alternative.confidence) + "\n")
+                STT_output.write(u"Transcript: ".encode('utf-8') + alternative.transcript.encode('utf-8') + "\r\n".encode('utf-8'))
+                STT_output.write(u"Confidence: ".encode('utf-8') + str(alternative.confidence).encode('utf-8') + "\r\n".encode('utf-8'))
 
                 for word_info in alternative.words:
                     word = word_info.word
                     start_time = word_info.start_time
                     end_time = word_info.end_time
-                    print('Word: {}, start_time: {}, end_time: {}'.format(
-                        word,
-                        start_time.seconds + start_time.nanos * 1e-9,
-                        end_time.seconds + end_time.nanos * 1e-9))
-                    STT_output.write(word + ',')
-                    STT_output.write(str(start_time.seconds + start_time.nanos * 1e-9) + ',')
-                    STT_output.write(str(end_time.seconds + end_time.nanos * 1e-9) + "\n")
+                    STT_output.write(word.encode('utf-8') + ','.encode('utf-8'))
+                    STT_output.write(str(start_time.seconds + start_time.nanos * 1e-9).encode('utf-8') + ','.encode('utf-8'))
+                    STT_output.write(str(end_time.seconds + end_time.nanos * 1e-9).encode('utf-8') + "\r\n".encode('utf-8'))
 
         with open(self.mTmpInfo.tmp_stt, 'rb') as f:
             data = f.read()

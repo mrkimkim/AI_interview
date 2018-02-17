@@ -50,6 +50,15 @@ public class NetworkService extends Service {
         }
     }
 
+    public static byte[] getHeader(int operation) {
+        byte[] opcode = new byte[20];
+        opcode[0] = (byte)(operation >> 24);
+        opcode[1] = (byte)(operation >> 16);
+        opcode[2] = (byte)(operation >> 8);
+        opcode[3] = (byte)(operation);
+        return opcode;
+    }
+
     public static byte[] getHeader(int operation, long question_idx, long size) {
         byte[] opcode = new byte[20];
         opcode[0] = (byte)(operation >> 24);

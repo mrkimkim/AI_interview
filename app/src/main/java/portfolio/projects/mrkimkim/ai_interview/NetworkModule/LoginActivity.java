@@ -1,17 +1,12 @@
 package portfolio.projects.mrkimkim.ai_interview.NetworkModule;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.StrictMode;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,8 +37,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Arrays;
 
-import portfolio.projects.mrkimkim.ai_interview.ActivityMain;
+import portfolio.projects.mrkimkim.ai_interview.A_Main;
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
 import portfolio.projects.mrkimkim.ai_interview.R;
@@ -178,6 +174,10 @@ public class LoginActivity extends AppCompatActivity {
             public void run() {
                 try {
                     int buf_size = 512;
+                    int packet_size = 0;
+                    int offset = 0;
+                    int len;
+
                     // 로그인 서버와 연결
                     Socket t_socket = new Socket();
                     t_socket.setReceiveBufferSize(buf_size);
@@ -185,20 +185,49 @@ public class LoginActivity extends AppCompatActivity {
                     DataInputStream networkDataReader = new DataInputStream(t_socket.getInputStream());
                     OutputStream networkDataWriter = t_socket.getOutputStream();
 
+
                     // 로그인 인증 패킷 전송
                     byte[] packet = Functions.concatBytes(Functions.longToBytes(user_id), kakao_token.getBytes());
                     networkDataWriter.write(packet);
                     networkDataWriter.flush();
 
+
+                    // 사용자 메시지, 총 시도 횟수, 받은 좋아요, 크레딧 정보를 받음
+                    packet = new byte[12];
+                    while (offset < 12) {
+                        len = networkDataReader.read(packet, offset, 12 - offset);
+                        if (len > 0) offset += len;
+                    }
+                    GlobalApplication.mUserInfoManager.setUserNumtry(Functions.bytesToInt(Arrays.copyOfRange(packet, 0, 4)));
+                    GlobalApplication.mUserInfoManager.setUserUpvote(Functions.bytesToInt(Arrays.copyOfRange(packet, 4, 8)));
+                    GlobalApplication.mUserInfoManager.setUserCredit(Functions.bytesToInt(Arrays.copyOfRange(packet,8 , 12)));
+
+                    offset = 0;
+                    packet = new byte[4];
+                    networkDataReader.read(packet, 0, 4);
+                    packet_size = Functions.bytesToInt(packet);
+                    packet = new byte[packet_size];
+                    while (offset < packet_size) {
+                        len = networkDataReader.read(packet, offset, packet_size - offset);
+                        if (len > 0) offset += len;
+                    }
+                    GlobalApplication.mUserInfoManager.setUserMsg(new String(packet, "utf-8"));
+
+
                     // 로그인 결과로 앱 서버의 AccessToken을 얻음
                     app_token = new byte[64];
-                    networkDataReader.read(app_token, 0, 64);
+                    offset = 0;
+                    while (offset < 64) {
+                        len = networkDataReader.read(app_token, offset , 64 - offset);
+                        if (len > 0) offset += len;
+                    }
                     GlobalApplication.mUserInfoManager.setAppToken(app_token);
-                    Log.d("AppToken : ", app_token.toString());
+
 
                     // FCM 푸시 토큰을 전송
                     networkDataWriter.write(FirebaseInstanceId.getInstance().getToken().getBytes());
                     networkDataWriter.flush();
+
 
                     // 로컬 DB 버전와 서버 DB를 동기화
                     DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
@@ -210,13 +239,10 @@ public class LoginActivity extends AppCompatActivity {
                     packet = new byte[4];
                     networkDataReader.read(packet, 0, 4);
                     int db_size = Functions.bytesToInt(packet);
-                    Log.d("Pakcet Size : ", String.valueOf(db_size));
                     if (db_size != 0) {
                         // csv 형태의 데이터를 받음
                         packet = new byte[db_size];
-
-                        int offset = 0;
-                        int len;
+                        offset = 0;
                         byte[] buffer = new byte[1024];
                         while (offset < db_size) {
                             len = networkDataReader.read(buffer);
@@ -229,6 +255,7 @@ public class LoginActivity extends AppCompatActivity {
                         mDBHelper.updateCategory(csv);
                     }
 
+
                     // 소켓 연결 종료
                     networkDataReader.close();
                     networkDataWriter.close();
@@ -236,6 +263,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     if(GlobalApplication.mUserInfoManager.getTokenValidation()) redirectMainMenu();
                     else showFailDialog();
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     showFailDialog();
@@ -248,9 +276,9 @@ public class LoginActivity extends AppCompatActivity {
 
     void showFailDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("앱 서버 로그인 실패");
-        builder.setMessage("서버 점검 중이에요!\n잠시 후에 다시 시도해주세요");
-        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+        builder.setTitle(getResources().getString(R.string.connectionFailedTitle));
+        builder.setMessage(getResources().getString(R.string.connectionFailedBody));
+        builder.setPositiveButton(getResources().getString(R.string.confirm), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
                 LoginActivity.this.finish();
             }
@@ -258,31 +286,9 @@ public class LoginActivity extends AppCompatActivity {
         builder.show();
     }
 
-    // 스토어 버전 체크
-    public class VersionChecker extends AsyncTask<String, String, String> {
-        String newVersion;
-
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                newVersion = Jsoup.connect("https://play.google.com/store/apps/details?id=" + "package name" + "&hl=en")
-                        .timeout(30000)
-                        .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
-                        .referrer("http://www.google.com")
-                        .get()
-                        .select("div[itemprop=softwareVersion]")
-                        .first()
-                        .ownText();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return newVersion;
-        }
-    }
-
-    // ActivityMain Activity로 전환
+    // A_Main Activity로 전환
     private void redirectMainMenu() {
-        Intent intent = new Intent(this, ActivityMain.class);
+        Intent intent = new Intent(this, A_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

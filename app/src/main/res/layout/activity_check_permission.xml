@@ -5,6 +5,6 @@
     android:background="#ff000000"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="portfolio.projects.mrkimkim.ai_interview.ActivityCheckPermission">
+    tools:context="portfolio.projects.mrkimkim.ai_interview.A_CheckPermission">
 
 </android.support.constraint.ConstraintLayout>

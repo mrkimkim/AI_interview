@@ -26,7 +26,6 @@ public class GlobalApplication extends Application {
 
     public static DBHelper mDBHelper;
     public static UserInfoManager mUserInfoManager;
-
     public static String ApplicationDataPath;
 
     public class UserInfoManager {
@@ -43,7 +42,9 @@ public class GlobalApplication extends Application {
 
         // 사용자 프로필 관련 함수
         public void setUserProfile(UserProfile up) {userProfile = up;}
+        public void setUserMsg(String msg) { this.userMsg = msg;}
         public UserProfile getUserProfile() { return userProfile; }
+        public String getUserMsg() { return this.userMsg; }
 
         // 사용자 수치 정보
         public void setUserNumtry(int value) {this.userNumtry = value;}
@@ -120,8 +121,6 @@ public class GlobalApplication extends Application {
         singleton = this;
         KakaoSDK.init(new KakaoSDKAdapter());
         mUserInfoManager = new UserInfoManager();
-
         ApplicationDataPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/interview/";
-
     }
 }

@@ -21,7 +21,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
-import portfolio.projects.mrkimkim.ai_interview.ActivityMain;
+import portfolio.projects.mrkimkim.ai_interview.A_Main;
 import portfolio.projects.mrkimkim.ai_interview.NetworkModule.NetworkService;
 import portfolio.projects.mrkimkim.ai_interview.R;
 import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
@@ -146,7 +146,7 @@ public class UploadVideo extends AppCompatActivity {
                 });
 
                 // 메인 액티비티로 돌아간다.
-                Intent intent = new Intent(UploadVideo.this, ActivityMain.class);
+                Intent intent = new Intent(UploadVideo.this, A_Main.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
 

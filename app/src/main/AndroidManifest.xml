@@ -21,7 +21,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
 
-        <activity android:name=".ActivityCheckPermission">
+        <activity android:name=".A_CheckPermission">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,28 +29,28 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ActivityMain" />
+        <activity android:name=".A_Main" />
 
         <activity android:name=".NetworkModule.LoginActivity"/>
 
-        <activity android:name=".ActivityChooseQuestion" />
+        <activity android:name=".A_ChooseQuestion" />
 
         <activity android:name=".InterviewModule.UploadVideo" />
 
-        <activity android:name=".ActivityUserInfo" />
+        <activity android:name=".A_UserInfo" />
 
-        <activity android:name=".ActivityInterviewResult" />
+        <activity android:name=".A_InterviewResult" />
 
-        <activity android:name=".ActivityChooseCategory" />
+        <activity android:name=".A_ChooseCategory" />
 
         <activity android:name=".TestActivity" />
 
         <activity android:name=".InterviewModule.StartInterviewActivity" />
 
-        <activity android:name=".ActivityInterviewVideo" />
+        <activity android:name=".A_InterviewVideo" />
 
         <activity
-            android:name=".ActivityInterviewReport"
+            android:name=".A_InterviewReport"
             android:theme="@android:style/Theme.Dialog" />
 
         <service

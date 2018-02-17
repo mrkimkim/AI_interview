@@ -122,7 +122,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     }
                     i += 1;
                 }
-                Log.d("DB SELECT : ", String.valueOf(values.length) + "rows are selected");
+
                 db.close();
                 return values;
             }
@@ -155,7 +155,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public void cleanTable(String tableName) {
         try {
             db = getWritableDatabase();
-            Log.d("TableName : ", tableName);
             db.execSQL("delete from " + tableName);
             db.close();
         } catch (Exception e) {
