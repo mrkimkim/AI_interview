@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +46,7 @@ public class A_InterviewResult extends AppCompatActivity {
     LinearLayout btn_back, btn_refresh;
 
     ArrayList<item_result> items;
-    ArrayList<ServerData> mServerData;
+    ArrayList<ServerData> serverData;
     boolean isDialogshow = false;
 
     /**
@@ -64,7 +63,6 @@ public class A_InterviewResult extends AppCompatActivity {
             this.subtitle = subtitle;
             this.pitch = pitch;
         }
-
         public Long getTask_idx() { return this.task_idx; }
         public Long getResult_idx() { return this.result_idx; }
         public String getEmotion() { return this.emotion; }
@@ -75,15 +73,24 @@ public class A_InterviewResult extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_result);
+        setContentView(R.layout.activity_interview_result);
 
+        items = new ArrayList<item_result>();
+        setUiElement(); // UI 요소 설정
+
+        /* 로컬 DB를 불러옴 */
+        Runnable r = new LoadInterviewData();
+        Thread t = new Thread(r);
+        t.start();
+    }
+
+    /* UI 요소를 설정함 */
+    public void setUiElement() {
         // RecyclerView
         mContext = getApplicationContext();
         recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-
-        items = new ArrayList<item_result>();
 
         // 뒤로가기 버튼
         btn_back = (LinearLayout) findViewById(R.id.result_btn_back);
@@ -99,192 +106,208 @@ public class A_InterviewResult extends AppCompatActivity {
         catLoadingView = new CatLoadingView();
         catLoadingView.setCancelable(false);
         fragmentManager = getSupportFragmentManager();
-
-        // 로컬 DB를 불러옴
-        loadInterviewData();
     }
 
-
-    public void refreshDB(View v) {
-        // DB를 업데이트 함
+    /* DB를 업데이트 함 */
+    public void onClickRefreshDB(View v) {
         catLoadingView.show(fragmentManager, "TAG");
         isDialogshow = true;
 
-        Runnable t_refreshDB = new Runnable() {
-            @Override
-            public void run() {
-                _downloadServerDB();
-            }
-        };
-
-        Thread t = new Thread(t_refreshDB);
+        Runnable r = new DownloadServerDB();
+        Thread t = new Thread(r);
         t.start();
     }
 
-    private void _downloadServerDB() {
-        class t_downloadServerDB implements Runnable {
-            @Override
-            public void run() {
-                try {
-                    Socket socket = new Socket();
-                    socket.connect(new InetSocketAddress(getString(R.string.server_ip), Integer.parseInt(getString(R.string.cmd_server_port))), 1000);
-                    InputStream networkReader = socket.getInputStream();
-                    OutputStream networkWriter = socket.getOutputStream();
+    /* 서버로부터 DB를 받음 */
+    private class DownloadServerDB implements Runnable {
+        @Override
+        public void run() {
+            try {
+                /* 소켓 설정 */
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(getString(R.string.server_ip), Integer.parseInt(getString(R.string.cmd_server_port))), 1000);
+                InputStream networkReader = socket.getInputStream();
+                OutputStream networkWriter = socket.getOutputStream();
 
-                    // 유저 인증 정보 전송
-                    NetworkService.Auth_User(networkReader, networkWriter);
+                /* 유저 인증 정보 전송 */
+                NetworkService.Auth_User(networkReader, networkWriter);
 
-                    // 명령 코드 전송
-                    networkWriter.write(Functions.intToBytes(2000));
+                /* 명령 코드 전송 */
+                networkWriter.write(Functions.intToBytes(2000));
 
+                /* 데이터 수신 */
+                byte[] packet_size;
+                byte[] packet;
+                serverData = new ArrayList<ServerData>();
+                packet_size = NetworkService.receive(networkReader, 8);
+                packet = NetworkService.receive(networkReader, Integer.valueOf(String.valueOf(Functions.bytesToLong(packet_size))));
+
+                /* 데이터 파싱 */
+                if (Integer.valueOf(String.valueOf(Functions.bytesToLong(packet_size))) > 0) {
                     int offset = 0;
-                    byte[] packet_size = new byte[8];
-                    byte[] buffer = new byte[1024];
+                    int chunkCnt = 0;
+                    byte[] bufferChunkCnt = new byte[8];
 
-                    // 결과 데이터 크기 수신
-                    while(offset < 8) {
-                        int len = networkReader.read(buffer, 0, 8);
-                        if (len > 0) {
-                            System.arraycopy(buffer, 0, packet_size, offset, len);
-                            offset += len;
-                        }
-                    }
+                    // 청크 사이즈
+                    System.arraycopy(packet, 0, bufferChunkCnt, 0, 8);
+                    chunkCnt = Integer.valueOf(String.valueOf(Functions.bytesToLong(bufferChunkCnt)));
+                    offset += 8;
 
-                    byte[] packet = new byte[Integer.valueOf(String.valueOf(Functions.bytesToLong(packet_size)))];
-                    mServerData = new ArrayList<ServerData>();
+                    // 청크 탐색
+                    for(int i = 0; i < chunkCnt; ++i) {
+                        // TaskIdx 와 ResultIdx를 받음
+                        byte[] taskIdx = new byte[8];
+                        byte[] resultIdx = new byte[8];
+                        System.arraycopy(packet, offset, taskIdx, 0, 8);
+                        System.arraycopy(packet, offset + 8, resultIdx, 0, 8);
+                        offset += 16;
 
-                    Log.d("Packet Size : ", "====================================================================================");
-                    Log.d("Packet Size : ", String.valueOf(Functions.bytesToLong(packet_size)));
+                        // Emotion 데이터 파싱
+                        int emotion_size = 0;
+                        byte[] buffer_emotion_size = new byte[8];
 
-                    offset = 0;
-                    if (Integer.valueOf(String.valueOf(Functions.bytesToLong(packet_size))) > 0) {
-                        // 전체 데이터 수집
-                        while (offset < Integer.valueOf(String.valueOf(Functions.bytesToLong(packet_size)))) {
-                            int len = networkReader.read(buffer);
-                            if (len > 0) {
-                                System.arraycopy(buffer, 0, packet, offset, len);
-                                offset += len;
-                            }
-                        }
+                        System.arraycopy(packet, offset, buffer_emotion_size, 0, 8);
+                        emotion_size = Integer.valueOf(String.valueOf(Functions.bytesToLong(buffer_emotion_size)));
 
-                        offset = 0;
-                        // 청크 사이즈
-                        int chunkCnt = 0;
-                        byte[] buffer_chunkCnt = new byte[8];
-                        System.arraycopy(packet, 0, buffer_chunkCnt, 0, 8);
-                        chunkCnt = Integer.valueOf(String.valueOf(Functions.bytesToLong(buffer_chunkCnt)));
-                        offset += 8;
+                        byte[] emotion = new byte[emotion_size];
+                        System.arraycopy(packet, offset + 8, emotion, 0, emotion_size);
+                        offset += 8 + emotion_size;
 
 
-                        // 각각의 청크를 탐색함
-                        for(int i = 0; i < chunkCnt; ++i) {
-                            // TaskIdx와 ResultIdx
-                            byte[] taskIdx = new byte[8];
-                            byte[] resultIdx = new byte[8];
-                            System.arraycopy(packet, offset, taskIdx, 0, 8);
-                            System.arraycopy(packet, offset + 8, resultIdx, 0, 8);
-                            offset += 16;
+                        // Subtitle 데이터 파싱
+                        int subtitle_size = 0;
+                        byte[] buffer_subtitle_size = new byte[8];
+                        System.arraycopy(packet, offset, buffer_subtitle_size, 0, 8);
+
+                        subtitle_size = Integer.valueOf(String.valueOf(Functions.bytesToLong(buffer_subtitle_size)));
+
+                        byte[] subtitle = new byte[subtitle_size];
+                        System.arraycopy(packet, offset + 8, subtitle, 0, subtitle_size);
+                        offset += 8 + subtitle_size;
 
 
-                            // Emotion
-                            int emotion_size = 0;
-                            byte[] buffer_emotion_size = new byte[8];
-                            System.arraycopy(packet, offset, buffer_emotion_size, 0, 8);
+                        // Pitch 데이터 파싱
+                        int pitch_size = 0;
+                        byte[] buffer_pitch_size = new byte[8];
+                        System.arraycopy(packet, offset, buffer_pitch_size, 0, 8);
 
-                            emotion_size = Integer.valueOf(String.valueOf(Functions.bytesToLong(buffer_emotion_size)));
+                        pitch_size = Integer.valueOf(String.valueOf(Functions.bytesToLong(buffer_pitch_size)));
 
-                            byte[] emotion = new byte[emotion_size];
-                            System.arraycopy(packet, offset + 8, emotion, 0, emotion_size);
-                            offset += 8 + emotion_size;
+                        byte[] pitch = new byte[pitch_size];
+                        System.arraycopy(packet, offset + 8, pitch, 0, pitch_size);
+                        offset += 8 + pitch_size;
 
-
-                            // Subtitle
-                            int subtitle_size = 0;
-                            byte[] buffer_subtitle_size = new byte[8];
-                            System.arraycopy(packet, offset, buffer_subtitle_size, 0, 8);
-
-                            subtitle_size = Integer.valueOf(String.valueOf(Functions.bytesToLong(buffer_subtitle_size)));
-
-                            byte[] subtitle = new byte[subtitle_size];
-                            System.arraycopy(packet, offset + 8, subtitle, 0, subtitle_size);
-                            offset += 8 + subtitle_size;
-
-
-                            // Pitch
-                            int pitch_size = 0;
-                            byte[] buffer_pitch_size = new byte[8];
-                            System.arraycopy(packet, offset, buffer_pitch_size, 0, 8);
-
-                            pitch_size = Integer.valueOf(String.valueOf(Functions.bytesToLong(buffer_pitch_size)));
-
-                            byte[] pitch = new byte[pitch_size];
-                            System.arraycopy(packet, offset + 8, pitch, 0, pitch_size);
-                            offset += 8 + pitch_size;
-
-                            mServerData.add(new ServerData(Functions.bytesToLong(taskIdx),
-                                    Functions.bytesToLong(resultIdx),
-                                    new String(emotion, "utf-8"),
-                                    new String(subtitle, "utf-8"),
-                                    new String(pitch, "utf-8")));
-
-                        }
+                        // 파싱된 데이터 추가
+                        serverData.add(new ServerData(Functions.bytesToLong(taskIdx),
+                                Functions.bytesToLong(resultIdx),
+                                new String(emotion, "utf-8"),
+                                new String(subtitle, "utf-8"),
+                                new String(pitch, "utf-8")));
 
                     }
-                    _updateLocalDB();
+                }
+
+                Runnable r = new UpdateLocalDB();
+                Thread t = new Thread(r);
+                t.start();
+                t.join();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /* 로컬 DB를 업데이트 함 */
+    class UpdateLocalDB implements Runnable {
+        @Override
+        public void run() {
+            DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
+            for(int i = 0; i < serverData.size(); i++) {
+                long task_idx = serverData.get(i).getTask_idx();
+                long result_idx = serverData.get(i).getResult_idx();
+
+                try {
+                    // 기기에 파일을 씀
+                    File emotion = new File(GlobalApplication.ApplicationDataPath + String.valueOf(result_idx) + "_emo");
+                    BufferedWriter out_emotion = new BufferedWriter(new FileWriter(emotion));
+                    out_emotion.write(serverData.get(i).getEmotion());
+                    out_emotion.flush();
+                    out_emotion.close();
+
+                    File subtitle = new File(GlobalApplication.ApplicationDataPath + String.valueOf(result_idx) + "_stt");
+                    BufferedWriter out_subtitle = new BufferedWriter(new FileWriter(subtitle));
+                    out_subtitle.write(serverData.get(i).getSubtitle());
+                    out_subtitle.flush();
+                    out_subtitle.close();
+
+                    File pitch = new File(GlobalApplication.ApplicationDataPath + String.valueOf(result_idx) + "_pitch");
+                    BufferedWriter out_pitch = new BufferedWriter(new FileWriter(pitch));
+                    out_pitch.write(serverData.get(i).getPitch());
+                    out_pitch.flush();
+                    out_pitch.close();
+
+                    // DB에 정보를 저장
+                    mDBHelper.update("InterviewData",
+                            new String[]{"result_idx", "emotion_path", "stt_path", "pitch_path"},
+                            new String[]{String.valueOf(result_idx), emotion.getAbsolutePath(), subtitle.getAbsolutePath(), pitch.getAbsolutePath()},
+                            "task_idx=?",
+                            new String[]{String.valueOf(task_idx)});
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+            Runnable r = new LoadInterviewData();
+            Thread t = new Thread(r);
+            t.start();
         }
-        Runnable t = new t_downloadServerDB();
-        t.run();
     }
 
-    public void _updateLocalDB() {
-        class t_updateLocalDB implements Runnable {
-            @Override
-            public void run() {
-                DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
-                for(int i = 0; i < mServerData.size(); i++) {
-                    long task_idx = mServerData.get(i).getTask_idx();
-                    long result_idx = mServerData.get(i).getResult_idx();
+    /* 로컬 DB 데이터를 로드 함 */
+    class LoadInterviewData implements Runnable {
+        @Override
+        public void run() {
+            DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
+            ContentValues[] values = mDBHelper.select("InterviewData", DBHelper.column_interviewdata, null, null, null, null, null);
 
-                    try {
-                        // 기기에 파일을 씀
-                        File emotion = new File(GlobalApplication.ApplicationDataPath + String.valueOf(result_idx) + "_emo");
-                        BufferedWriter out_emotion = new BufferedWriter(new FileWriter(emotion));
-                        out_emotion.write(mServerData.get(i).getEmotion());
-                        out_emotion.flush();
-                        out_emotion.close();
+            if (values != null) {
 
-                        File subtitle = new File(GlobalApplication.ApplicationDataPath + String.valueOf(result_idx) + "_stt");
-                        BufferedWriter out_subtitle = new BufferedWriter(new FileWriter(subtitle));
-                        out_subtitle.write(mServerData.get(i).getSubtitle());
-                        out_subtitle.flush();
-                        out_subtitle.close();
+                items.clear();
+                for (int i = 0; i < values.length; ++i) {
+                    // InterviewData를 로드.
+                    long idx = values[i].getAsLong("idx");
+                    long user_idx = 0;
+                    //long user_idx = values[i].getAsLong("user_idx");
+                    String video_path = values[i].getAsString("video_path");
+                    String emotion_path = values[i].getAsString("emotion_path");
+                    String stt_path = values[i].getAsString("stt_path");
+                    String pitch_path = values[i].getAsString("pitch_path");
+                    long task_idx = values[i].getAsLong("task_idx");
+                    long result_idx = values[i].getAsLong("result_idx");
+                    long question_idx = values[i].getAsLong("question_idx");
 
-                        File pitch = new File(GlobalApplication.ApplicationDataPath + String.valueOf(result_idx) + "_pitch");
-                        BufferedWriter out_pitch = new BufferedWriter(new FileWriter(pitch));
-                        out_pitch.write(mServerData.get(i).getPitch());
-                        out_pitch.flush();
-                        out_pitch.close();
-
-                        // DB에 정보를 저장
-                        mDBHelper.update("InterviewData",
-                                new String[]{"result_idx", "emotion_path", "stt_path", "pitch_path"},
-                                new String[]{String.valueOf(result_idx), emotion.getAbsolutePath(), subtitle.getAbsolutePath(), pitch.getAbsolutePath()},
-                                "task_idx=?",
-                                new String[]{String.valueOf(task_idx)});
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    // Question 데이터를 로드함
+                    ContentValues[] question = mDBHelper.select("Question", DBHelper.column_questioninfo, "idx=?", new String[]{String.valueOf(question_idx)}, null, null, null);
+                    if (question != null && question.length > 0) {
+                        String title = question[0].getAsString("title");
+                        String history = question[0].getAsString("history");
+                        String duration = question[0].getAsString("duration");
+                        String src_lang = question[0].getAsString("src_lang");
+                        String dest_lang = question[0].getAsString("dest_lang");
+                        String like_cnt = question[0].getAsString("like_cnt");
+                        String view_cnt = question[0].getAsString("view_cnt");
+                        String markdown_uri = question[0].getAsString("markdown_uri");
+                        items.add(new item_result(idx, user_idx, video_path, emotion_path, stt_path, pitch_path, task_idx, result_idx, question_idx, title, history, duration, src_lang, dest_lang, view_cnt, like_cnt, markdown_uri));
                     }
                 }
-                loadInterviewData();
+                handler.sendEmptyMessage(0);
+            }
+            // 다이얼로그 제거
+            if (isDialogshow) {
+                catLoadingView.dismiss();
+                isDialogshow = false;
             }
         }
-        Runnable t = new t_updateLocalDB();
-        t.run();
     }
 
     /**
@@ -294,7 +317,7 @@ public class A_InterviewResult extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             if (Adapter == null) {
-                Adapter = new ResultAdapter(items, mContext);
+                Adapter = new ResultAdapter(items);
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setAdapter(Adapter);
             } else {
@@ -304,65 +327,106 @@ public class A_InterviewResult extends AppCompatActivity {
         }
     };
 
-    private void loadInterviewData() {
-        class t_LoadInterviewData implements Runnable {
-            @Override
-            public void run() {
-                DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
-                ContentValues[] values = mDBHelper.select("InterviewData", DBHelper.column_interviewdata, null, null, null, null, null);
-
-                if (values != null) {
-
-                    items.clear();
-                    for (int i = 0; i < values.length; ++i) {
-                        // InterviewData를 로드.
-                        long idx = values[i].getAsLong("idx");
-                        long user_idx = 0;
-                        //long user_idx = values[i].getAsLong("user_idx");
-                        String video_path = values[i].getAsString("video_path");
-                        String emotion_path = values[i].getAsString("emotion_path");
-                        String stt_path = values[i].getAsString("stt_path");
-                        String pitch_path = values[i].getAsString("pitch_path");
-                        long task_idx = values[i].getAsLong("task_idx");
-                        long result_idx = values[i].getAsLong("result_idx");
-                        long question_idx = values[i].getAsLong("question_idx");
-
-                        // Question 데이터를 로드함
-                        ContentValues[] question = mDBHelper.select("Question", DBHelper.column_questioninfo, "idx=?", new String[]{String.valueOf(question_idx)}, null, null, null);
-                        if (question != null && question.length > 0) {
-                            String title = question[0].getAsString("title");
-                            String history = question[0].getAsString("history");
-                            String duration = question[0].getAsString("duration");
-                            String src_lang = question[0].getAsString("src_lang");
-                            String dest_lang = question[0].getAsString("dest_lang");
-                            String like_cnt = question[0].getAsString("like_cnt");
-                            String view_cnt = question[0].getAsString("view_cnt");
-                            String markdown_uri = question[0].getAsString("markdown_uri");
-                            items.add(new item_result(idx, user_idx, video_path, emotion_path, stt_path, pitch_path, task_idx, result_idx, question_idx, title, history, duration, src_lang, dest_lang, view_cnt, like_cnt, markdown_uri));
-                        }
+    /* 면접 결과 확인 다이얼로그 */
+    public AlertDialog.Builder showDialogShowResult(final String Video_path, final String Emotion_path, final String Subtitle_path, final String Pitch_path) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
+        builder.setTitle("결과 확인");
+        builder.setMessage("면접 결과를 확인하시겠습니까?");
+        builder.setPositiveButton("예",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // STT와 Emotion을 처리한다.
+                        Intent intent = new Intent(A_InterviewResult.this, A_InterviewVideo.class);
+                        intent.putExtra("Video_path", Video_path);
+                        intent.putExtra("Emotion_path", Emotion_path);
+                        intent.putExtra("Subtitle_path", Subtitle_path);
+                        intent.putExtra("Pitch_path", Pitch_path);
+                        startActivity(intent);
                     }
-                    handler.sendEmptyMessage(0);
-                }
-                // 다이얼로그 제거
-                if (isDialogshow) {
-                    catLoadingView.dismiss();
-                    isDialogshow = false;
-                }
-            }
-        }
-        Runnable t = new t_LoadInterviewData();
-        t.run();
+                });
+        builder.setNegativeButton("아니오", null);
+        return builder;
     }
 
+    /* 분석 미완료 다이얼로그 */
+    public void showDialogIsProcessing() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
+        builder.setTitle("분석 중");
+        builder.setMessage("서버에서 분석 중이에요. 결과가 나오면 푸시로 알려드릴게요.");
+        builder.setPositiveButton("확인", null);
+        builder.show();
+    }
+
+    /* 미업로드 비디오 다이얼로그 */
+    public void showDialogUploadVideo(final int position, final long idx, final long question_idx, final String video_path) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
+        builder.setTitle("분석 의뢰");
+        builder.setMessage("영상을 서버로 업로드하여 분석을 진행할까요?");
+        builder.setPositiveButton("예",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 파일이 존재하는지 확인
+                        File file = new File(video_path);
+                        if(file.exists() != true) {
+                            showDialogFileNotexist();
+                            Adapter.removeItem(position);
+                            deleteDB(idx);
+                        }
+                        else {
+                            // 영상을 서버로 전송함
+                            uploadVideo(idx, question_idx, video_path);
+                        }
+                    }
+                });
+        builder.setNegativeButton("아니오", null);
+        builder.show();
+    }
+
+    /* 파일 미존재 다이얼로그 */
+    public void showDialogFileNotexist() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
+        builder.setTitle("데이터 에러");
+        builder.setMessage("촬영된 면접 영상을 기기에서 찾을 수 없어요.");
+        builder.setPositiveButton("확인", null);
+        builder.show();
+    }
+
+    /* 파일 삭제 다이얼로그 */
+    public void showDialogDeleteDB(final int position, final long idx) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
+        builder.setTitle("데이터 삭제");
+        builder.setMessage("인터뷰 기록을 삭제할까요?");
+        builder.setPositiveButton("예",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteDB(idx);
+                        Adapter.removeItem(position);
+                    }
+                });
+        builder.setNegativeButton("아니오", null);
+        builder.show();
+    }
+
+    /* DB 삭제 */
+    public void deleteDB(long idx) {
+        DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
+        mDBHelper.delete("InterviewData", "idx=?", new String[]{String.valueOf(idx)}); // 로컬 DB에서 해당 InterviewData를 삭제함
+    }
+
+    /* 비디오를 업로드 한다 */
+    public void uploadVideo(final long idx, final long question_idx, final String video_path) {
+        Intent intent = new Intent(A_InterviewResult.this, UploadVideo.class);
+        intent.putExtra("question_idx", question_idx);
+        intent.putExtra("video_path", video_path);
+        intent.putExtra("uri", "file://" + video_path);
+        startActivity(intent);
+    }
 
     class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder> {
-        private Context context;
         private ArrayList<item_result> mItems;
-        private int lastPosition = -1;
 
-        public ResultAdapter(ArrayList items, Context mContext) {
+        public ResultAdapter(ArrayList items) {
             mItems = items;
-            context = mContext;
         }
 
         @Override
@@ -372,7 +436,6 @@ public class A_InterviewResult extends AppCompatActivity {
             ViewHolder holder = new ViewHolder(v);
             return holder;
         }
-
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
@@ -416,133 +479,37 @@ public class A_InterviewResult extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                item_result instance = mItems.get(getAdapterPosition());
+                item_result instance = mItems.get(getAdapterPosition()); // 인스턴스를 받아옴
 
+                /* 다운로드 버튼을 클릭했을 때 */
                 if (v.getId() == ib_download.getId()) {
-                    Log.d("Button Click Event", "Download " + String.valueOf(getAdapterPosition()));
-                    Log.d("ResultInfo : ", String.valueOf(instance.getTask_idx()) + "/" + String.valueOf(instance.getResult_idx()));
-
                     // Case 1 온라인에 업로드 되지 않은 파일인 경우
                     if (instance.getTask_idx() == 0) {
-                        showDialog_uploadVideo(getAdapterPosition(), instance.getIdx(), instance.getQuestion_idx(), instance.getVideo_path());
+                        showDialogUploadVideo(getAdapterPosition(), instance.getIdx(), instance.getQuestion_idx(), instance.getVideo_path());
                     }
 
                     // Case 2 온라인에 업로드 되어 아직 처리되지 않은 파일
                     else if (instance.getResult_idx() == 0) {
-                        showDialog_isprocessing();
+                        showDialogIsProcessing();
                     }
 
                     // Case 3 온라인에 업로드 되어 처리된 파일
                     else {
-                        AlertDialog.Builder builder = showDialog_showResult(instance.getVideo_path(), instance.getEmotion_path(), instance.getStt_path(), instance.getPitch_path());
+                        AlertDialog.Builder builder = showDialogShowResult(instance.getVideo_path(), instance.getEmotion_path(), instance.getStt_path(), instance.getPitch_path());
                         builder.show();
                     }
-
                     notifyDataSetChanged();
                 }
 
                 else if (v.getId() == ib_share.getId()) {
-                    Toast.makeText(getApplicationContext(), "준비중인 기능이에요!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.comingSoonBody), Toast.LENGTH_LONG).show();
                 }
 
                 else if (v.getId() == ib_delete.getId()) {
-                    showDialog_deleteDB(getAdapterPosition(), instance.getIdx());
+                    showDialogDeleteDB(getAdapterPosition(), instance.getIdx());
                 }
             }
         }
-    }
-
-
-    public AlertDialog.Builder showDialog_showResult(final String Video_path, final String Emotion_path, final String Subtitle_path, final String Pitch_path) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
-        builder.setTitle("결과 확인");
-        builder.setMessage("면접 결과를 확인하시겠습니까?");
-        builder.setPositiveButton("예",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // STT와 Emotion을 처리한다.
-                        Intent intent = new Intent(A_InterviewResult.this, A_InterviewVideo.class);
-                        intent.putExtra("Video_path", Video_path);
-                        intent.putExtra("Emotion_path", Emotion_path);
-                        intent.putExtra("Subtitle_path", Subtitle_path);
-                        intent.putExtra("Pitch_path", Pitch_path);
-                        startActivity(intent);
-                    }
-                });
-        builder.setNegativeButton("아니오", null);
-        return builder;
-    }
-
-    public void showDialog_isprocessing() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
-        builder.setTitle("분석 중");
-        builder.setMessage("서버에서 분석 중이에요. 결과가 나오면 푸시로 알려드릴게요.");
-        builder.setPositiveButton("확인", null);
-        builder.show();
-    }
-
-
-    public void showDialog_uploadVideo(final int position, final long idx, final long question_idx, final String video_path) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
-        builder.setTitle("분석 의뢰");
-        builder.setMessage("영상을 서버로 업로드하여 분석을 진행할까요?");
-        builder.setPositiveButton("예",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // 파일이 존재하는지 확인
-                        File file = new File(video_path);
-                        if(file.exists() != true) {
-                            showDialog_fileNotexist();
-                            Adapter.removeItem(position);
-                            delete_DB(idx);
-                        }
-                        else {
-                            // 영상을 서버로 전송함
-                            upload_video(idx, question_idx, video_path);
-                        }
-                    }
-                });
-        builder.setNegativeButton("아니오", null);
-        builder.show();
-    }
-
-    public void showDialog_fileNotexist() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
-        builder.setTitle("데이터 에러");
-        builder.setMessage("촬영된 면접 영상을 기기에서 찾을 수 없어요.");
-        builder.setPositiveButton("확인", null);
-        builder.show();
-    }
-
-    public void showDialog_deleteDB(final int position, final long idx) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
-        builder.setTitle("데이터 삭제");
-        builder.setMessage("인터뷰 기록을 삭제할까요?");
-        builder.setPositiveButton("예",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        delete_DB(idx);
-                        Adapter.removeItem(position);
-                    }
-                });
-        builder.setNegativeButton("아니오", null);
-        builder.show();
-    }
-
-
-    public void delete_DB(long idx) {
-        DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
-        // 로컬 DB에서 해당 InterviewData를 삭제함
-        mDBHelper.delete("InterviewData", "idx=?", new String[]{String.valueOf(idx)});
-    }
-
-
-    public void upload_video(final long idx, final long question_idx, final String video_path) {
-        Intent intent = new Intent(A_InterviewResult.this, UploadVideo.class);
-        intent.putExtra("question_idx", question_idx);
-        intent.putExtra("video_path", video_path);
-        intent.putExtra("uri", "file://" + video_path);
-        startActivity(intent);
     }
 }
 

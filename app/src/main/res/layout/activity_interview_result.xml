@@ -32,7 +32,7 @@
         <LinearLayout
             android:id="@+id/result_btn_refresh"
             android:clickable="true"
-            android:onClick="refreshDB"
+            android:onClick="onClickRefreshDB"
             style="@style/common_titlebar_rightlayout">
             <ImageButton
                 android:clickable="false"

@@ -44,7 +44,7 @@ public class A_CheckPermission extends AppCompatActivity {
         finish();
     }
 
-    // 퍼미션 체크
+    /* 퍼미션 체크 */
     private boolean checkPermissions() {
         for (int i = 0; i < permissions.length; ++i) {
             if (ContextCompat.checkSelfPermission(this, permissions[i]) == PackageManager.PERMISSION_DENIED) return true;
@@ -52,7 +52,7 @@ public class A_CheckPermission extends AppCompatActivity {
         return false;
     }
 
-    // 퍼미션 요구 이유 체크
+    /* 퍼미션 요구 이유 체크 */
     private boolean showRequestPermission() {
         for (int i = 0; i < permissions.length; ++i) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) return true;

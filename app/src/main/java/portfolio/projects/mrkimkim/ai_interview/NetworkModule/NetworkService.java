@@ -110,7 +110,7 @@ public class NetworkService extends Service {
         t.run();
     }
 
-    public byte[] receive(InputStream inputStream, int size) {
+    public static byte[] receive(InputStream inputStream, int size) {
         final int bufsize = 1024;
         int recv = 0;
         try {

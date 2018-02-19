@@ -15,120 +15,115 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.roger.catloadinglibrary.CatLoadingView;
-
 import java.util.ArrayList;
 
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_category;
 
 public class A_ChooseCategory extends AppCompatActivity {
-    static final int n_category_parent = 4;
-    int n_subcategory_parent = 0;
+    static final int NUM_CATEGORY_PARENT = 4;
+    int NUM_SUBCATEGORY_PARENT = 0;
 
-    CatLoadingView mView;
     Context mContext;
     DBHelper mDBHelper;
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     Adapter_Category mAdapter_Category, mAdapter_SubCategory;
-    ArrayList[] items_category = new ArrayList[4];
-    ArrayList[] items_subcategory;
+    ArrayList[] itemsCategory = new ArrayList[4];
+    ArrayList[] itemsSubcategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        // DB 인스턴스를 가져온다
+        /* DB 인스턴스를 가져온다 */
         mDBHelper = DBHelper.getInstance(getApplicationContext());
 
-        // RecyclerView를 초기화한다.
+        /* RecyclerView를 초기화한다. */
         recyclerView = (RecyclerView)findViewById(R.id.search_recycler_view);
         recyclerView.setHasFixedSize(true);
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
 
-        // DB에서 카테고리 정보를 가져와 Adapter에 연결시킨다.
-        _LoadCategory();
+        /* DB에서 카테고리 정보를 가져와 Adapter에 연결시킨다. */
+        Runnable r = new LoadCategory();
+        Thread t = new Thread(r);
+        t.start();
     }
 
-    private void _LoadCategory() {
-        class t_LoadCategory implements Runnable {
-            @Override
-            public void run() {
-                // Category의 ArrayList를 초기화한다.
-                for(int i = 0; i < n_category_parent; ++i) items_category[i] = new ArrayList<item_category>();
+    /* 카테고리 정보를 로드하는 Runnable */
+    private class LoadCategory implements Runnable {
+        @Override
+        public void run() {
+            /* Category의 ArrayList를 초기화한다. */
+            for(int i = 0; i < NUM_CATEGORY_PARENT; ++i) itemsCategory[i] = new ArrayList<item_category>();
 
-                // DB의 모든 카테고리를 불러온다.
-                ContentValues[] values = mDBHelper.select("Category", DBHelper.column_category, null, null, null, null, null);
+            /* DB의 모든 카테고리를 불러온다. */
+            ContentValues[] values = mDBHelper.select("Category", DBHelper.column_category, null, null, null, null, null);
 
-                // 메인 카테고리를 찾는다
-                for (int i = 0; i < values.length; ++i) {
-                    int idx = values[i].getAsInteger("parent_idx");
-                    if (1 <= idx && idx <= n_category_parent) {
-                        --idx;
-                        Log.d("IDX :", String.valueOf(idx));
-                        items_category[idx].add(new item_category(R.drawable.icon_category_card_1,
-                                values[i].getAsInteger("idx"),
-                                values[i].getAsInteger("parent_idx"),
-                                values[i].getAsString("title"),
-                                values[i].getAsString("description"),
-                                values[i].getAsInteger("n_subcategory"),
-                                values[i].getAsInteger("n_probset"),
-                                values[i].getAsInteger("n_problem")));
-                        n_subcategory_parent += 1;
-                    }
+            /* 메인 카테고리를 찾는다 */
+            for (int i = 0; i < values.length; ++i) {
+                int idx = values[i].getAsInteger("parent_idx");
+                if (1 <= idx && idx <= NUM_CATEGORY_PARENT) {
+                    --idx;
+                    Log.d("IDX :", String.valueOf(idx));
+                    itemsCategory[idx].add(new item_category(R.drawable.icon_category_card_1,
+                            values[i].getAsInteger("idx"),
+                            values[i].getAsInteger("parent_idx"),
+                            values[i].getAsString("title"),
+                            values[i].getAsString("description"),
+                            values[i].getAsInteger("n_subcategory"),
+                            values[i].getAsInteger("n_probset"),
+                            values[i].getAsInteger("n_problem")));
+                    NUM_SUBCATEGORY_PARENT += 1;
                 }
-
-                // SubCategory의 ArrayList를 초기화한다.
-                items_subcategory = new ArrayList[n_subcategory_parent];
-                for(int i = 0; i < n_subcategory_parent; ++i) items_subcategory[i] = new ArrayList<item_category>();
-
-                // 서브 카테고리를 찾는다
-                for (int i = 0; i < values.length; ++i) {
-                    int idx = values[i].getAsInteger("parent_idx");
-                    if (n_category_parent < idx && idx <= n_category_parent + n_subcategory_parent) {
-                        items_subcategory[idx - n_category_parent - 1].add(new item_category(R.drawable.icon_category_card_1,
-                                values[i].getAsInteger("idx"),
-                                values[i].getAsInteger("parent_idx"),
-                                values[i].getAsString("title"),
-                                values[i].getAsString("description"),
-                                values[i].getAsInteger("n_subcategory"),
-                                values[i].getAsInteger("n_probset"),
-                                values[i].getAsInteger("n_problem")));
-                        Log.d("sub", values[i].getAsString("parent_idx") + "," + values[i].getAsString("title"));
-                    }
-                }
-
-                // DEFAULT로 보여줄 카테고리 설정
-                mAdapter_Category = new Adapter_Category(items_category[0], mContext);
-                mAdapter_SubCategory = new Adapter_Category(items_subcategory[0], mContext);
-
-                // RecyclerView와 Adapter를 연결
-                recyclerView.setLayoutManager(layoutManager);
-                recyclerView.setAdapter(mAdapter_Category);
             }
-        }
-        Runnable t = new t_LoadCategory();
-        t.run();
-    }
 
-    // 화면에서 좌측 대분류 버튼을 클릭 시 RecyclerView의 데이터를 갱신한다.
+            /* SubCategory의 ArrayList를 초기화한다. */
+            itemsSubcategory = new ArrayList[NUM_SUBCATEGORY_PARENT];
+            for(int i = 0; i < NUM_SUBCATEGORY_PARENT; ++i) itemsSubcategory[i] = new ArrayList<item_category>();
+
+            /* 서브 카테고리를 찾는다 */
+            for (int i = 0; i < values.length; ++i) {
+                int idx = values[i].getAsInteger("parent_idx");
+                if (NUM_CATEGORY_PARENT < idx && idx <= NUM_CATEGORY_PARENT + NUM_SUBCATEGORY_PARENT) {
+                    itemsSubcategory[idx - NUM_CATEGORY_PARENT - 1].add(new item_category(R.drawable.icon_category_card_1,
+                            values[i].getAsInteger("idx"),
+                            values[i].getAsInteger("parent_idx"),
+                            values[i].getAsString("title"),
+                            values[i].getAsString("description"),
+                            values[i].getAsInteger("n_subcategory"),
+                            values[i].getAsInteger("n_probset"),
+                            values[i].getAsInteger("n_problem")));
+                    Log.d("sub", values[i].getAsString("parent_idx") + "," + values[i].getAsString("title"));
+                }
+            }
+
+            // DEFAULT로 보여줄 카테고리 설정
+            mAdapter_Category = new Adapter_Category(itemsCategory[0], mContext);
+            mAdapter_SubCategory = new Adapter_Category(itemsSubcategory[0], mContext);
+
+            // RecyclerView와 Adapter를 연결
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(mAdapter_Category);
+        }
+    };
+
+    /* 화면에서 좌측 대분류 버튼을 클릭 시 RecyclerView의 데이터를 갱신한다. */
     public void changeCategory(View v) {
         int id = v.getId();
         if (!recyclerView.getAdapter().equals(mAdapter_Category)) {
             recyclerView.swapAdapter(mAdapter_Category, false);
         }
-        if (R.id.search_menu1 == id) mAdapter_Category.refreshItems(items_category[0]);
-        else if (R.id.search_menu2 == id) mAdapter_Category.refreshItems(items_category[1]);
-        else if (R.id.search_menu3 == id) mAdapter_Category.refreshItems(items_category[2]);
-        else if (R.id.search_menu4 == id) mAdapter_Category.refreshItems(items_category[3]);
+        if (R.id.search_menu1 == id) mAdapter_Category.refreshItems(itemsCategory[0]);
+        else if (R.id.search_menu2 == id) mAdapter_Category.refreshItems(itemsCategory[1]);
+        else if (R.id.search_menu3 == id) mAdapter_Category.refreshItems(itemsCategory[2]);
+        else if (R.id.search_menu4 == id) mAdapter_Category.refreshItems(itemsCategory[3]);
     }
 
     public class Adapter_Category extends RecyclerView.Adapter<Adapter_Category.ViewHolder> {
         public ArrayList<item_category> mItems;
-
         public Adapter_Category(ArrayList items, Context mContext) {
             mItems = items;
         }
@@ -142,13 +137,10 @@ public class A_ChooseCategory extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            int idx = position % 5;
+            int[] cardColor = {R.color.category_card_background_0, R.color.category_card_background_1, R.color.category_card_background_2, R.color.category_card_background_3, R.color.category_card_background_4};
+
             // 카드 배경 색상 지정
-            if (idx == 0) holder.card.setCardBackgroundColor(getResources().getColor(R.color.category_card_background_0));
-            else if (idx == 1) holder.card.setCardBackgroundColor(getResources().getColor(R.color.category_card_background_1));
-            else if (idx == 2) holder.card.setCardBackgroundColor(getResources().getColor(R.color.category_card_background_2));
-            else if (idx == 3) holder.card.setCardBackgroundColor(getResources().getColor(R.color.category_card_background_3));
-            else holder.card.setCardBackgroundColor(getResources().getColor(R.color.category_card_background_4));
+            holder.card.setCardBackgroundColor(getResources().getColor(cardColor[position % 5]));
 
             // 카드 아이콘
             holder.icon.setImageResource(mItems.get(position).getImage());
@@ -166,12 +158,6 @@ public class A_ChooseCategory extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return mItems.size();
-        }
-
-        public void refreshItems(ArrayList items) {
-            this.mItems = null;
-            this.mItems = items;
-            notifyDataSetChanged();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -206,24 +192,31 @@ public class A_ChooseCategory extends AppCompatActivity {
 
                 Log.d("Title : ", instance.gettitle());
                 Log.d("parent_idx", String.valueOf(parent_idx));
-                Log.d("n_category_parent", String.valueOf(n_category_parent));
-                Log.d("n_subcategory_parent", String.valueOf(n_subcategory_parent));
+                Log.d("NUM_CATEGORY_PARENT", String.valueOf(NUM_CATEGORY_PARENT));
+                Log.d("NUM_SUBCATEGORY_PARENT", String.valueOf(NUM_SUBCATEGORY_PARENT));
 
                 // 메인 카테고리인 경우 어댑터를 교체한다.
-                if (1 <= parent_idx && parent_idx <= n_category_parent) {
-                    idx = instance.getidx() - n_category_parent - 1;
-                    mAdapter_SubCategory.refreshItems(items_subcategory[idx]);
+                if (1 <= parent_idx && parent_idx <= NUM_CATEGORY_PARENT) {
+                    idx = instance.getidx() - NUM_CATEGORY_PARENT - 1;
+                    mAdapter_SubCategory.refreshItems(itemsSubcategory[idx]);
                     recyclerView.swapAdapter(mAdapter_SubCategory, false);
                 }
 
                 // 서브 카테고리인 경우 문제를 로드한다.
-                else if (n_category_parent < parent_idx && parent_idx <= n_category_parent + n_subcategory_parent) {
+                else if (NUM_CATEGORY_PARENT < parent_idx && parent_idx <= NUM_CATEGORY_PARENT + NUM_SUBCATEGORY_PARENT) {
                     // 문제 로딩
                     Intent intent = new Intent(A_ChooseCategory.this, A_ChooseQuestion.class);
                     intent.putExtra("category_idx", instance.getidx());
                     startActivity(intent);
                 }
             }
+        }
+
+        /* 데이터 변경을 알림*/
+        public void refreshItems(ArrayList items) {
+            this.mItems = null;
+            this.mItems = items;
+            notifyDataSetChanged();
         }
     }
 }

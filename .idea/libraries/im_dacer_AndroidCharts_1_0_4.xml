@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="im.dacer:AndroidCharts-1.0.4">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/AndroidCharts-1.0.4.aar/86c899da3df041b4a340bc7a917c556b/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/AndroidCharts-1.0.4.aar/86c899da3df041b4a340bc7a917c556b/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/AndroidCharts-1.0.4.aar/204f13a100a6165b3d14777ccb22f043/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/AndroidCharts-1.0.4.aar/204f13a100a6165b3d14777ccb22f043/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="com.google.android:flexbox-0.3.2">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/flexbox-0.3.2.aar/07995d1fea07939cadf37d844e131c10/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/flexbox-0.3.2.aar/07995d1fea07939cadf37d844e131c10/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/flexbox-0.3.2.aar/7ff94c2ff915f215efa66f9ba67afbd9/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/flexbox-0.3.2.aar/7ff94c2ff915f215efa66f9ba67afbd9/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

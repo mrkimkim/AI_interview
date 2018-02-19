@@ -39,8 +39,8 @@ public class A_ChooseQuestion extends YouTubeBaseActivity implements YouTubePlay
     private static final int RECOVERY_REQUEST = 1;
     private static final String YOUTUBE_API_KEY = "AIzaSyCsBC6KFCzSWwA9qy7byEZ7tElx0EEjHos";
     private static final String VIDEO_ID = "hOLVzFm-nPk";
-    Context mContext;
 
+    Context mContext;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     Adapter_Question mAdapter_Question;
@@ -66,7 +66,6 @@ public class A_ChooseQuestion extends YouTubeBaseActivity implements YouTubePlay
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choosequestion);
@@ -80,40 +79,40 @@ public class A_ChooseQuestion extends YouTubeBaseActivity implements YouTubePlay
         recyclerView.setHasFixedSize(true);
         layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
 
-        _LoadQuestion();
+        /* DB에서 카테고리를 가져와 Adapter에 연결시킨다. */
+        Runnable r = new LoadQuestion();
+        Thread t = new Thread(r);
+        t.start();
     }
 
+    /* 문제를 로드한다 */
+    private class LoadQuestion implements Runnable {
+        @Override
+        public void run() {
+            DBHelper mDBhelper = DBHelper.getInstance(getApplicationContext());
+            ContentValues[] values = mDBhelper.select("Question", DBHelper.column_questioninfo, "category_idx=?", new String[]{String.valueOf(category_idx)}, null, null, null);
 
-    private void _LoadQuestion() {
-        class t_LoadQuestion implements Runnable {
-            @Override
-            public void run() {
-                DBHelper mDBhelper = DBHelper.getInstance(getApplicationContext());
-                ContentValues[] values = mDBhelper.select("Question", DBHelper.column_questioninfo, "category_idx=?", new String[]{String.valueOf(category_idx)}, null, null, null);
-
-                for(int i = 0; i < values.length; ++i) {
-                    items_question.add(new item_question(values[i].getAsInteger("idx"),
-                            values[i].getAsInteger("category_idx"),
-                            values[i].getAsString("title"),
-                            values[i].getAsString("history"),
-                            values[i].getAsString("duration"),
-                            values[i].getAsString("src_lang"),
-                            values[i].getAsString("dest_lang"),
-                            values[i].getAsString("price"),
-                            values[i].getAsString("view_cnt"),
-                            values[i].getAsString("like_cnt"),
-                            values[i].getAsString("markdown_uri")));
-                }
-
-                mAdapter_Question = new Adapter_Question(items_question, mContext);
-                recyclerView.setLayoutManager(layoutManager);
-                recyclerView.setAdapter(mAdapter_Question);
+            for(int i = 0; i < values.length; ++i) {
+                items_question.add(new item_question(values[i].getAsInteger("idx"),
+                        values[i].getAsInteger("category_idx"),
+                        values[i].getAsString("title"),
+                        values[i].getAsString("history"),
+                        values[i].getAsString("duration"),
+                        values[i].getAsString("src_lang"),
+                        values[i].getAsString("dest_lang"),
+                        values[i].getAsString("price"),
+                        values[i].getAsString("view_cnt"),
+                        values[i].getAsString("like_cnt"),
+                        values[i].getAsString("markdown_uri")));
             }
+
+            mAdapter_Question = new Adapter_Question(items_question, mContext);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(mAdapter_Question);
         }
-        Runnable t = new t_LoadQuestion();
-        t.run();
     }
 
+    /* 어댑터 설정 */
     public class Adapter_Question extends RecyclerView.Adapter<Adapter_Question.ViewHolder> {
         private Context context;
         private ArrayList<item_question> mItems;
@@ -193,14 +192,10 @@ public class A_ChooseQuestion extends YouTubeBaseActivity implements YouTubePlay
 
             @Override
             public void onClick(View v) {
-                // 문제 보기를 클릭한 경우
+                /* 문제 보기를 클릭한 경우 */
                 if (v.getId() == R.id.question_card_left_btn_viewQuestion) {
-                    Log.d("This", "Clicked");
-                    // 클릭된 개체를 받아옴
-                    item_question instance = mItems.get(getAdapterPosition());
-
-                    // 마크다운 URI를 얻음
-                    String markdown_uri = instance.getMarkdown_uri();
+                    item_question instance = mItems.get(getAdapterPosition()); // 클릭된 개체를 받아옴
+                    String markdown_uri = instance.getMarkdown_uri(); // 마크다운 URI를 얻음
 
                     Dialog dialog = new Dialog(A_ChooseQuestion.this);
                     dialog.setContentView(R.layout.dialog_question);
