@@ -16,10 +16,15 @@
     <string name="cancel">취소</string>
 
     <!-- Activity UserInfo -->
+    <string name="comingSoonTitle">알파 테스트</string>
+    <string name="comingSoonBody">테스트 기간에는 지원하지 않아요</string>
+
 
     <!-- Activity Login -->
-    <string name="connectionFailedTitle">앱 서버 로그인 실패</string>
-    <string name="connectionFailedBody">앱 서버 로그인 실패</string>
+    <string name="connectionFailedTitle">로그인 실패</string>
+    <string name="connectionFailedBody">서버 점검 중이에요!</string>
+
+
     <!-- Activity UserInfo -->
     <!-- Activity UserInfo -->
     <!-- Activity UserInfo -->

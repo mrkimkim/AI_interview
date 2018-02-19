@@ -21,31 +21,34 @@ class mResultSender(object):
 
         interview_idxs = []
         task_dics = {}
+        data = []
+        
         for row in rows:
             task_dics[row[1]] = [row[0], row[2], row[3], row[4]] # [task_idx, result_idx, emotion_blob, subtitle_blob, pitch_blob]
             interview_idxs.append(row[1])
 
-        """ Search InterviewData Idx """
-        format_strings = ','.join(['%s'] * len(interview_idxs))
-        query = """select idx, interviewdata_idx from TaskQueue where `interviewdata_idx` IN (%s)""" % format_strings
-        self.curs.execute(query, tuple(interview_idxs))
-        rows = self.curs.fetchall()
+        if len(interview_idxs) > 0:
+            """ Search InterviewData Idx """
+            format_strings = ','.join(['%s'] * len(interview_idxs))
+            query = """select idx, interviewdata_idx from TaskQueue where `interviewdata_idx` IN (%s)""" % format_strings
+            self.curs.execute(query, tuple(interview_idxs))
+            rows = self.curs.fetchall()
 
-        data = []
-        for row in rows:
-            if row[1] in task_dics:
-                tmp = task_dics[row[1]]
-                emotion_blob = bucket.blob(tmp[1])
-                emotion_data = emotion_blob.download_as_string()
-                
-                subtitle_blob = bucket.blob(tmp[2])
-                subtitle_data = subtitle_blob.download_as_string()
+            if len(rows) > 0: 
+                for row in rows:
+                    if row[1] in task_dics:
+                        tmp = task_dics[row[1]]
+                        emotion_blob = bucket.blob(tmp[1])
+                        emotion_data = emotion_blob.download_as_string()
+                        
+                        subtitle_blob = bucket.blob(tmp[2])
+                        subtitle_data = subtitle_blob.download_as_string()
 
-                pitch_blob = bucket.blob(tmp[3])
-                pitch_data = pitch_blob.download_as_string()
+                        pitch_blob = bucket.blob(tmp[3])
+                        pitch_data = pitch_blob.download_as_string()
 
-                data.append([row[0], tmp[0], emotion_data, subtitle_data, pitch_data])
-                """[taskidx, resultidx, emotion, subtitle]"""
+                        data.append([row[0], tmp[0], emotion_data, subtitle_data, pitch_data])
+                        """[taskidx, resultidx, emotion, subtitle]"""
     
         """ Packet Structure
             Size - Length of Chunk

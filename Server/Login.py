@@ -82,6 +82,7 @@ class LoginSession(threading.Thread):
         Check if user info is in DB and generate hash
         """
         try:
+            print ("Check UserInfo DB")
             login_query = """select userMsg, userNumtry, userUpvote, userCredit from UserInfo where `user_id` = %s"""
             self.curs.execute(login_query, (self.user_id))
             rows = self.curs.fetchall()
@@ -89,18 +90,20 @@ class LoginSession(threading.Thread):
             if len(rows) < 1: raise Exception("user isn't signed up")
         except Exception as e:
             # Create New User
+            print ("SignUp User")
             id_hash = hashlib.sha256(self.user_id.encode('utf-8')).hexdigest()
-            insert_query = """insert into UserInfo(idx, user_id, id_hash, credit)
-                            values (%s, %s, %s, %s)"""
-            self.curs.execute(insert_query, (self.user_id, self.user_id, id_hash, 0))
+            insert_query = """insert into UserInfo(idx, user_id, id_hash)
+                            values (%s, %s, %s)"""
+            self.curs.execute(insert_query, (self.user_id, self.user_id, id_hash))
             # Default DataSet
-            rows = ['write your message', 0, 0, 0]
+            rows = [['write your message', 0, 0, 0]]
 
 
         """
         Send UserInfo and Update UserInfo
         """
         try:
+            print ("Update UserInfo")
             update_query = """update UserInfo SET `last_login` = now()"""
             self.curs.execute(update_query)
             userMsg, userNumtry, userUpvote, userCredit = rows[0][0], rows[0][1], rows[0][2], rows[0][3]
@@ -119,6 +122,7 @@ class LoginSession(threading.Thread):
         Generate app_token
         """
         try:
+            print ("App Token Update")
             app_token_seed = str(self.user_id) + str(self.user_token) + str(time.time())
             app_token = str(hashlib.sha256(app_token_seed.encode('utf-8')).hexdigest())
             update_query = """Update UserInfo SET `app_token` = %s where `idx` = %s"""
@@ -134,6 +138,7 @@ class LoginSession(threading.Thread):
         Receive & Register FCM Token
         """
         try:
+            print ("Receive & Register FCM Token")
             push_token = self.conn.recv(152)
             self.push_token = hexToString(push_token)
             update_query = """Update UserInfo SET `push_token` = %s where `idx` = %s"""
@@ -146,6 +151,7 @@ class LoginSession(threading.Thread):
 
         """ Send DB File """
         try:
+            print ("Send DB File")
             db_version = self.conn.recv(4)
             data = open("DB.csv","rb").read()
             data_size = len(data)

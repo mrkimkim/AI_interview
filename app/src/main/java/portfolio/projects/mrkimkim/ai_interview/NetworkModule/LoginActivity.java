@@ -139,7 +139,9 @@ public class LoginActivity extends AppCompatActivity {
         Session.getCurrentSession().removeCallback(callback);
     }
 
-    // 카카오로부터 로그인 토큰을 받아온다.
+    /**
+     * KaKao 계정의 Token을 받아온다.
+     */
     public void requestAccessTokenInfo() {
         AuthService.requestAccessTokenInfo(new ApiResponseCallback<AccessTokenInfoResponse>() {
             @Override
@@ -167,7 +169,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // 앱 서버에 로그인 한다.
+    /**
+     * 앱 서버에 로그인한다.
+     */
     private void LoginToServer() {
         class t_loginToServer implements Runnable {
             @Override

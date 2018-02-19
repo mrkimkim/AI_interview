@@ -1,10 +1,11 @@
 import socket
 import sys
 import threading
+import pymysql
 import VideoReceiver
 import ResultSender
+import UpdateUserInfo
 from Login import LoginSession
-import pymysql
 from Background.Scheme import UserInfo
 
 def hexToLong(str_hex):
@@ -71,6 +72,10 @@ class Session(threading.Thread):
             """ Request InterviewResult """
             mResultSender = ResultSender.mResultSender(self.conn, self.sql, self.user_id)
             mResultSender.run()
+        elif cmd == 3000:
+            """ Update UserInfo """
+            mUpdateUserInfo = UpdateUserInfo.mUpdateUserInfo(self.conn, self.sql, self.user_id)
+            mUpdateUserInfo.run()
 
         # Close Session
         self.conn.close()

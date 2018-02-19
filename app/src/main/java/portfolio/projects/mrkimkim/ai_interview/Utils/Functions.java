@@ -1,5 +1,9 @@
 package portfolio.projects.mrkimkim.ai_interview.Utils;
 
+import android.graphics.drawable.Drawable;
+
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.ByteBuffer;
 
 /**
@@ -63,5 +67,15 @@ public class Functions {
             hexChars[i * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    public static Drawable LoadThumbnail(String url) {
+        try {
+            InputStream is = (InputStream) new URL(url).getContent();
+            Drawable d = Drawable.createFromStream(is, "src name");
+            return d;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

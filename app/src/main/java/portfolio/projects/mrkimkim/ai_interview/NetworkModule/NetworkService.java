@@ -51,7 +51,7 @@ public class NetworkService extends Service {
     }
 
     public static byte[] getHeader(int operation) {
-        byte[] opcode = new byte[20];
+        byte[] opcode = new byte[4];
         opcode[0] = (byte)(operation >> 24);
         opcode[1] = (byte)(operation >> 16);
         opcode[2] = (byte)(operation >> 8);
@@ -108,6 +108,22 @@ public class NetworkService extends Service {
         }
         Runnable t = new t_sendData(bytes);
         t.run();
+    }
+
+    public byte[] receive(InputStream inputStream, int size) {
+        final int bufsize = 1024;
+        int recv = 0;
+        try {
+            byte[] packet = new byte[size];
+            while(recv < size) {
+                int len = inputStream.read(packet, recv, Math.min(bufsize, size - recv));
+                if (len > 0) recv += len;
+            }
+            return packet;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void receiveData() {

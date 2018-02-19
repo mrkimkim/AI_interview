@@ -50,6 +50,9 @@ public class A_InterviewResult extends AppCompatActivity {
     ArrayList<ServerData> mServerData;
     boolean isDialogshow = false;
 
+    /**
+     * 서버 데이터를 다루는 클래스
+     */
     class ServerData{
         Long task_idx, result_idx;
         String emotion, subtitle, pitch;
@@ -284,6 +287,9 @@ public class A_InterviewResult extends AppCompatActivity {
         t.run();
     }
 
+    /**
+     * 데이터 변경 시 뷰를 업데이트 한다
+     */
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -302,42 +308,41 @@ public class A_InterviewResult extends AppCompatActivity {
         class t_LoadInterviewData implements Runnable {
             @Override
             public void run() {
-                Log.d("REALOD : ", "REALOD : REALOD : REALOD : REALOD : REALOD : REALOD : REALOD : REALOD : REALOD : REALOD : ");
                 DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
                 ContentValues[] values = mDBHelper.select("InterviewData", DBHelper.column_interviewdata, null, null, null, null, null);
-                if (values == null) return;
 
-                items.clear();
-                for (int i = 0; i < values.length; ++i) {
-                    // InterviewData를 로드.
-                    long idx = values[i].getAsLong("idx");
-                    long user_idx = 0;
-                    //long user_idx = values[i].getAsLong("user_idx");
-                    String video_path = values[i].getAsString("video_path");
-                    String emotion_path = values[i].getAsString("emotion_path");
-                    String stt_path = values[i].getAsString("stt_path");
-                    String pitch_path = values[i].getAsString("pitch_path");
-                    long task_idx = values[i].getAsLong("task_idx");
-                    long result_idx = values[i].getAsLong("result_idx");
-                    long question_idx = values[i].getAsLong("question_idx");
+                if (values != null) {
 
-                    // Question 데이터를 로드함
-                    ContentValues[] question = mDBHelper.select("Question", DBHelper.column_questioninfo, "idx=?", new String[]{String.valueOf(question_idx)}, null, null, null);
-                    if (question != null && question.length > 0) {
-                        String title = question[0].getAsString("title");
-                        String history = question[0].getAsString("history");
-                        String duration = question[0].getAsString("duration");
-                        String src_lang = question[0].getAsString("src_lang");
-                        String dest_lang = question[0].getAsString("dest_lang");
-                        String like_cnt = question[0].getAsString("like_cnt");
-                        String view_cnt = question[0].getAsString("view_cnt");
-                        String markdown_uri = question[0].getAsString("markdown_uri");
-                        items.add(new item_result(idx, user_idx, video_path, emotion_path, stt_path, pitch_path, task_idx, result_idx, question_idx, title, history, duration, src_lang, dest_lang, view_cnt, like_cnt, markdown_uri));
+                    items.clear();
+                    for (int i = 0; i < values.length; ++i) {
+                        // InterviewData를 로드.
+                        long idx = values[i].getAsLong("idx");
+                        long user_idx = 0;
+                        //long user_idx = values[i].getAsLong("user_idx");
+                        String video_path = values[i].getAsString("video_path");
+                        String emotion_path = values[i].getAsString("emotion_path");
+                        String stt_path = values[i].getAsString("stt_path");
+                        String pitch_path = values[i].getAsString("pitch_path");
+                        long task_idx = values[i].getAsLong("task_idx");
+                        long result_idx = values[i].getAsLong("result_idx");
+                        long question_idx = values[i].getAsLong("question_idx");
+
+                        // Question 데이터를 로드함
+                        ContentValues[] question = mDBHelper.select("Question", DBHelper.column_questioninfo, "idx=?", new String[]{String.valueOf(question_idx)}, null, null, null);
+                        if (question != null && question.length > 0) {
+                            String title = question[0].getAsString("title");
+                            String history = question[0].getAsString("history");
+                            String duration = question[0].getAsString("duration");
+                            String src_lang = question[0].getAsString("src_lang");
+                            String dest_lang = question[0].getAsString("dest_lang");
+                            String like_cnt = question[0].getAsString("like_cnt");
+                            String view_cnt = question[0].getAsString("view_cnt");
+                            String markdown_uri = question[0].getAsString("markdown_uri");
+                            items.add(new item_result(idx, user_idx, video_path, emotion_path, stt_path, pitch_path, task_idx, result_idx, question_idx, title, history, duration, src_lang, dest_lang, view_cnt, like_cnt, markdown_uri));
+                        }
                     }
+                    handler.sendEmptyMessage(0);
                 }
-
-                handler.sendEmptyMessage(0);
-
                 // 다이얼로그 제거
                 if (isDialogshow) {
                     catLoadingView.dismiss();
