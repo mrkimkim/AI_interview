@@ -11,7 +11,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,7 @@ import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import java.util.ArrayList;
 
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
-import portfolio.projects.mrkimkim.ai_interview.InterviewModule.StartInterviewActivity;
+import portfolio.projects.mrkimkim.ai_interview.InterviewModule.A_RecordInterview;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_question;
 import us.feras.mdv.MarkdownView;
 
@@ -226,7 +225,7 @@ public class A_ChooseQuestion extends YouTubeBaseActivity implements YouTubePlay
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     Toast.makeText(getApplicationContext(),"면접장으로 이동합니다.",Toast.LENGTH_LONG).show();
-                                    Intent intent = new Intent(A_ChooseQuestion.this, StartInterviewActivity.class);
+                                    Intent intent = new Intent(A_ChooseQuestion.this, A_RecordInterview.class);
                                     intent.putExtra("question_idx", mItems.get(getAdapterPosition()).getidx());
                                     startActivity(intent);
                                 }

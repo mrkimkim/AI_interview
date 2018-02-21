@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
@@ -28,43 +27,20 @@ import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
 import portfolio.projects.mrkimkim.ai_interview.GlobalApplication;
 import portfolio.projects.mrkimkim.ai_interview.R;
 
-public class StartInterviewActivity extends AppCompatActivity {
+public class A_RecordInterview extends AppCompatActivity {
     // Camera.CameraInfo.CAMERA_FACING_FRONT or Camera.CameraInfo.CAMERA_FACING_BACK
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_FRONT;
-    private static final String TAG = "StartInterviewActivity";
-    private AppCompatActivity mActivity;
+    private static final String TAG = "A_RecordInterview";
 
-    int question_idx;
     String tempFilePath = "";
+    int questionIdx;
     boolean isRecording = false;
 
-    Context ctx;
+    Context context;
     Preview preview;
     Camera camera;
     MediaRecorder mediaRecorder;
-    CircleButton btn_record;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ctx = this;
-        mActivity = this;
-
-        Intent intent = getIntent();
-        question_idx = intent.getIntExtra("question_idx", 0);
-        Log.d("Question_IDX : ", String.valueOf(question_idx));
-        clearTitleBar();
-        setContentView(R.layout.activity_interview);
-
-        btn_record = (CircleButton)findViewById(R.id.btnPower);
-        btn_record.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!isRecording) startRecord(view);
-                else stopRecord(view);
-            }
-        });
-    }
+    CircleButton btnRecord;
 
     @Override
     protected void onResume() {
@@ -73,12 +49,35 @@ public class StartInterviewActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = this;
+
+        /* 풀 스크린 모드 */
+        clearTitleBar();
+        setContentView(R.layout.activity_record_interview);
+
+        /* 녹화 버튼 클릭 이벤트 등록 */
+        btnRecord = (CircleButton)findViewById(R.id.btnPower);
+        btnRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isRecording) startRecord(view);
+                else stopRecord(view);
+            }
+        });
+
+        /* 문제 정보를 받아옴 */
+        Intent intent = getIntent();
+        questionIdx = intent.getIntExtra("questionIdx", 0);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
 
         // Surface will be destroyed when we return, so stop the preview.
         if(camera != null) {
-            // Call stopPreview() to stop updating the preview surface
             camera.stopPreview();
             preview.setCamera(null);
             camera.release();
@@ -117,21 +116,21 @@ public class StartInterviewActivity extends AppCompatActivity {
                 camera.startPreview();
 
             } catch (RuntimeException ex) {
-                Toast.makeText(ctx, "camera_not_found " + ex.getMessage().toString(),
+                Toast.makeText(context, "camera_not_found " + ex.getMessage().toString(),
                         Toast.LENGTH_LONG).show();
-                Log.d(TAG, "camera_not_found " + ex.getMessage().toString());
             }
         }
         preview.setCamera(camera);
     }
 
+    /* 녹화 시작 */
     public void startRecord(View view) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
                     isRecording = true;
-                    btn_record.setClickable(false);
+                    btnRecord.setClickable(false);
 
                     // 파일 준비
                     File sdCard = Environment.getExternalStorageDirectory();
@@ -140,22 +139,24 @@ public class StartInterviewActivity extends AppCompatActivity {
 
                     tempFilePath = dir + String.format("%d.mp4", System.currentTimeMillis());
 
-                    // 카메라 준비
+                    /* 카메라 준비 */
                     camera.unlock();
 
+                    /* MediaRecorder 초기화 */
                     mediaRecorder = new MediaRecorder();
                     mediaRecorder.setCamera(camera);
                     mediaRecorder.setOrientationHint(270);
-
                     mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-
                     mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
                     mediaRecorder.setOutputFile(tempFilePath);
-
                     mediaRecorder.prepare();
+
+                    /* 녹화 시작 */
                     mediaRecorder.start();
-                    btn_record.setClickable(true);
+
+                    /* 버튼 해제 */
+                    btnRecord.setClickable(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                     HandleCameraException();
@@ -164,6 +165,7 @@ public class StartInterviewActivity extends AppCompatActivity {
         });
     }
 
+    /* 녹화 종료 */
     public void stopRecord(View view) {
         runOnUiThread(new Runnable() {
             @Override
@@ -171,14 +173,14 @@ public class StartInterviewActivity extends AppCompatActivity {
                 if (isRecording) {
                     try {
                         // 카메라 해제
-                        btn_record.setClickable(false);
+                        btnRecord.setClickable(false);
                         camera.lock();
                         mediaRecorder.release();
-                        btn_record.setClickable(true);
+                        btnRecord.setClickable(true);
                         isRecording = false;
 
                         refreshGallery();
-                        dialogConnectServer();
+                        dialogFinishInterview();
                     } catch (Exception e) {
                         e.printStackTrace();
                         HandleCameraException();
@@ -188,45 +190,58 @@ public class StartInterviewActivity extends AppCompatActivity {
         });
     }
 
+    /* 카메라 예외 처리 */
+    public void HandleCameraException() {
+        btnRecord.setClickable(false);
 
-    public void dialogConnectServer() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(StartInterviewActivity.this);
-        builder.setTitle("면접 종료");
-        builder.setMessage("지금 AI 분석을 시작하시겠습니까? (1크레딧)");
-        builder.setPositiveButton("예",
+        // 카메라 자원 할당을 해제 한다
+        camera.lock();
+        mediaRecorder.release();
+        isRecording = !isRecording;
+        delteTempFile();
+
+        btnRecord.setClickable(true);
+    }
+
+    /* 인터뷰 종료 다이얼로그 */
+    public void dialogFinishInterview() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(A_RecordInterview.this);
+        builder.setTitle(getString(R.string.finishInterviewTitle));
+        builder.setMessage(getString(R.string.finishInterviewBody));
+        builder.setPositiveButton(getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        SaveDB();
-                        Toast.makeText(getApplicationContext(),"서버와 연결 시작",Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(StartInterviewActivity.this, UploadVideo.class);
+                        saveInterviewDB();
+                            Toast.makeText(getApplicationContext(),getString(R.string.connecting),Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(A_RecordInterview.this, A_UploadInterview.class);
                         intent.putExtra("uri", "file://" + tempFilePath);
-                        intent.putExtra("question_idx", Long.valueOf(String.valueOf(question_idx)));
+                        intent.putExtra("questionIdx", Long.valueOf(String.valueOf(questionIdx)));
                         intent.putExtra("video_path", tempFilePath);
                         startActivity(intent);
                     }
                 });
-        builder.setNegativeButton("아니오",
+        builder.setNegativeButton(getString(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        dialogSaveVideo();
+                        dialogSaveInterview();
                     }
                 });
         builder.show();
     }
 
-
-    public void dialogSaveVideo() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(StartInterviewActivity.this);
-        builder.setTitle("동영상 저장");
-        builder.setMessage("면접 영상 및 정보를 기기에 저장하시겠습니까?");
-        builder.setPositiveButton("예",
+    /* 인터뷰 저장 다이얼로그 */
+    public void dialogSaveInterview() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(A_RecordInterview.this);
+        builder.setTitle(getString(R.string.saveInterviewTitle));
+        builder.setMessage(getString(R.string.saveInterviewBody));
+        builder.setPositiveButton(getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        SaveDB();
+                        saveInterviewDB();
                         Toast.makeText(getApplicationContext(), tempFilePath + "경로에 영상이 저장되었습니다. 면접 결과 페이지에서 AI 분석을 요청할 수 있습니다.",Toast.LENGTH_LONG).show();
                     }
                 });
-        builder.setNegativeButton("아니오",
+        builder.setNegativeButton(getString(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         delteTempFile();
@@ -235,32 +250,22 @@ public class StartInterviewActivity extends AppCompatActivity {
         builder.show();
     }
 
-
-    public void SaveDB() {
+    /* DB에 데이터를 저장 */
+    public void saveInterviewDB() {
         DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
         mDBHelper.insert("InterviewData",
-                new String[]{"user_idx", "video_path", "task_idx", "result_idx", "question_idx"},
-                new String[]{String.valueOf(GlobalApplication.mUserInfoManager.getUserProfile().getId()), tempFilePath, "0", "0", String.valueOf(question_idx)}, null, null);
+                new String[]{"user_idx", "video_path", "task_idx", "result_idx", "questionIdx"},
+                new String[]{String.valueOf(GlobalApplication.mUserInfoManager.getUserProfile().getId()), tempFilePath, "0", "0", String.valueOf(questionIdx)}, null, null);
     }
 
-
-    public void HandleCameraException() {
-        btn_record.setClickable(false);
-
-        camera.lock();
-        mediaRecorder.release();
-        isRecording = !isRecording;
-        delteTempFile();
-
-        btn_record.setClickable(true);
-    }
-
+    /* 임시 영상 파일 제거 */
     public void delteTempFile() {
         File file = new File(tempFilePath);
         if (file.exists()) file.delete();
         tempFilePath = "";
     }
 
+    /* 핸드폰 갤러리 업데이트 */
     private void refreshGallery() {
         File file = new File(tempFilePath);
         Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -268,6 +273,7 @@ public class StartInterviewActivity extends AppCompatActivity {
         sendBroadcast(mediaScanIntent);
     }
 
+    /* 타이틀 바 제거 */
     private void clearTitleBar() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -277,7 +283,7 @@ public class StartInterviewActivity extends AppCompatActivity {
     }
 
 
-
+    /* 스마트 폰 회전 상태에 따른 카메라 촬영 각도를 설정한다 */
     public static int setCameraDisplayOrientation(Activity activity,
                                                   int cameraId, android.hardware.Camera camera) {
         android.hardware.Camera.CameraInfo info =
@@ -302,5 +308,7 @@ public class StartInterviewActivity extends AppCompatActivity {
         }
         return result;
     }
+
+
 
 }

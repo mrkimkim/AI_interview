@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-public class A_Main extends AppCompatActivity {
+public class A_MainMenu extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,22 +16,22 @@ public class A_Main extends AppCompatActivity {
     }
 
     public void onClickUserInfo(View v) {
-        Intent intent = new Intent(A_Main.this, A_UserInfo.class);
+        Intent intent = new Intent(A_MainMenu.this, A_UserInfo.class);
         startActivity(intent);
     }
 
     public void onClickStartInterview(View v) {
-        Intent intent = new Intent(A_Main.this, A_ChooseCategory.class);
+        Intent intent = new Intent(A_MainMenu.this, A_ChooseCategory.class);
         startActivity(intent);
     }
 
     public void onClickSearchQuestion(View v) {
-        Intent intent = new Intent(A_Main.this, A_InterviewVideo.class);
+        Intent intent = new Intent(A_MainMenu.this, A_ShowInterviewVideo.class);
         startActivity(intent);
     }
 
     public void onClickInterviewResult(View v) {
-       Intent intent = new Intent(A_Main.this, A_InterviewResult.class);
+       Intent intent = new Intent(A_MainMenu.this, A_ShowInterviewList.class);
        startActivity(intent);
     }
 
@@ -72,7 +72,7 @@ public class A_Main extends AppCompatActivity {
 
                                         @Override
                                         public void onSuccess(Long result) {
-                                            Toast.makeText(A_Main.this, "회원 탈퇴 완료", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(A_MainMenu.this, "회원 탈퇴 완료", Toast.LENGTH_LONG).show();
                                             redirectLoginActivity();
                                         }
                                     });

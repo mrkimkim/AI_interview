@@ -29,28 +29,28 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".A_Main" />
+        <activity android:name=".A_MainMenu" />
 
         <activity android:name=".NetworkModule.LoginActivity"/>
 
         <activity android:name=".A_ChooseQuestion" />
 
-        <activity android:name=".InterviewModule.UploadVideo" />
+        <activity android:name=".InterviewModule.A_UploadInterview" />
 
         <activity android:name=".A_UserInfo" />
 
-        <activity android:name=".A_InterviewResult" />
+        <activity android:name=".A_ShowInterviewList" />
 
         <activity android:name=".A_ChooseCategory" />
 
         <activity android:name=".TestActivity" />
 
-        <activity android:name=".InterviewModule.StartInterviewActivity" />
+        <activity android:name=".InterviewModule.A_RecordInterview" />
 
-        <activity android:name=".A_InterviewVideo" />
+        <activity android:name=".A_ShowInterviewVideo" />
 
         <activity
-            android:name=".A_InterviewReport"
+            android:name=".A_ShowInterviewReport"
             android:theme="@android:style/Theme.Dialog" />
 
         <service

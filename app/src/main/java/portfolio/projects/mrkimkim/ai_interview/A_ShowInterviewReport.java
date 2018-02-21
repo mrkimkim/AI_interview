@@ -36,11 +36,11 @@ import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipCloudConfig;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_subtitle;
 
-public class A_InterviewReport extends Activity {
+public class A_ShowInterviewReport extends Activity {
     int parentWidth = 0;
     ConstraintLayout parentConstraintLayout;
     RelativeLayout barHappy, barNeutral, barSad, barNervous;
-    FlexboxLayout flexbox;
+    FlexboxLayout keywordFlex;
     LineChart chart_emotion, chart_wps, chart_pitch;
 
     ListView subtitleView;
@@ -113,8 +113,7 @@ public class A_InterviewReport extends Activity {
 
     /* 키워드 표시*/
     public void setKeyword(Context context, ArrayList<String> tag) {
-        ArrayList<Integer> drawable;
-        flexbox = (FlexboxLayout)findViewById(R.id.flexbox);
+        keywordFlex = (FlexboxLayout)findViewById(R.id.flexbox);
 
         // 태그 설정
         ChipCloudConfig config = new ChipCloudConfig()
@@ -126,7 +125,7 @@ public class A_InterviewReport extends Activity {
                 .useInsetPadding(true);
 
         // 태그 추가
-        ChipCloud chipCloud = new ChipCloud(context, flexbox, config);
+        ChipCloud chipCloud = new ChipCloud(context, keywordFlex, config);
         for(int i = 0; i < Math.min(tag.size(), 10); ++i) {
             if (i == 0) chipCloud.addChip(tag.get(i), ContextCompat.getDrawable(context, R.drawable.icon_1st));
             else if (i == 1) chipCloud.addChip(tag.get(i), ContextCompat.getDrawable(context, R.drawable.icon_2nd));
@@ -151,7 +150,6 @@ public class A_InterviewReport extends Activity {
             @Override
             public void onGlobalLayout() {
                 if (parentWidth > 0) {
-                    Log.d("HAPPY : ", String.valueOf(avg_happy));
                     barHappy.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) barHappy.getLayoutParams();
                     lp.width = (int) (parentWidth * avg_happy / 100.0);
@@ -165,7 +163,6 @@ public class A_InterviewReport extends Activity {
             @Override
             public void onGlobalLayout() {
                 if (parentWidth > 0) {
-                    Log.d("NEUTRAL : ", String.valueOf(avg_neutral));
                     barNeutral.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) barNeutral.getLayoutParams();
                     lp.width = (int) (parentWidth * avg_neutral / 100.0);
@@ -179,7 +176,6 @@ public class A_InterviewReport extends Activity {
             @Override
             public void onGlobalLayout() {
                 if (parentWidth > 0) {
-                    Log.d("SAD : ", String.valueOf(avg_sad));
                     barSad.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) barSad.getLayoutParams();
                     lp.width = (int) (parentWidth * avg_sad / 100.0);
@@ -194,7 +190,6 @@ public class A_InterviewReport extends Activity {
             @Override
             public void onGlobalLayout() {
                 if (parentWidth > 0) {
-                    Log.d("NERVOUS : ", String.valueOf(avg_nervous));
                     barNervous.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) barNervous.getLayoutParams();
                     lp.width = (int) (parentWidth * avg_nervous / 100.0);
@@ -218,37 +213,33 @@ public class A_InterviewReport extends Activity {
         for(int i = 0; i < 4; ++i) {
             entries.add(new ArrayList<Entry>());
             for(int j = 0; j < emotion_timestamp.size(); ++j) {
-                Log.d("TIME / EMO :", String.valueOf(emotion_timestamp.get(j)) + "/" + dataset.get(i).get(j));
                 entries.get(i).add(new Entry(emotion_timestamp.get(j), dataset.get(i).get(j)));
             }
-            Log.d("=== END === :", "END");
         }
 
         // 차트 설정
         LineData lineData = getCurvedLineData(entries);
-
+        chart_emotion.setData(lineData);
     }
 
     /* 발음 속도 꺾은 선 표시 */
     public void setChartWps() {
-        // 데이터 설정
+        // 차트 데이터 설정
         List<Entry> entries = new ArrayList<Entry>();
         for(int i = 0; i < wps_timestamp.size(); ++i) entries.add(new Entry(wps_timestamp.get(i), wps.get(i)));
 
-        // 차트 설정
-        LineData lineData = getLineData(entries, "WPS");
-        chart_wps.setData(lineData);
+        // 차트 표시
+        chart_wps.setData(getLineData(entries, "WPS"));
     }
 
-    /* 음정  꺾은 선 표시 */
+    /* 음정 꺾은 선 표시 */
     public void setChartPitch() {
         // 데이터 설정
         List<Entry> entries = new ArrayList<Entry>();
         for(int i = 0; i < pitch_timestamp.size(); ++i) entries.add(new Entry(pitch_timestamp.get(i), pitch.get(i)));
 
-        // 차트 설정
-        LineData lineData = getLineData(entries, "PITCH");
-        chart_pitch.setData(lineData);
+        // 차트 표시
+        chart_pitch.setData(getLineData(entries, "PITCH"));
     }
 
     /* 꺾은 선 복수 데이터 */
@@ -281,7 +272,6 @@ public class A_InterviewReport extends Activity {
 
         LineData lineData = new LineData(dataSets);
         lineData.setDrawValues(true);
-        chart_emotion.setData(lineData);
         return lineData;
     }
 

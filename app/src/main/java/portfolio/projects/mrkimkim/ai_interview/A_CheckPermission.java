@@ -3,6 +3,7 @@ package portfolio.projects.mrkimkim.ai_interview;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.StrictMode;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -34,14 +35,31 @@ public class A_CheckPermission extends AppCompatActivity {
             }
         }
 
-        while (true) {
-            if (!checkPermissions()) {
-                break;
-            }
+        // 기기 버전 체크 후 정책 변경
+        if (android.os.Build.VERSION.SDK_INT > 9)
+        {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
         }
-        Intent intent = new Intent(A_CheckPermission.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
+
+        Runnable r = new PermissionChecker();
+        Thread t = new Thread(r);
+        t.start();
+    }
+
+    /* 권한 체크 */
+    private class PermissionChecker implements Runnable{
+        @Override
+        public void run() {
+            while (true) {
+                if (!checkPermissions()) {
+                    break;
+                }
+            }
+            Intent intent = new Intent(A_CheckPermission.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     /* 퍼미션 체크 */

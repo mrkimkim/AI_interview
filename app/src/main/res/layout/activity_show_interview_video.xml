@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="portfolio.projects.mrkimkim.ai_interview.A_InterviewVideo">
+    tools:context="portfolio.projects.mrkimkim.ai_interview.A_ShowInterviewVideo">
 
     <SurfaceView
         android:id="@+id/show_interview_video_surface"

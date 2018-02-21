@@ -31,12 +31,12 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
-import portfolio.projects.mrkimkim.ai_interview.InterviewModule.UploadVideo;
+import portfolio.projects.mrkimkim.ai_interview.InterviewModule.A_UploadInterview;
 import portfolio.projects.mrkimkim.ai_interview.NetworkModule.NetworkService;
 import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
 import portfolio.projects.mrkimkim.ai_interview.Utils.item_result;
 
-public class A_InterviewResult extends AppCompatActivity {
+public class A_ShowInterviewList extends AppCompatActivity {
     Context mContext;
     RecyclerView recyclerView;
     ResultAdapter Adapter;
@@ -252,7 +252,6 @@ public class A_InterviewResult extends AppCompatActivity {
                             new String[]{String.valueOf(result_idx), emotion.getAbsolutePath(), subtitle.getAbsolutePath(), pitch.getAbsolutePath()},
                             "task_idx=?",
                             new String[]{String.valueOf(task_idx)});
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -271,17 +270,16 @@ public class A_InterviewResult extends AppCompatActivity {
             ContentValues[] values = mDBHelper.select("InterviewData", DBHelper.column_interviewdata, null, null, null, null, null);
 
             if (values != null) {
-
                 items.clear();
                 for (int i = 0; i < values.length; ++i) {
                     // InterviewData를 로드.
                     long idx = values[i].getAsLong("idx");
-                    long user_idx = 0;
-                    //long user_idx = values[i].getAsLong("user_idx");
+
                     String video_path = values[i].getAsString("video_path");
                     String emotion_path = values[i].getAsString("emotion_path");
                     String stt_path = values[i].getAsString("stt_path");
                     String pitch_path = values[i].getAsString("pitch_path");
+                    long user_idx = values[i].getAsLong("user_idx");
                     long task_idx = values[i].getAsLong("task_idx");
                     long result_idx = values[i].getAsLong("result_idx");
                     long question_idx = values[i].getAsLong("question_idx");
@@ -329,14 +327,14 @@ public class A_InterviewResult extends AppCompatActivity {
 
     /* 면접 결과 확인 다이얼로그 */
     public AlertDialog.Builder showDialogShowResult(final String Video_path, final String Emotion_path, final String Subtitle_path, final String Pitch_path) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(A_ShowInterviewList.this);
         builder.setTitle("결과 확인");
         builder.setMessage("면접 결과를 확인하시겠습니까?");
         builder.setPositiveButton("예",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // STT와 Emotion을 처리한다.
-                        Intent intent = new Intent(A_InterviewResult.this, A_InterviewVideo.class);
+                        Intent intent = new Intent(A_ShowInterviewList.this, A_ShowInterviewVideo.class);
                         intent.putExtra("Video_path", Video_path);
                         intent.putExtra("Emotion_path", Emotion_path);
                         intent.putExtra("Subtitle_path", Subtitle_path);
@@ -350,19 +348,19 @@ public class A_InterviewResult extends AppCompatActivity {
 
     /* 분석 미완료 다이얼로그 */
     public void showDialogIsProcessing() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
-        builder.setTitle("분석 중");
-        builder.setMessage("서버에서 분석 중이에요. 결과가 나오면 푸시로 알려드릴게요.");
-        builder.setPositiveButton("확인", null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(A_ShowInterviewList.this);
+        builder.setTitle(getString(R.string.isProcessingTitle));
+        builder.setMessage(getString(R.string.isProcessingBody));
+        builder.setPositiveButton(getString(R.string.confirm), null);
         builder.show();
     }
 
     /* 미업로드 비디오 다이얼로그 */
     public void showDialogUploadVideo(final int position, final long idx, final long question_idx, final String video_path) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
-        builder.setTitle("분석 의뢰");
-        builder.setMessage("영상을 서버로 업로드하여 분석을 진행할까요?");
-        builder.setPositiveButton("예",
+        AlertDialog.Builder builder = new AlertDialog.Builder(A_ShowInterviewList.this);
+        builder.setTitle(getString(R.string.uploadVideoTitle));
+        builder.setMessage(getString(R.string.uploadVideoBody));
+        builder.setPositiveButton(getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // 파일이 존재하는지 확인
@@ -378,32 +376,32 @@ public class A_InterviewResult extends AppCompatActivity {
                         }
                     }
                 });
-        builder.setNegativeButton("아니오", null);
+        builder.setNegativeButton(getString(R.string.no), null);
         builder.show();
     }
 
-    /* 파일 미존재 다이얼로그 */
+    /* 파일 없음 다이얼로그 */
     public void showDialogFileNotexist() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
-        builder.setTitle("데이터 에러");
-        builder.setMessage("촬영된 면접 영상을 기기에서 찾을 수 없어요.");
-        builder.setPositiveButton("확인", null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(A_ShowInterviewList.this);
+        builder.setTitle(getString(R.string.fileNotExistTitle));
+        builder.setMessage(getString(R.string.fileNotExistBody));
+        builder.setPositiveButton(getString(R.string.confirm), null);
         builder.show();
     }
 
     /* 파일 삭제 다이얼로그 */
     public void showDialogDeleteDB(final int position, final long idx) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(A_InterviewResult.this);
-        builder.setTitle("데이터 삭제");
-        builder.setMessage("인터뷰 기록을 삭제할까요?");
-        builder.setPositiveButton("예",
+        AlertDialog.Builder builder = new AlertDialog.Builder(A_ShowInterviewList.this);
+        builder.setTitle(getString(R.string.deleteDataTitle));
+        builder.setMessage(getString(R.string.deleteDataBody));
+        builder.setPositiveButton(getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         deleteDB(idx);
                         Adapter.removeItem(position);
                     }
                 });
-        builder.setNegativeButton("아니오", null);
+        builder.setNegativeButton(getString(R.string.no), null);
         builder.show();
     }
 
@@ -413,15 +411,16 @@ public class A_InterviewResult extends AppCompatActivity {
         mDBHelper.delete("InterviewData", "idx=?", new String[]{String.valueOf(idx)}); // 로컬 DB에서 해당 InterviewData를 삭제함
     }
 
-    /* 비디오를 업로드 한다 */
+    /* 비디오 업로드 액티비티로 이동 */
     public void uploadVideo(final long idx, final long question_idx, final String video_path) {
-        Intent intent = new Intent(A_InterviewResult.this, UploadVideo.class);
+        Intent intent = new Intent(A_ShowInterviewList.this, A_UploadInterview.class);
         intent.putExtra("question_idx", question_idx);
         intent.putExtra("video_path", video_path);
         intent.putExtra("uri", "file://" + video_path);
         startActivity(intent);
     }
 
+    /* 결과 RecyclerView를 위한 Adapter */
     class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder> {
         private ArrayList<item_result> mItems;
 

@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 
 class Preview extends ViewGroup implements SurfaceHolder.Callback {
     private final String TAG = "Preview";
-
     SurfaceView mSurfaceView;
     SurfaceHolder mHolder;
     Size mPreviewSize;
@@ -24,14 +23,10 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
 
     Preview(Context context, SurfaceView sv ) {
         super(context);
-
         mSurfaceView = sv;
-//        addView(mSurfaceView);
-
         mHolder = mSurfaceView.getHolder();
         mHolder.addCallback(this);
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
     }
 
     public void setCamera(Camera camera) {
@@ -194,5 +189,4 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
         }
 
     }
-
 }

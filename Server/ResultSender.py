@@ -48,7 +48,7 @@ class mResultSender(object):
                         pitch_data = pitch_blob.download_as_string()
 
                         data.append([row[0], tmp[0], emotion_data, subtitle_data, pitch_data])
-                        """[taskidx, resultidx, emotion, subtitle]"""
+                        """[taskidx, resultidx, emotion, subtitle, pitch]"""
     
         """ Packet Structure
             Size - Length of Chunk

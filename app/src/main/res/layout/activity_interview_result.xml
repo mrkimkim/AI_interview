@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#ffffffff"
     android:fitsSystemWindows="true"
-    tools:context="portfolio.projects.mrkimkim.ai_interview.A_InterviewResult">
+    tools:context="portfolio.projects.mrkimkim.ai_interview.A_ShowInterviewList">
 
     <!-- 타이틀 바 -->
     <RelativeLayout

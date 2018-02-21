@@ -14,6 +14,8 @@
 
     <string name="confirm">확인</string>
     <string name="cancel">취소</string>
+    <string name="yes">예</string>
+    <string name="no">아니오</string>
 
     <!-- Activity UserInfo -->
     <string name="comingSoonTitle">준비 중</string>
@@ -26,9 +28,30 @@
 
 
     <!-- Activity InterviewResult -->
+    <string name="isProcessingTitle">분석 중</string>
+    <string name="isProcessingBody">서버에서 분석 중이에요. 결과가 나오면 푸시로 알려드릴게요.</string>
 
-    <!-- Activity UserInfo -->
-    <!-- Activity UserInfo -->
+    <string name="uploadVideoTitle">서버 제출</string>
+    <string name="uploadVideoBody">영상을 서버로 전송해서 분석할까요?</string>
+
+    <string name="fileNotExistTitle">파일 에러</string>
+    <string name="fileNotExistBody">촬영된 면접 영상이 기기에 없어요</string>
+
+    <string name="deleteDataTitle">데이터 삭제</string>
+    <string name="deleteDataBody">면접 데이터를 삭제합니다</string>
+
+    <!-- Activity RecordInterview -->
+    <string name="finishInterviewTitle">면접 종료</string>
+    <string name="finishInterviewBody">지금 AI 분석을 시작할까요? (1 크레딧)</string>
+
+    <string name="saveInterviewTitle">인터뷰 저장</string>
+    <string name="saveInterviewBody">인터뷰 영상 및 정보를 기기에 저장할까요?</string>
+
+    <!-- Activity UploadInterview -->
+    <string name="updatingLocalDB">로컬 데이터베이스를 업데이트 중 입니다</string>
+    <string name="finishUploadInterview">인터뷰 데이터 전송에 성공했습니다.</string>
+    <string name="failUploadInterview">인터뷰 데이터 전송에 실패했습니다</string>
+
     <!-- Activity UserInfo -->
     <!-- Activity UserInfo -->
     <!-- Activity UserInfo -->

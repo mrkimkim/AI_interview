@@ -2,8 +2,6 @@ package portfolio.projects.mrkimkim.ai_interview.InterviewModule;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,16 +19,15 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import portfolio.projects.mrkimkim.ai_interview.DBHelper.DBHelper;
-import portfolio.projects.mrkimkim.ai_interview.A_Main;
+import portfolio.projects.mrkimkim.ai_interview.A_MainMenu;
 import portfolio.projects.mrkimkim.ai_interview.NetworkModule.NetworkService;
 import portfolio.projects.mrkimkim.ai_interview.R;
 import portfolio.projects.mrkimkim.ai_interview.Utils.Functions;
 
-public class UploadVideo extends AppCompatActivity {
+public class A_UploadInterview extends AppCompatActivity {
     private Socket socket;
     private InputStream networkReader;
     private OutputStream networkWriter;
-    private Handler mHandler;
     private Uri uri;
 
     private long question_idx;
@@ -41,29 +38,20 @@ public class UploadVideo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_upload_video);
+        setContentView(R.layout.activity_upload_interview);
 
         progressBar = (ProgressBar) findViewById(R.id.show_interview_video_seekbar);
         tv_progress = (TextView) findViewById(R.id.upload_video_tv_progress);
 
-        // 버전 체크
-        if (android.os.Build.VERSION.SDK_INT > 9)
-        {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
-
-        // 이전 액티비티의 영상 인텐트 전달
+        // 이전 액티비티의 영상 인텐트, 문제 번호, 로컬 비디오 경로를 받음
         Intent intent = getIntent();
         String path = intent.getStringExtra("uri");
-
-        question_idx = intent.getLongExtra("question_idx", 0);
+        question_idx = intent.getLongExtra("questionIdx", 0);
         video_path = intent.getStringExtra("video_path");
         uri = Uri.parse(path);
 
 
         // 서버에 연결
-        mHandler = new Handler();
         try {
             setSocket(getString(R.string.server_ip), Integer.parseInt(getString(R.string.cmd_server_port)));
             Upload.start();
@@ -71,96 +59,6 @@ public class UploadVideo extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-    public void setProgressBar(final int p) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setProgress(p);
-                tv_progress.setText(String.valueOf(p/10) + "% 전송 완료");
-            }
-        });
-    }
-
-    public void setProgressText(final String msg) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                tv_progress.setText(msg);
-            }
-        });
-    }
-
-    private Thread Upload = new Thread() {
-        public void run() {
-            try {
-                int maxBufferSize = 2048;
-                final byte[] buffers = new byte[maxBufferSize];
-
-                // 유저 인증 토큰을 전송함.
-                NetworkService.Auth_User(networkReader, networkWriter);
-
-                // 비디오를 로드함
-                String[] FileName = uri.getPath().split("/");
-                File file = new File(uri.getPath());
-                FileInputStream fis = new FileInputStream(file);
-                final long video_size = file.length();
-                int read = 0;
-
-
-                // 헤더 전송 (20byte)
-                byte[] Opcode = NetworkService.getHeader(getResources().getInteger(R.integer.op_upload), Long.valueOf(String.valueOf(question_idx)), video_size);
-                networkWriter.write(Opcode);
-                networkWriter.flush();
-
-
-                // 비디오 데이터 전송
-                int uploaded_size = 0;
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                while((read = bis.read(buffers, 0, maxBufferSize)) != -1) {
-                    networkWriter.write(buffers, 0, read);
-                    uploaded_size += read;
-                    Log.d("BUFFER SIZE : ", String.valueOf(uploaded_size));
-                    setProgressBar((uploaded_size * 1000) / Integer.valueOf(String.valueOf(video_size)));
-                }
-                networkWriter.flush();
-
-
-                // 업로드 된 영상의 task_idx를 DB에 저장한다.
-                setProgressText("DB를 업데이트 중입니다.");
-
-                byte[] packet = new byte[8];
-                networkReader.read(packet, 0, 8);
-                long task_idx = Functions.bytesToLong(packet);
-
-                DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
-                mDBHelper.update("InterviewData",
-                        new String[]{"task_idx", "question_idx"},
-                        new String[]{String.valueOf(task_idx), String.valueOf(question_idx)}, "video_path= ?", new String[]{video_path});
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(UploadVideo.this, "영상 전송에 성공했습니다.", Toast.LENGTH_LONG).show();
-                    }
-                });
-
-                // 메인 액티비티로 돌아간다.
-                Intent intent = new Intent(UploadVideo.this, A_Main.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(UploadVideo.this, "영상 전송에 실패했습니다.", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        }
-    };
 
     @Override
     public void onDestroy() {
@@ -184,6 +82,102 @@ public class UploadVideo extends AppCompatActivity {
         }
     }
 
+    /* 업로드 완료 비율을 표시 */
+    public void setProgressBar(final int p) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setProgress(p);
+                tv_progress.setText(String.valueOf(p/10) + "% 전송 완료");
+            }
+        });
+    }
+
+    /* 상태 메시지를 표시 */
+    public void setProgressMsg(final String msg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tv_progress.setText(msg);
+            }
+        });
+    }
+
+    /* 데이터 업로드 수행 */
+    private Thread Upload = new Thread() {
+        public void run() {
+            try {
+                int maxBufferSize = 2048;
+                final byte[] buffers = new byte[maxBufferSize];
+
+                // 유저 인증 토큰을 전송함.
+                NetworkService.Auth_User(networkReader, networkWriter);
+
+                // 비디오를 로드함
+                File file = new File(uri.getPath());
+                FileInputStream fis = new FileInputStream(file);
+                final long video_size = file.length();
+                int read;
+
+
+                // 헤더 전송 (20byte)
+                byte[] Opcode = NetworkService.getHeader(getResources().getInteger(R.integer.op_upload), Long.valueOf(String.valueOf(question_idx)), video_size);
+                networkWriter.write(Opcode);
+                networkWriter.flush();
+
+
+                // 비디오 데이터 전송
+                int uploaded_size = 0;
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                while((read = bis.read(buffers, 0, maxBufferSize)) != -1) {
+                    networkWriter.write(buffers, 0, read);
+                    uploaded_size += read;
+                    setProgressBar((uploaded_size * 1000) / Integer.valueOf(String.valueOf(video_size)));
+                }
+                networkWriter.flush();
+
+                // DB 업데이트 메시지 표시
+                setProgressMsg(getString(R.string.updatingLocalDB));
+
+                /* 로컬 DB를 패치 */
+                byte[] packet = NetworkService.receive(networkReader, 8);
+                long task_idx = Functions.bytesToLong(packet);
+                updateLocalDB(task_idx);
+
+                /* 데이터 전송 성공을 알림 */
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(A_UploadInterview.this, getString(R.string.finishUploadInterview), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                /* 메인 액티비티로 돌아간다. */
+                Intent intent = new Intent(A_UploadInterview.this, A_MainMenu.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(A_UploadInterview.this, getString(R.string.failUploadInterview), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }
+    };
+
+    /* 로컬 데이터베이스의 task_idx를 서버와 동기화한다. */
+    public void updateLocalDB(long task_idx) {
+        DBHelper mDBHelper = DBHelper.getInstance(getApplicationContext());
+        mDBHelper.update("InterviewData",
+                new String[]{"task_idx", "questionIdx"},
+                new String[]{String.valueOf(task_idx), String.valueOf(question_idx)}, "video_path= ?", new String[]{video_path});
+    }
+
+    /* 소켓 초기화 */
     public void setSocket(String ip, int port) {
         try {
             socket = new Socket();

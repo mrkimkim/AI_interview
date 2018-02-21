@@ -15,7 +15,7 @@ import android.widget.TextView;
 import at.markushi.ui.CircleButton;
 import portfolio.projects.mrkimkim.ai_interview.Utils.InterviewData;
 
-public class A_InterviewVideo extends Activity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener {
+public class A_ShowInterviewVideo extends Activity implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener {
     InterviewData interviewData;
     InterviewData.EmotionData emotionData;
     InterviewData.SubtitleData subtitleData;
@@ -52,7 +52,9 @@ public class A_InterviewVideo extends Activity implements SurfaceHolder.Callback
         setUiElement();
     }
 
-    /* 동영상 SeekBar를 제어하는 스레드 */
+    /*
+    * 동영상 SeekBar를 제어하는 스레드
+    */
     class SeekBarThread extends Thread {
         @Override
         public void run() {
@@ -87,7 +89,9 @@ public class A_InterviewVideo extends Activity implements SurfaceHolder.Callback
         }
     }
 
-    /* 인텐트 데이터를 로드한다 */
+    /*
+    * 인텐트 데이터를 로드한다
+    */
     private void loadIntentData(Intent intent) {
         Video_path = intent.getStringExtra("Video_path");
         Emotion_path = intent.getStringExtra("Emotion_path");
@@ -101,7 +105,9 @@ public class A_InterviewVideo extends Activity implements SurfaceHolder.Callback
         pitchData = interviewData.getmPitchData();
     }
 
-    /* UI 세팅 함수 */
+    /*
+    * UI 세팅 함수
+    */
     private void setUiElement() {
         // onTogglePlay 버튼 설정
         btn_Play = (CircleButton)findViewById(R.id.show_interview_video_btn_play);
@@ -135,7 +141,7 @@ public class A_InterviewVideo extends Activity implements SurfaceHolder.Callback
         // 비디오 설정
         surfaceView = (SurfaceView)findViewById(R.id.show_interview_video_surface);
         surfaceHolder = surfaceView.getHolder();
-        surfaceHolder.addCallback(A_InterviewVideo.this);
+        surfaceHolder.addCallback(A_ShowInterviewVideo.this);
 
         // SeekBar 설정
         seekBar = (SeekBar)findViewById(R.id.show_interview_video_seekbar);
@@ -170,9 +176,11 @@ public class A_InterviewVideo extends Activity implements SurfaceHolder.Callback
         btn_Play.setClickable(true);
     }
 
-    /* 리포트 보기 버튼 */
+    /*
+    * 리포트 보기 버튼
+    */
     public void onViewReport(View v) {
-        Intent intent = new Intent(A_InterviewVideo.this, A_InterviewReport.class);
+        Intent intent = new Intent(A_ShowInterviewVideo.this, A_ShowInterviewReport.class);
 
         // Emotion 평균 데이터
         intent.putExtra("avg_happy", emotionData.getAvg_happy());
@@ -200,7 +208,9 @@ public class A_InterviewVideo extends Activity implements SurfaceHolder.Callback
         startActivityForResult(intent, 1);
     }
 
-    /* 토글 버튼 설정 */
+    /*
+    * 토글 버튼 설정 시작
+    */
     public void onTogglePlay(View v) {
         btn_Play.setClickable(false);
         if (!isPlaying) {
@@ -258,6 +268,9 @@ public class A_InterviewVideo extends Activity implements SurfaceHolder.Callback
         }
     }
 
+    /*
+    * 토글 버튼 설정 끝
+    */
     @Override
     public void surfaceCreated(SurfaceHolder Holder) {
         mediaPlayer = new MediaPlayer();
@@ -280,7 +293,7 @@ public class A_InterviewVideo extends Activity implements SurfaceHolder.Callback
             }
         });
         mediaPlayer.setDisplay(surfaceHolder);
-        mediaPlayer.setOnPreparedListener(A_InterviewVideo.this);
+        mediaPlayer.setOnPreparedListener(A_ShowInterviewVideo.this);
         mediaPlayer.setScreenOnWhilePlaying(true);
         new Thread(new Runnable() {
             @Override
