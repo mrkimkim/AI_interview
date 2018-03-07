@@ -16,7 +16,11 @@ day_count = (end_date - start_date).days + 1
 filePath = ""
 length = 0
 
+# def getPage()
 
+# def getArticle()
+
+# def parseArticle()
 
 # Do Crawling range (start_date, end_date)
 for day in [d for d in (start_date + datetime.timedelta(n) for n in range(day_count)) if d < end_date]:
